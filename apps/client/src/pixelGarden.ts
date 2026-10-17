@@ -3,7 +3,7 @@ import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type L
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, pixelEllipse, project, unproject } from './isometric';
-import { scarletDirection } from './scarletDirections';
+import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
 export type Selection = AvatarId | EquipmentId;
@@ -23,7 +23,7 @@ export class PixelGarden {
   private resizeObserver: ResizeObserver;
   private walkCycle = new ScarletWalkCycle();
   private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>();
-  private friendsAtlas?: HTMLCanvasElement;
+  private friendsAtlas?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private props: Sprite[] = [];
   private hits: Hit[] = [];
   private zoom = 1;
@@ -53,8 +53,8 @@ export class PixelGarden {
   }
   private async loadArt() {
     try {
-      const [friends, image, approved] = await Promise.all([
-        loadPixelAtlas('sprites/garden/garden-friends-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
+      const [friends, friendsSw, image, approved] = await Promise.all([
+        loadPixelAtlas('sprites/garden/garden-friends-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
           const [idle, walk] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk)]);
@@ -63,7 +63,7 @@ export class PixelGarden {
       ]);
       if (this.disposed) return;
       approved.forEach(([source, art]) => this.approvedArt.set(source, art));
-      this.friendsAtlas = friends;
+      this.friendsAtlas = { se: friends, sw: friendsSw };
       // Trim each independent cell, retaining alpha for both drawing and selection.
       const w = image.naturalWidth / 4, h = image.naturalHeight / 2;
       for (let n = 0; n < 8; n++) {
@@ -165,7 +165,7 @@ export class PixelGarden {
       c.restore();
     } else if (this.friendsAtlas && a.id !== 'character') {
       const frame = (a.id === 'peach' ? 0 : 4) + (moving && !still ? 1 + Math.floor(this.life.time * 7) % 3 : 0);
-      c.drawImage(this.friendsAtlas, frame % 4 * 96, Math.floor(frame / 4) * 96, 96, 96, x, y, size, size);
+      c.drawImage(this.friendsAtlas[friendSide(a.yaw)], frame % 4 * 96, Math.floor(frame / 4) * 96, 96, 96, x, y, size, size);
     } else {
       // Original placeholder friends, drawn on the same logical pixel grid.
       c.save(); c.translate(p.x, Math.round(base));

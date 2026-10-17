@@ -3,7 +3,7 @@ import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { depth, pixelEllipse, project, unproject } from './isometric';
-import { scarletDirection } from './scarletDirections';
+import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
@@ -242,11 +242,14 @@ class GardenScene extends Phaser.Scene {
     shape('ring', Math.round(1.4 * U) + 2, Math.round(.64 * U) + 2, (c, w, h) => { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(w / 2, h / 2, w / 2 - 1, h / 2 - 1, 0, 0, Math.PI * 2); c.stroke(); });
   }
   private async makeFriends() {
-    const tex = this.textures.addCanvas('friends', await loadPixelAtlas('sprites/garden/garden-friends-v1.png'))!;
-    for (let i = 0; i < 8; i++) tex.add(i, 0, i % 4 * 96, Math.floor(i / 4) * 96, 96, 96);
-    // Same 4x2 source layout; only cells 0 (Momo) and 4 (Lulu) hold seated frames.
-    const sit = this.textures.addCanvas('friends-sit', await loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'))!;
-    for (const i of [0, 4]) sit.add(i, 0, i % 4 * 96, Math.floor(i / 4) * 96, 96, 96);
+    // Down-right sheets and their left-right mirrors (tools/art/make-garden-friends-mirror-v1.py), same 4x2 cell order.
+    const sheets = [['friends', 'garden-friends-v1'], ['friends-sw', 'garden-friends-sw-v1'], ['friends-sit', 'garden-friends-sit-v1'], ['friends-sit-se', 'garden-friends-sit-se-v1']];
+    const atlases = await Promise.all(sheets.map(([, file]) => loadPixelAtlas(`sprites/garden/${file}.png`)));
+    sheets.forEach(([key], n) => {
+      const tex = this.textures.addCanvas(key, atlases[n])!;
+      // Walk sheets fill all 8 cells; seated sheets only cells 0 (Momo) and 4 (Lulu).
+      for (const i of key.startsWith('friends-sit') ? [0, 4] : [0, 1, 2, 3, 4, 5, 6, 7]) tex.add(i, 0, i % 4 * 96, Math.floor(i / 4) * 96, 96, 96);
+    });
   }
 
   private get items() { const e = this.g.editor; return e.active ? e.draft.items.filter(i => i.id !== e.pending?.id) : this.g.life.layout; }
@@ -383,9 +386,12 @@ class GardenScene extends Phaser.Scene {
       else view.sprite.setTexture(`idle-${source}`);
       view.sprite.setFlipX(flipX).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
-      // Friends only have a down-left seated frame; on a down-right seat it is mirrored.
-      view.sprite.setTexture('friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(facing === 'se');
-    } else view.sprite.setTexture('friends', (a.id === 'peach' ? 0 : 4) + (moving ? 1 + Math.floor(this.g.life.time * 7) % 3 : 0)).setFlipX(false);
+      // Friends' seated frame faces down-left; a down-right seat uses its mirrored sheet.
+      view.sprite.setTexture(facing === 'se' ? 'friends-sit-se' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
+    } else {
+      const sheet = friendSide(a.yaw) === 'sw' ? 'friends-sw' : 'friends';
+      view.sprite.setTexture(sheet, (a.id === 'peach' ? 0 : 4) + (moving ? 1 + Math.floor(this.g.life.time * 7) % 3 : 0)).setFlipX(false);
+    }
     view.label.setText(a.phase === 'waving' ? '♡' : seated ? seat?.kind === 'swing' ? '♪' : '···' : '')
       .setPosition(x, base - view.sprite.displayHeight * view.sprite.originY - 3).setDepth(z + .02);
     if (a.id === this.g.selectedAvatar) this.ring.setPosition(x, p.y + swing.ground).setDepth(z - .005);
