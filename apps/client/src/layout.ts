@@ -23,12 +23,12 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
  */
 export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2 };
 /**
- * The swing art is not symmetric about its seat (its near A-frame splays wider in the perspective), so the seat sits
- * right of the art's centre in one turn and left in the other. In playground-swing-v2.png, where the seat hangs
- * midway between the two A-frames, that is +.23 tile (seat board centre x 235 vs art centre 215 of 406 px) and −.22
- * (209.5 vs 228). Shifting the art by this keeps the seat on the swing's position, where the rider sits.
+ * Where the swing art's seat sits from the centre of the art's trimmed box (the game trims each cell to its alpha > 0
+ * bounds), in tiles of screen width. In playground-swing-v2.png the seat hangs midway between the A-frames and lands
+ * close to that centre: +.06 tile in one turn (seat board centre x 227 vs box centre 221 of 443 px) and −.03 in the
+ * other (215 vs 217.5 of 436). Shifting the art by this keeps the seat on the swing's position, where the rider sits.
  */
-export function swingSeatShift(item: PlacedItem) { return (item.turn % 2 ? .23 : -.22) * (item.turn >= 2 ? -1 : 1); }
+export function swingSeatShift(item: PlacedItem) { return (item.turn % 2 ? .06 : -.03) * (item.turn >= 2 ? -1 : 1); }
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
 export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33 }, standing: { bench: .75, swing: -.1 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {

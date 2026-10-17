@@ -20,9 +20,10 @@ const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.benc
  */
 const SWING_CELL = 444;
 const SWING_RIG = {
-  // playground-swing-v2: ropes and seat moved midway between the A-frames (tools/art/center-swing-seat-v1.py).
-  2: { row: 0, pivots: [[174, 143], [277, 104]], seat: [237, 295], forward: 1 },
-  3: { row: 1, pivots: [[165, 99], [267, 137]], seat: [205, 294], forward: -1 },
+  // playground-swing-v2: far A-frame + ropes + seat moved toward the near frame so the seat hangs midway
+  // (tools/art/center-swing-seat-v1.py): v1's points + (-16, 6) and (10, 4).
+  2: { row: 0, pivots: [[166, 146], [269, 107]], seat: [229, 298], forward: 1 },
+  3: { row: 1, pivots: [[170, 101], [272, 139]], seat: [210, 296], forward: -1 },
 } as const;
 /** Largest rope angle, one back-and-forth in seconds, and pre-drawn poses on each side of hanging still. */
 const SWING = { max: 18 * Math.PI / 180, period: 2.4, poses: 16, pad: 24 } as const;
