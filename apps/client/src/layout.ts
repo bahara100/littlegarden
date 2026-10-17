@@ -20,21 +20,36 @@ export function transform(local: Point, item: PlacedItem): Point {
   const angle = item.turn * Math.PI / 2, c = Math.round(Math.cos(angle)), s = Math.round(Math.sin(angle));
   return { x: item.x + local.x * c + local.z * s, z: item.z - local.x * s + local.z * c };
 }
+function oriented(item: PlacedItem, w: number, d: number) { const swap = item.turn % 2; return { x: item.x, z: item.z, w: swap ? d : w, d: swap ? w : d }; }
+/** Whole floor tiles an art size covers (floor tiles are 1×1 with edges on whole units). */
+export const tileSpan = (size: number) => Math.max(1, Math.round(size));
+/**
+ * Ground footprint in whole tiles (overlap checks, editor highlight, prop shadow). A fence stays a thin line along
+ * its tiles. Navigation keeps its own tighter collision boxes (worldFrom).
+ */
 export function footprint(item: PlacedItem) {
-  const asset = CATALOG[item.kind], swap = item.turn % 2;
-  const w = item.w ?? asset.w, d = item.d ?? asset.d;
-  return { x: item.x, z: item.z, w: swap ? d : w, d: swap ? w : d };
+  const asset = CATALOG[item.kind], w = item.w ?? asset.w, d = item.d ?? asset.d;
+  return oriented(item, tileSpan(w), item.kind === 'fence' ? d : tileSpan(d));
 }
+/** Centre on a tile centre for an odd span and on a tile edge for an even one, so the footprint fills whole tiles. */
+const snapAxis = (v: number, span: number) => span % 2 ? Math.floor(v) + .5 : Math.round(v);
+export function snapToTiles<T extends PlacedItem>(item: T): T {
+  const asset = CATALOG[item.kind], w = tileSpan(item.w ?? asset.w), d = tileSpan(item.d ?? asset.d), swap = item.turn % 2;
+  return { ...item, x: snapAxis(item.x, swap ? d : w), z: snapAxis(item.z, swap ? w : d) };
+}
+/** The two fixed floor features, on whole tiles: a picnic rug and a garden sign. */
+export const PICNIC = { x: -3, z: 4, w: 2, d: 2 } as const;
+export const SIGN = { x: -.5, z: -6.5, w: .4, d: .4 } as const;
 export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing'; approach: Point; height: number; yaw: number }
 export interface NavigationWorld { rectangles: { x: number; z: number; w: number; d: number }[]; trunks: (Point & { r: number })[]; seats: Seat[] }
 export function worldFrom(items: PlacedItem[]): NavigationWorld {
-  const rectangles = [{ x: -3.5, z: 4.4, w: 2.1, d: 1.65 }, { x: -.1, z: -6.2, w: .4, d: .4 }];
+  const rectangles: NavigationWorld['rectangles'] = [{ ...PICNIC }, { ...SIGN }];
   const trunks: NavigationWorld['trunks'] = [], seats: Seat[] = [];
   for (const item of items) {
     if (item.kind === 'tree') trunks.push({ x: item.x, z: item.z, r: .67 });
     else if (item.kind !== 'path') {
       const size = item.kind === 'bench' ? { w: 3.15 * B, d: 1.15 * B } : item.kind === 'swing' ? { w: 3.25 * S, d: 2.1 * S } : { w: item.w ?? CATALOG[item.kind].w, d: item.d ?? CATALOG[item.kind].d };
-      rectangles.push(footprint({ ...item, ...size }));
+      rectangles.push(oriented(item, size.w, size.d));
     }
     if (item.kind === 'bench') {
       for (const [suffix, side] of [['left', -1], ['right', 1]] as const) seats.push({
@@ -48,20 +63,22 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
 export function cloneLayout(layout: Layout): Layout { return { items: layout.items.map(i => ({ ...i })), stored: layout.stored.map(i => ({ ...i })) }; }
 function makeDefault(): Layout {
   const items: PlacedItem[] = [
-    { id: 'bench', kind: 'bench', x: -3.25, z: -2, turn: 0 }, { id: 'swing', kind: 'swing', x: 3.1, z: -2, turn: 0 },
-    ...[[-6.2, -5.3], [6, -5.4], [-6.4, 5.4], [6, 5.5]].map(([x, z], i) => ({ id: `tree-${i}`, kind: 'tree' as const, x, z, turn: 0 })),
-    { id: 'flower-0', kind: 'flower', x: -4.1, z: -6.4, turn: 0, w: 2.7, d: 1 },
-    { id: 'flower-1', kind: 'flower', x: 4.1, z: -6.4, turn: 0, w: 2.4, d: 1 },
-    { id: 'flower-2', kind: 'flower', x: -6.2, z: 3, turn: 0, w: 1.3, d: 1.6 },
-    { id: 'flower-3', kind: 'flower', x: 6, z: 3, turn: 0, w: 1.4, d: 1.5 },
+    // Every footprint fills whole floor tiles (snapToTiles): bench 3×2, swing 3×3, tree 1×1, beds 3×1 / 2×1 / 1×2.
+    { id: 'bench', kind: 'bench', x: -3.5, z: -2, turn: 0 }, { id: 'swing', kind: 'swing', x: 3.5, z: -1.5, turn: 0 },
+    ...[[-6.5, -5.5], [6.5, -5.5], [-6.5, 5.5], [6.5, 5.5]].map(([x, z], i) => ({ id: `tree-${i}`, kind: 'tree' as const, x, z, turn: 0 })),
+    { id: 'flower-0', kind: 'flower', x: -4.5, z: -6.5, turn: 0, w: 2.7, d: 1 },
+    { id: 'flower-1', kind: 'flower', x: 4, z: -6.5, turn: 0, w: 2.4, d: 1 },
+    { id: 'flower-2', kind: 'flower', x: -6.5, z: 3, turn: 0, w: 1.3, d: 1.6 },
+    { id: 'flower-3', kind: 'flower', x: 6.5, z: 3, turn: 0, w: 1.4, d: 1.5 },
   ];
-  for (let x = -6; x <= 6; x += 2) items.push({ id: `fence-top-${x}`, kind: 'fence', x, z: -7.55, turn: 0 });
-  for (let z = -6; z <= -2; z += 2) items.push({ id: `fence-left-${z}`, kind: 'fence', x: -7.55, z, turn: 1 });
+  // Fences run down the middle of the outermost tile row/column.
+  for (let x = -6; x <= 6; x += 2) items.push({ id: `fence-top-${x}`, kind: 'fence', x, z: -7.5, turn: 0 });
+  for (let z = -6; z <= -2; z += 2) items.push({ id: `fence-left-${z}`, kind: 'fence', x: -7.5, z, turn: 1 });
   const cells = new Set<string>();
-  for (let x = -7.5; x <= 7.5; x++) for (const z of [.75, 1.75]) cells.add(`${x},${z}`);
-  // Tiles meet on whole-unit centres; the crossing avoids duplicate tiles.
-  for (let z = -7.25; z <= 6.75; z++) for (const x of [-.5, .5]) {
-    if (z >= .25 && z <= 2.25) continue;
+  // Path tiles sit exactly on floor tiles: a two-tile band across (z .5, 1.5) and down (x -.5, .5) the garden.
+  for (let x = -7.5; x <= 7.5; x++) for (const z of [.5, 1.5]) cells.add(`${x},${z}`);
+  for (let z = -7.5; z <= 7.5; z++) for (const x of [-.5, .5]) {
+    if (z === .5 || z === 1.5) continue;
     cells.add(`${x},${z}`);
   }
   [...cells].forEach((key, i) => { const [x, z] = key.split(',').map(Number); items.push({ id: `path-${i}`, kind: 'path', x, z, turn: 0 }); });
@@ -77,8 +94,8 @@ export function geometryError(items: PlacedItem[]): string | null {
     ids.add(item.id); const a = footprint(item);
     if (Math.abs(a.x) + a.w / 2 > 8.001 || Math.abs(a.z) + a.d / 2 > 8.001) return '놀이터 경계 안에 놓아주세요.';
     if (item.kind === 'path') continue;
-    if (Math.abs(a.x + 3.5) < a.w / 2 + 1.05 && Math.abs(a.z - 4.4) < a.d / 2 + .825) return '피크닉 공간은 비워주세요.';
-    if (Math.abs(a.x + .1) < a.w / 2 + .2 && Math.abs(a.z + 6.2) < a.d / 2 + .2) return '안내판과 겹쳐요.';
+    if (Math.abs(a.x - PICNIC.x) < (a.w + PICNIC.w) / 2 - .001 && Math.abs(a.z - PICNIC.z) < (a.d + PICNIC.d) / 2 - .001) return '피크닉 공간은 비워주세요.';
+    if (Math.abs(a.x - SIGN.x) < (a.w + SIGN.w) / 2 && Math.abs(a.z - SIGN.z) < (a.d + SIGN.d) / 2) return '안내판과 겹쳐요.';
   }
   for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
     const a = footprint(items[i]), b = footprint(items[j]);

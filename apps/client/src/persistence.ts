@@ -1,4 +1,4 @@
-import { CATALOG, cloneLayout, type Layout, type PlacedItem } from './layout';
+import { CATALOG, cloneLayout, snapToTiles, type Layout, type PlacedItem } from './layout';
 import { layoutError } from './editor';
 
 export const SAVE_KEY = 'little-garden.layout.v1';
@@ -20,7 +20,9 @@ export function decodeSave(text: string): Layout {
   }
   const result = { items: layout.items.map(item), stored: layout.stored.map(item) };
   const error = layoutError(result.items); if (error) throw new Error(error);
-  return result;
+  // Saves from before tile alignment move onto whole tiles when that still gives a valid layout.
+  const snapped = { items: result.items.map((i: PlacedItem) => snapToTiles(i)), stored: result.stored.map((i: PlacedItem) => snapToTiles(i)) };
+  return layoutError(snapped.items) ? result : snapped;
 }
 export function encodeSave(layout: Layout): string {
   return JSON.stringify({ app: 'little-garden', version: 1, savedAt: new Date().toISOString(), layout: cloneLayout(layout) }, null, 2);

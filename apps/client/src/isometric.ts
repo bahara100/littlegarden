@@ -15,3 +15,5 @@ export function pixelEllipse(c: CanvasRenderingContext2D, cx: number, cy: number
     if (half >= .5) c.fillRect(Math.round(cx - half), y, Math.round(cx + half) - Math.round(cx - half), 1);
   }
 }
+/** Prop shadow over its footprint tiles; translucent so it reads on grass and path tiles alike. */
+export const PROP_SHADOW = { color: '#5f7a4c', alpha: .32 } as const;

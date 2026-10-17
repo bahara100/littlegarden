@@ -1,4 +1,4 @@
-import { CATALOG, DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, worldFrom, type Layout, type PlacedItem, type ItemKind } from './layout';
+import { CATALOG, DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, snapToTiles, worldFrom, type Layout, type PlacedItem, type ItemKind } from './layout';
 import { findPath, walkable } from './simulation';
 export function layoutError(items: PlacedItem[]): string | null {
   const error = geometryError(items); if (error) return error;
@@ -23,13 +23,14 @@ export class LayoutEditor {
   begin(kind: ItemKind): string | null {
     if (this.draft.items.length + this.draft.stored.length >= 160) return '기구와 장식은 보관함을 포함해 최대 160개까지 만들 수 있어요.';
     let id: string; do { id = `placed-${this.sequence++}`; } while ([...this.draft.items, ...this.draft.stored].some(i => i.id === id));
-    this.source = 'new'; this.pending = { id, kind, x: 0, z: 4.5, turn: 0 }; this.positionLocked = false; this.selected = null; return null;
+    this.source = 'new'; this.pending = snapToTiles({ id, kind, x: 0, z: 4.5, turn: 0 }); this.positionLocked = false; this.selected = null; return null;
   }
   move(id: string) { const item = this.draft.items.find(i => i.id === id); if (!item) return; this.pending = { ...item }; this.positionLocked = false; this.source = 'move'; this.selected = id; }
   restore(id: string) { const item = this.draft.stored.find(i => i.id === id); if (!item) return; this.pending = { ...item }; this.positionLocked = false; this.source = 'stored'; this.selected = null; }
-  position(x: number, z: number, lock = true) { if (this.pending) { this.pending.x = Math.round(x * 2) / 2; this.pending.z = Math.round(z * 2) / 2; this.positionLocked = lock; } }
+  /** Positions snap so the footprint covers whole floor tiles. */
+  position(x: number, z: number, lock = true) { if (this.pending) { this.pending = snapToTiles({ ...this.pending, x, z }); this.positionLocked = lock; } }
   followPointer(x: number, z: number) { if (!this.positionLocked) this.position(x, z, false); }
-  rotate() { if (!this.pending && this.selected) this.move(this.selected); if (this.pending) this.pending.turn = (this.pending.turn + 1) % 4; }
+  rotate() { if (!this.pending && this.selected) this.move(this.selected); if (this.pending) this.pending = snapToTiles({ ...this.pending, turn: (this.pending.turn + 1) % 4 }); }
   candidates() { return this.pending ? [...this.draft.items.filter(i => i.id !== this.pending!.id), this.pending] : this.draft.items; }
   get error() { const items = this.candidates(), key = JSON.stringify(items); if (key !== this.validationKey) { this.validationKey = key; this.validationResult = layoutError(items); } return this.validationResult; }
   place(): string | null {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_LAYOUT, BENCH_SEAT, cloneLayout, worldFrom, transform, type PlacedItem } from '../../apps/client/src/layout.js';
+import { DEFAULT_LAYOUT, BENCH_SEAT, cloneLayout, footprint, worldFrom, transform, type PlacedItem } from '../../apps/client/src/layout.js';
 import { LayoutEditor, layoutError } from '../../apps/client/src/editor.js';
 import { LifeSimulation, walkable } from '../../apps/client/src/simulation.js';
 
@@ -8,11 +8,23 @@ test('default layout has no overlaps and every seat can be reached', () => {
   assert.equal(layoutError(DEFAULT_LAYOUT.items), null);
   assert.equal(worldFrom(DEFAULT_LAYOUT.items).seats.length, 3);
 });
+test('every default footprint covers whole floor tiles, and the editor keeps it that way when rotating', () => {
+  const whole = (v: number) => Math.abs(v - Math.round(v)) < 1e-9;
+  for (const item of DEFAULT_LAYOUT.items) {
+    if (item.kind === 'fence') continue;
+    const f = footprint(item);
+    for (const edge of [f.x - f.w / 2, f.x + f.w / 2, f.z - f.d / 2, f.z + f.d / 2]) assert.ok(whole(edge), `${item.id} edge ${edge} is not on a tile edge`);
+  }
+  const e = new LayoutEditor(); e.enter(); e.move('bench'); e.position(-4.2, -2.3); e.rotate();
+  const f = footprint(e.pending!);
+  assert.deepEqual([f.w, f.d], [2, 3]);
+  for (const edge of [f.x - f.w / 2, f.z - f.d / 2]) assert.ok(whole(edge));
+});
 test('clicking or entering coordinates pins a preview while pointer movement leaves it unchanged', () => {
   const e = new LayoutEditor(); e.enter(); e.begin('tree');
   e.followPointer(4, 1.5); assert.equal(e.positionLocked, false);
-  e.position(4, 1.5); e.followPointer(3, -2);
-  assert.deepEqual([e.pending!.x, e.pending!.z], [4, 1.5]); assert.equal(e.error, null);
+  e.position(4.2, 1.9); e.followPointer(3, -2);
+  assert.deepEqual([e.pending!.x, e.pending!.z], [4.5, 1.5], 'a 1×1 tree snaps to the centre of the clicked tile'); assert.equal(e.error, null);
   e.rotate(); e.followPointer(20, 20); assert.equal(e.positionLocked, true);
   assert.equal(e.place(), null);
   e.move(e.selected!); assert.equal(e.positionLocked, false);
@@ -25,7 +37,7 @@ test('invalid previews never replace committed items; cancel restores the full l
   e.enter(); e.move('bench'); e.position(20, 0);
   assert.match(e.error!, /경계/); assert.ok(e.place()); assert.ok(e.apply());
   assert.equal(JSON.stringify(e.committed), original);
-  e.cancelPlacement(); assert.equal(e.draft.items.find(i => i.id === 'bench')!.x, -3.25);
+  e.cancelPlacement(); assert.equal(e.draft.items.find(i => i.id === 'bench')!.x, -3.5);
   e.begin('tree'); e.position(4, 1.5); assert.equal(e.place(), null);
   e.cancel(); assert.equal(JSON.stringify(e.draft), original); assert.equal(JSON.stringify(e.committed), original);
 });

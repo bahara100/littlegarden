@@ -1,8 +1,8 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
-import { depth, pixelEllipse, project, unproject } from './isometric';
+import { PROP_SHADOW, depth, pixelEllipse, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
@@ -125,9 +125,9 @@ export class PixelGarden {
       const p = this.screen(item); c.fillStyle = '#eee3c7'; c.fillRect(p.x - 2, p.y - 1, 3, 1);
     }
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
-    this.tile({ x: -3.5, z: 4.4 }, 2.1, 1.65, '#e8b8a7', '#a97e7e');
-    for (let x = -4.4; x < -2.5; x += .4) for (let z = 3.7; z < 5.1; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
-    const sign = this.screen({ x: -.1, z: -6.2 });
+    this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
+    for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
+    const sign = this.screen(SIGN);
     c.fillStyle = '#766454'; c.fillRect(sign.x - 1, sign.y - 14, 2, 14); c.fillStyle = '#f8e8bd'; c.fillRect(sign.x - 9, sign.y - 20, 18, 9); c.fillStyle = '#b6b989'; c.fillRect(sign.x - 6, sign.y - 17, 10, 2);
   }
   private drawItem(item: PlacedItem, ghost = false) {
@@ -138,7 +138,8 @@ export class PixelGarden {
     const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 })[item.kind] * unit;
     const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * .2);
     if (ghost) c.globalAlpha = .65;
-    if (this.shadows) this.tile(item, Math.min(2.5, CATALOG[item.kind].w), .65, '#9baf80');
+    // Prop shadows darken exactly the floor tiles each footprint covers (same look as the Phaser renderer).
+    if (this.shadows) { const f = footprint(item), alpha = c.globalAlpha; c.globalAlpha = alpha * PROP_SHADOW.alpha; this.tile(item, f.w, f.d, PROP_SHADOW.color); c.globalAlpha = alpha; }
     c.save();
     if (item.turn >= 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
     c.drawImage(art.image, x, y, size, size); c.restore(); c.globalAlpha = 1;

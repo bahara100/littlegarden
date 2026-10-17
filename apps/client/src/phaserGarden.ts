@@ -1,8 +1,8 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
-import { depth, pixelEllipse, project, unproject } from './isometric';
+import { PROP_SHADOW, depth, pixelEllipse, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
@@ -274,10 +274,11 @@ class GardenScene extends Phaser.Scene {
       const p = iso(item); c.fillStyle = '#eee3c7'; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
     }
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
-    diamond(c, { x: -3.5, z: 4.4 }, 2.1, 1.65, '#e8b8a7', '#a97e7e');
-    for (let x = -4.4; x < -2.5; x += .4) for (let z = 3.7; z < 5.1; z += .4) diamond(c, { x, z }, .2, .2, '#f7e7d1');
-    if (this.g.shadows) for (const item of items.filter(i => i.kind !== 'path')) diamond(c, item, Math.min(2.5, CATALOG[item.kind].w), .65, '#9baf80');
-    const s = iso({ x: -.1, z: -6.2 }), sx = Math.round(s.x + FLOOR.ox), sy = Math.round(s.y + FLOOR.oy);
+    diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
+    for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) diamond(c, { x, z }, .2, .2, '#f7e7d1');
+    // Prop shadows darken exactly the floor tiles each footprint covers.
+    if (this.g.shadows) { c.globalAlpha = PROP_SHADOW.alpha; for (const item of items.filter(i => i.kind !== 'path')) { const f = footprint(item); diamond(c, item, f.w, f.d, PROP_SHADOW.color); } c.globalAlpha = 1; }
+    const s = iso(SIGN), sx = Math.round(s.x + FLOOR.ox), sy = Math.round(s.y + FLOOR.oy);
     c.fillStyle = '#766454'; c.fillRect(sx - 1, sy - 14, 2, 14); c.fillStyle = '#f8e8bd'; c.fillRect(sx - 9, sy - 20, 18, 9); c.fillStyle = '#b6b989'; c.fillRect(sx - 6, sy - 17, 10, 2);
     this.floor.refresh();
   }

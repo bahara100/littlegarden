@@ -43,3 +43,11 @@ test('storage failures are reported without replacing recoverable source data', 
   const blocked: SaveStorage = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('quota'); } };
   assert.throws(() => loadLayout(blocked)); assert.throws(() => saveLayout(blocked, cloneLayout(DEFAULT_LAYOUT)));
 });
+test('saves from before tile alignment load onto whole tiles', () => {
+  const old = cloneLayout(DEFAULT_LAYOUT);
+  Object.assign(old.items.find(i => i.id === 'bench')!, { x: -3.25, z: -2 });
+  Object.assign(old.items.find(i => i.id === 'tree-0')!, { x: -6.2, z: -5.3 });
+  const loaded = decodeSave(encodeSave(old));
+  assert.deepEqual(loaded.items.find(i => i.id === 'bench'), { id: 'bench', kind: 'bench', x: -3.5, z: -2, turn: 0 });
+  assert.deepEqual(loaded.items.find(i => i.id === 'tree-0'), { id: 'tree-0', kind: 'tree', x: -6.5, z: -5.5, turn: 0 });
+});
