@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { depth, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
@@ -12,7 +12,6 @@ type Callbacks = { select(id: Selection): void; zoom(value: number): void; error
 
 /** Logical pixels per ground unit. The camera scales this to the viewport, nearest-neighbour. */
 const U = 18;
-const FRIEND_SIT_LIFT = { bench: .45, swing: .5 } as const;
 const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 };
 /**
  * Swing layers from tools/art/split-swing-v1.py: rows are props cells 2 (seat faces down-right) and 3 (down-left),
@@ -292,7 +291,7 @@ class GardenScene extends Phaser.Scene {
   }
   private placeProp(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const index = propIndex(item), size = PROP_WIDTH[item.kind] * U * 128 / this.propWidths[index], p = iso(item);
-    image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * .2).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(depth(item));
+    image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(depth(item));
   }
   /** Current pose of a swing: its ropes + seat frame, and where its seat moved (world px; `ground` is the part along the floor). */
   private swingPose(item: PlacedItem) {
@@ -307,7 +306,7 @@ class GardenScene extends Phaser.Scene {
    */
   private placeSwing(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const cell = propIndex(item) as SwingCell, size = PROP_WIDTH.swing * U * 128 / this.swingArt.get(cell)!.width;
-    const p = iso(item), x = p.x, y = p.y + U * .2, z = depth(item), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
+    const p = iso(item), x = p.x, y = p.y + U * PROP_ART_BASE.swing, z = depth(item), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
     let view = this.swingViews.get(item.id);
     if (!view) {
       const part = (originY: number) => { const o = this.add.image(0, 0, 'prop0').setOrigin(.5, originY).setInteractive({ pixelPerfect: true }); o.setData('id', item.id); return o; };
@@ -365,7 +364,7 @@ class GardenScene extends Phaser.Scene {
     // New SD sitting art is not made yet. Keep its new idle instead of changing costume to the old sit sheet.
     const drawnSit = friendSit;
     const standingOnSeat = drawnSit && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
-    const lift = !drawnSit ? seated * .75 : standingOnSeat ? 0 : seated * FRIEND_SIT_LIFT[seat!.kind];
+    const lift = !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : standingOnSeat ? 0 : seated * SEAT_LIFT.drawn[seat!.kind];
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);

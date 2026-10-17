@@ -1,5 +1,5 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
@@ -135,7 +135,7 @@ export class PixelGarden {
     const index = item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd;
     const art = this.props[index]; if (!art) return;
     const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 })[item.kind] * unit;
-    const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * .2);
+    const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
     if (ghost) c.globalAlpha = .65;
     c.save();
     if (item.turn >= 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
@@ -150,7 +150,7 @@ export class PixelGarden {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
-    const base = p.y - seated * u * .75 + sway;
+    const base = p.y - seated * u * SEAT_LIFT.standing[seat?.kind ?? 'bench'] + sway;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : 2.8)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : .97));
     if (a.id === 'character' && this.approvedArt.size) {
