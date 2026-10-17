@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, swingSeatShift, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { depth, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
@@ -291,7 +291,7 @@ class GardenScene extends Phaser.Scene {
   }
   private placeProp(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const index = propIndex(item), size = PROP_WIDTH[item.kind] * U * 128 / this.propWidths[index], p = iso(item);
-    image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(depth(item));
+    image.setTexture(`prop${index}`).setPosition(p.x - (item.kind === 'swing' ? swingSeatShift(item) * U : 0), p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(depth(item));
   }
   /** Current pose of a swing: its ropes + seat frame, and where its seat moved (world px; `ground` is the part along the floor). */
   private swingPose(item: PlacedItem) {
@@ -306,7 +306,7 @@ class GardenScene extends Phaser.Scene {
    */
   private placeSwing(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const cell = propIndex(item) as SwingCell, size = PROP_WIDTH.swing * U * 128 / this.swingArt.get(cell)!.width;
-    const p = iso(item), x = p.x, y = p.y + U * PROP_ART_BASE.swing, z = depth(item), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
+    const p = iso(item), x = p.x - swingSeatShift(item) * U, y = p.y + U * PROP_ART_BASE.swing, z = depth(item), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
     let view = this.swingViews.get(item.id);
     if (!view) {
       const part = (originY: number) => { const o = this.add.image(0, 0, 'prop0').setOrigin(.5, originY).setInteractive({ pixelPerfect: true }); o.setData('id', item.id); return o; };

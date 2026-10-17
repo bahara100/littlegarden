@@ -1,5 +1,5 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, swingSeatShift, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
@@ -135,8 +135,9 @@ export class PixelGarden {
     const index = item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd;
     const art = this.props[index]; if (!art) return;
     const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 })[item.kind] * unit;
-    const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
+    const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2 - (item.kind === 'swing' ? swingSeatShift(item) * (item.turn >= 2 ? -1 : 1) * unit : 0)), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
     if (ghost) c.globalAlpha = .65;
+    // x is before the turn ≥ 2 mirror about p.x below, which flips the swing's seat shift by itself.
     c.save();
     if (item.turn >= 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
     c.drawImage(art.image, x, y, size, size); c.restore(); c.globalAlpha = 1;

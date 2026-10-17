@@ -22,6 +22,13 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
  * others; otherwise the frame stands a tile behind its seat and footprint.
  */
 export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2 };
+/**
+ * The swing art's seat is not at the art's centre: its ropes hang about 20 source px to one side of the bar's middle,
+ * so the seat sits right of the art's centre in one turn (+.33 tile, measured from playground-swing-v1.png: seat
+ * board centre x≈242 vs art centre 215 of 406 px) and left in the other (−.26: 206 vs 228). Shifting the art by this
+ * keeps the seat on the swing's position, where the rider sits.
+ */
+export function swingSeatShift(item: PlacedItem) { return (item.turn % 2 ? .33 : -.26) * (item.turn >= 2 ? -1 : 1); }
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
 export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33 }, standing: { bench: .75, swing: -.1 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
