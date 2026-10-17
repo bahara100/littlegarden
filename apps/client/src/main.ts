@@ -10,7 +10,7 @@ function setText(id: string, value: string) { const node = el(id); if (node.text
 // Phaser is the default renderer; ?renderer=canvas keeps the Canvas renderer.
 const params = new URLSearchParams(location.search);
 const usePhaser = params.get('renderer') !== 'canvas';
-let garden: PixelGarden | PhaserGarden | undefined, selected: Selection = 'character', panMode = false;
+let garden: PixelGarden | PhaserGarden | undefined, selected: Selection = 'character';
 let toastUntil = 0, panelKey = '';
 let inventoryKey = '';
 const defaultHint = '친구 선택 → 바닥을 눌러 이동 · 기구를 눌러 이용';
@@ -70,7 +70,7 @@ function refresh() {
     setText('use-equipment', `${active.name}에게 이용 부탁하기`);
     setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
   }
-  if (performance.now() > toastUntil) setText('scene-hint', panMode ? '왼쪽 버튼을 누른 채 드래그해 화면을 이동하세요' : defaultHint);
+  if (performance.now() > toastUntil) setText('scene-hint', defaultHint);
 }
 function showSelection(id: Selection) { selected = id; refresh(); }
 function refreshEditor() {
@@ -110,7 +110,6 @@ try {
   el('loading').hidden = true; refresh();
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
   el('zoom-in').onclick = () => garden?.zoomBy(1.15); el('zoom-out').onclick = () => garden?.zoomBy(1 / 1.15); el('reset-view').onclick = () => garden?.reset();
-  el('pan-mode').onclick = () => { panMode = !panMode; garden?.setPanMode(panMode); el('pan-mode').setAttribute('aria-pressed', String(panMode)); toastUntil = 0; refresh(); };
   el<HTMLInputElement>('grid-toggle').onchange = e => garden?.setGrid((e.target as HTMLInputElement).checked);
   el<HTMLInputElement>('shadow-toggle').onchange = e => garden?.setShadows((e.target as HTMLInputElement).checked);
   el('wave').onclick = () => garden?.wave();
@@ -122,7 +121,7 @@ try {
   el('use-equipment').onclick = () => garden?.commandUse(selected);
   el('edit-mode').onclick = () => {
     if (!garden) return;
-    if (garden.editor.active) garden.cancelEdit(); else { panMode = false; garden.setPanMode(false); el('pan-mode').setAttribute('aria-pressed', 'false'); garden.enterEdit(); }
+    if (garden.editor.active) garden.cancelEdit(); else garden.enterEdit();
     toastUntil = 0; refresh();
   };
   document.querySelectorAll<HTMLButtonElement>('[data-catalog]').forEach(button => { button.onclick = () => { const error = garden?.beginPlacement(button.dataset.catalog as ItemKind); if (error) notice(error); refresh(); }; });

@@ -28,14 +28,13 @@ export class PixelGarden {
   private hits: Hit[] = [];
   private zoom = 1;
   private pan = { x: 0, y: 0 };
-  private panMode = false;
   private grid = false;
   private shadows = true;
   private frame = 0;
   private last = performance.now();
   private disposed = false;
   private focus: AvatarId | null = null;
-  private drag: { x: number; y: number; sx: number; sy: number; moved: boolean; pan: boolean; id: number } | null = null;
+  private drag: { x: number; y: number; sx: number; sy: number; moved: boolean; id: number } | null = null;
   private reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
   constructor(private host: HTMLElement, private callbacks: Callbacks) {
@@ -230,24 +229,24 @@ export class PixelGarden {
   private pointerDown = (e: PointerEvent) => {
     if (e.button !== 0 && e.button !== 2) return;
     this.canvas.setPointerCapture(e.pointerId);
-    this.drag = { x: e.clientX, y: e.clientY, sx: this.pan.x, sy: this.pan.y, moved: false, pan: e.button === 2 || this.panMode || e.pointerType === 'touch', id: e.pointerId };
+    this.drag = { x: e.clientX, y: e.clientY, sx: this.pan.x, sy: this.pan.y, moved: false, id: e.pointerId };
   };
   private pointerMove = (e: PointerEvent) => {
     const d = this.drag;
     if (d) {
       const dx = e.clientX - d.x, dy = e.clientY - d.y;
       if (Math.hypot(dx, dy) > 6) d.moved = true;
-      if (d.pan && d.moved) { this.focus = null; const r = this.canvas.getBoundingClientRect(); this.pan = { x: d.sx + dx * this.canvas.width / r.width, y: d.sy + dy * this.canvas.height / r.height }; }
+      if (d.moved) { this.canvas.style.cursor = 'grabbing'; this.focus = null; const r = this.canvas.getBoundingClientRect(); this.pan = { x: d.sx + dx * this.canvas.width / r.width, y: d.sy + dy * this.canvas.height / r.height }; }
       return;
     }
     const p = this.coords(e);
-    this.canvas.style.cursor = this.panMode ? 'grab' : this.pick(p.x, p.y) ? 'pointer' : 'crosshair';
-    if (this.editor.active && this.editor.pending && !this.panMode) { const target = this.ground(p.x, p.y); this.editor.followPointer(target.x, target.z); }
+    this.canvas.style.cursor = this.pick(p.x, p.y) ? 'pointer' : 'crosshair';
+    if (this.editor.active && this.editor.pending) { const target = this.ground(p.x, p.y); this.editor.followPointer(target.x, target.z); }
   };
   private pointerUp = (e: PointerEvent) => {
     const d = this.drag; this.drag = null;
     if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
-    if (!d || d.moved || this.panMode || e.button === 2) return;
+    if (!d || d.moved || e.button === 2) return;
     const p = this.coords(e), target = this.ground(p.x, p.y);
     if (this.editor.active) {
       if (this.editor.pending) { this.editor.position(target.x, target.z); this.callbacks.notice(this.editor.error ?? '위치를 고정했어요. «여기에 놓기»를 눌러주세요.'); }
@@ -274,7 +273,6 @@ export class PixelGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
-  setPanMode(enabled: boolean) { this.panMode = enabled; }
   setShadows(show: boolean) { this.shadows = show; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }

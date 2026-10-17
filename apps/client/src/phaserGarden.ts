@@ -75,7 +75,6 @@ export class PhaserGarden {
   selection: Selection = 'character';
   zoom = 1;
   pan = { x: 0, y: 0 };
-  panMode = false;
   grid = false;
   shadows = true;
   focus: AvatarId | null = null;
@@ -104,7 +103,6 @@ export class PhaserGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
-  setPanMode(enabled: boolean) { this.panMode = enabled; }
   setShadows(show: boolean) { this.shadows = show; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
@@ -140,7 +138,8 @@ class GardenScene extends Phaser.Scene {
   private overlay!: Phaser.Textures.CanvasTexture;
   private floorKey = '';
   private overlayKey = '';
-  private drag: { x: number; y: number; sx: number; sy: number; moved: boolean; pan: boolean } | null = null;
+  /** Any drag past 6px pans the view; a press that stays put is a click. */
+  private drag: { x: number; y: number; sx: number; sy: number; moved: boolean } | null = null;
   private reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
   constructor(private g: PhaserGarden) { super('garden'); }
@@ -423,22 +422,22 @@ class GardenScene extends Phaser.Scene {
   }
   private pointerDown(p: Phaser.Input.Pointer) {
     if (p.button !== 0 && p.button !== 2) return;
-    this.drag = { x: p.x, y: p.y, sx: this.g.pan.x, sy: this.g.pan.y, moved: false, pan: p.button === 2 || this.g.panMode || p.wasTouch };
+    this.drag = { x: p.x, y: p.y, sx: this.g.pan.x, sy: this.g.pan.y, moved: false };
   }
   private pointerMove(p: Phaser.Input.Pointer) {
     const d = this.drag, canvas = this.game.canvas;
     if (d && p.isDown) {
       if (Math.hypot(p.x - d.x, p.y - d.y) > 6) d.moved = true;
-      if (d.pan && d.moved) { this.g.focus = null; this.g.pan = { x: d.sx + p.x - d.x, y: d.sy + p.y - d.y }; }
+      if (d.moved) { canvas.style.cursor = 'grabbing'; this.g.focus = null; this.g.pan = { x: d.sx + p.x - d.x, y: d.sy + p.y - d.y }; }
       return;
     }
-    canvas.style.cursor = this.g.panMode ? 'grab' : this.pick(p) ? 'pointer' : 'crosshair';
+    canvas.style.cursor = this.pick(p) ? 'pointer' : 'crosshair';
     const e = this.g.editor;
-    if (e.active && e.pending && !this.g.panMode) { const q = this.ground(p); e.followPointer(q.x, q.z); }
+    if (e.active && e.pending) { const q = this.ground(p); e.followPointer(q.x, q.z); }
   }
   private pointerUp(p: Phaser.Input.Pointer) {
     const d = this.drag; this.drag = null;
-    if (!d || d.moved || this.g.panMode || p.button === 2) return;
+    if (!d || d.moved || p.button === 2) return;
     const g = this.g, target = this.ground(p);
     if (g.editor.active) {
       if (g.editor.pending) { g.editor.position(target.x, target.z); g.callbacks.notice(g.editor.error ?? '위치를 고정했어요. «여기에 놓기»를 눌러주세요.'); }
