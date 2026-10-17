@@ -133,7 +133,7 @@
 - **SW 앉기 V1 (사용자 검수 전)**: sprites/scarlet/sit-sw-v1/ 및 docs/art/pixel/SCARLET_SW_SIT_V1.md. 벤치·그네 그림은 정면 두 방향(SW·SE)뿐이라 앉기도 SW·SE만 만든다. SW는 [벤치, 그네, 중간] 3컷이다. 상체는 SW 대기 그림을 그대로 쓰고, 다리만 Pixelorama로 새로 그렸다. 흰 오른다리는 화면 왼쪽, 검은 교차 리본 왼다리는 화면 오른쪽에 있고 위에 그린다. 게임에서는 좌석 높이 SIT_LIFT로 앉힌다. SE 좌석은 아직 예전 방식이다.
 
 - **기구 크기 (사용자 검수 전)**: 벤치와 그네를 캐릭터 크기에 맞췄다. layout.ts의 EQUIPMENT_SCALE(벤치 0.65, 그네 0.78) 하나로 그림 너비, 배치 칸, 충돌 상자, 좌석·접근 위치를 함께 조정한다. 크기를 바꿀 때는 phaserGarden.ts의 앉은 높이 SIT_LIFT도 브라우저에서 다시 맞춘다. 기록은 docs/art/pixel/SCARLET_SW_SIT_V1.md에 있다.
-- **모모·루루 좌우 방향 (2026-10-17)**: 사용자가 “현재 만들어진 모션들 좌우 반전으로 생성해. 왼쪽 앞을 보는 것도 만들어서 적용”이라고 했다. garden-friends-v1.png(오른쪽 앞 SE)를 칸마다 좌우 반전한 garden-friends-sw-v1.png(왼쪽 앞 SW)와, 앉기 시트 반전 garden-friends-sit-se-v1.png를 tools/art/make-garden-friends-mirror-v1.py로 만들었다(다시 그린 픽셀 없음). 뒷모습이 없어 화면 오른쪽 이동(SE·NE)은 원본, 왼쪽 이동(SW·NW)은 반전 시트를 쓴다(scarletDirections.ts friendSide). 원본 시트를 고치면 스크립트를 다시 실행한다.
+- **모모·루루 좌우 방향 (2026-10-17)**: 사용자가 “현재 만들어진 모션들 좌우 반전으로 생성해. 왼쪽 앞을 보는 것도 만들어서 적용”이라고 했다. garden-friends-v1.png(오른쪽 앞 SE)를 칸마다 좌우 반전한 garden-friends-sw-v1.png(왼쪽 앞 SW)와, 앉기 시트 반전 garden-friends-sit-sw-v1.png를 tools/art/make-garden-friends-mirror-v1.py로 만들었다(다시 그린 픽셀 없음). 뒷모습이 없어 화면 오른쪽 이동(SE·NE)은 원본, 왼쪽 이동(SW·NW)은 반전 시트를 쓴다(scarletDirections.ts friendSide). 앉기 원본 garden-friends-sit-v1.png도 대기 그림에서 만들어 오른쪽 앞(SE)을 보므로, 사용자가 “앉은 모습도 좌우 반전으로 만들어”라고 해서 왼쪽 앞 좌석(turn 0·3, 기본 벤치·그네)은 반전 시트, 오른쪽 앞 좌석은 원본을 쓴다(이전 코드는 반대로 써서 기본 좌석에서 오른쪽을 봤다). 원본 시트를 고치면 스크립트를 다시 실행한다.
 - **앉은 모습 (사용자 검수 전)**: 모모·루루는 garden-friends-sit-v1.png의 앉은 그림을 쓴다(tools/art/make-garden-friends-sit-v1.ps1). 앉은 친구는 항상 기구 그림 앞에 그린다. 그네 그림은 정지 그림이라 타는 사람만 흔들지 않는다. 벤치 좌석은 BENCH_SEAT ±0.6칸이다. 기록은 docs/art/pixel/SCARLET_SW_SIT_V1.md에 있다. 홍련의 SE 좌석 앉기는 아직 없다.
 
 

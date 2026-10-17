@@ -2,8 +2,8 @@
 
 garden-friends-v1.png faces down-right (SE): idle in column 0 and three walk frames in columns 1..3, Momo on row 0
 and Lulu on row 1. garden-friends-sw-v1.png is the same sheet with every cell flipped left-right in place, so the
-friends face and walk down-left (SW) with the same cell order. garden-friends-sit-v1.png (seated, cells 0 and 4)
-gets the same treatment as garden-friends-sit-se-v1.png. Nothing is redrawn.
+friends face and walk down-left (SW) with the same cell order. garden-friends-sit-v1.png (seated, cells 0 and 4) is
+made from the idle cells and so faces down-right too; its mirror is garden-friends-sit-sw-v1.png. Nothing is redrawn.
 
 The source sheets are 4x2 cells of fractional width (1774 / 4 = 443.5 px); each cell is flipped inside its rounded
 box, which the game's atlas loader (pixelAtlas.ts) then scales to 90 px, so the rounding is far below one pixel.
@@ -16,7 +16,7 @@ from PIL import Image
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 GARDEN = os.path.join(ROOT, 'apps/client/public/sprites/garden')
-SHEETS = [('garden-friends-v1.png', 'garden-friends-sw-v1.png'), ('garden-friends-sit-v1.png', 'garden-friends-sit-se-v1.png')]
+SHEETS = [('garden-friends-v1.png', 'garden-friends-sw-v1.png'), ('garden-friends-sit-v1.png', 'garden-friends-sit-sw-v1.png')]
 
 
 def mirror_cells(src: Image.Image) -> Image.Image:

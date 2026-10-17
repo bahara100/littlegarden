@@ -243,7 +243,7 @@ class GardenScene extends Phaser.Scene {
   }
   private async makeFriends() {
     // Down-right sheets and their left-right mirrors (tools/art/make-garden-friends-mirror-v1.py), same 4x2 cell order.
-    const sheets = [['friends', 'garden-friends-v1'], ['friends-sw', 'garden-friends-sw-v1'], ['friends-sit', 'garden-friends-sit-v1'], ['friends-sit-se', 'garden-friends-sit-se-v1']];
+    const sheets = [['friends', 'garden-friends-v1'], ['friends-sw', 'garden-friends-sw-v1'], ['friends-sit', 'garden-friends-sit-v1'], ['friends-sit-sw', 'garden-friends-sit-sw-v1']];
     const atlases = await Promise.all(sheets.map(([, file]) => loadPixelAtlas(`sprites/garden/${file}.png`)));
     sheets.forEach(([key], n) => {
       const tex = this.textures.addCanvas(key, atlases[n])!;
@@ -386,8 +386,8 @@ class GardenScene extends Phaser.Scene {
       else view.sprite.setTexture(`idle-${source}`);
       view.sprite.setFlipX(flipX).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
-      // Friends' seated frame faces down-left; a down-right seat uses its mirrored sheet.
-      view.sprite.setTexture(facing === 'se' ? 'friends-sit-se' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
+      // The seated frame is made from the down-right idle pose; a down-left seat uses its mirrored sheet.
+      view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
     } else {
       const sheet = friendSide(a.yaw) === 'sw' ? 'friends-sw' : 'friends';
       view.sprite.setTexture(sheet, (a.id === 'peach' ? 0 : 4) + (moving ? 1 + Math.floor(this.g.life.time * 7) % 3 : 0)).setFlipX(false);
