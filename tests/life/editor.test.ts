@@ -46,7 +46,10 @@ test('rotation transforms footprints, seat anchors, approaches and facing togeth
   assert.equal(e.place(), null); assert.equal(e.apply(), null);
   const bench = e.committed.items.find(i => i.id === 'bench')!, seat = worldFrom(e.committed.items).seats.find(s => s.id === 'bench-left')!;
   assert.deepEqual({ x: seat.x, z: seat.z }, transform({ x: -BENCH_SEAT.x, z: BENCH_SEAT.z }, bench));
-  assert.deepEqual(seat.approach, transform({ x: -BENCH_SEAT.approachX, z: BENCH_SEAT.approachZ }, bench));
+  // The approach turns with the bench and sits on the nearest free tile centre to the art's approach point.
+  const raw = transform({ x: -BENCH_SEAT.approachX, z: BENCH_SEAT.approachZ }, bench);
+  for (const v of [seat.approach.x, seat.approach.z]) assert.equal(v - Math.floor(v), .5);
+  assert.ok(Math.hypot(seat.approach.x - raw.x, seat.approach.z - raw.z) <= Math.SQRT1_2 + 1e-9);
   assert.equal(seat.yaw, Math.PI / 2);
 });
 test('storage and restoration preserve instance identity without duplicating objects', () => {

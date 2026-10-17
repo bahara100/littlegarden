@@ -58,7 +58,23 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
       });
     } else if (item.kind === 'swing') seats.push({ id: `${item.id}-seat`, equipment: item.id, kind: 'swing', ...transform({ x: 0, z: 0 }, item), approach: transform({ x: .15 * S, z: 2.25 * S }, item), height: .965 * S, yaw: item.turn * Math.PI / 2 });
   }
+  // Friends walk tile centre to tile centre, so each seat's approach (where they step on and off) is the nearest
+  // free tile centre to the art's approach point.
+  const used: Point[] = [];
+  for (const seat of seats) { seat.approach = approachTile(seat.approach, rectangles, trunks, used); used.push(seat.approach); }
   return { rectangles, trunks, seats };
+}
+/** Same clearance as the simulation's walkable(): foot radius .34 around obstacles, inside the garden. */
+function clear(p: Point, rectangles: NavigationWorld['rectangles'], trunks: NavigationWorld['trunks']) {
+  return Math.abs(p.x) <= 7.25 && Math.abs(p.z) <= 7.25 &&
+    !rectangles.some(r => Math.abs(p.x - r.x) < r.w / 2 + .34 && Math.abs(p.z - r.z) < r.d / 2 + .34) &&
+    !trunks.some(t => Math.hypot(p.x - t.x, p.z - t.z) < t.r);
+}
+function approachTile(raw: Point, rectangles: NavigationWorld['rectangles'], trunks: NavigationWorld['trunks'], used: Point[]): Point {
+  const candidates: Point[] = [];
+  for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) candidates.push({ x: Math.floor(raw.x) + .5 + dx, z: Math.floor(raw.z) + .5 + dz });
+  candidates.sort((a, b) => Math.hypot(a.x - raw.x, a.z - raw.z) - Math.hypot(b.x - raw.x, b.z - raw.z));
+  return candidates.find(c => clear(c, rectangles, trunks) && !used.some(u => u.x === c.x && u.z === c.z)) ?? raw;
 }
 export function cloneLayout(layout: Layout): Layout { return { items: layout.items.map(i => ({ ...i })), stored: layout.stored.map(i => ({ ...i })) }; }
 function makeDefault(): Layout {

@@ -22,6 +22,14 @@ test('paths run down tile centres and turn on them', () => {
   path.slice(1).forEach((p, i) => { if (p.x !== path[i].x) assert.ok(centre(p.z)); else assert.ok(centre(p.x)); });
   assert.deepEqual(tileCentre({ x: -1.25, z: 1.99 }), { x: -1.5, z: 1.5 });
 });
+test('friends step on and off seats from a tile centre', () => {
+  const sim = new LifeSimulation(seeded()), a = sim.avatars.get('character')!;
+  for (const s of sim.seats) for (const v of [s.approach.x, s.approach.z]) assert.equal(v - Math.floor(v), .5);
+  sim.use(a.id, 'swing'); until(sim, () => a.phase === 'boarding');
+  assert.deepEqual({ x: a.x, z: a.z }, sim.seatOf(a)!.approach);
+  until(sim, () => a.phase === 'swinging'); sim.leave(a.id); until(sim, () => a.phase === 'idle');
+  for (const v of [a.x, a.z]) assert.ok(Math.abs(v - Math.floor(v) - .5) < 1e-9, 'gets off onto a tile centre');
+});
 test('two bench reservations are exclusive before arrival, failed requests preserve existing orders', () => {
   const sim = new LifeSimulation(seeded());
   assert.equal(sim.use('character', 'bench'), null); assert.equal(sim.use('peach', 'bench'), null);
