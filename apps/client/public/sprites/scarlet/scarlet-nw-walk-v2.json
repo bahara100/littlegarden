@@ -1,0 +1,51 @@
+﻿{
+    "fps":  6,
+    "version":  2,
+    "changedFrames":  [
+                          2,
+                          4
+                      ],
+    "anchor":  {
+                   "y":  88,
+                   "x":  48
+               },
+    "direction":  "nw",
+    "frames":  [
+                   {
+                       "number":  1,
+                       "width":  96,
+                       "y":  0,
+                       "image":  "scarlet-nw-walk-v1-frame-0.png",
+                       "x":  0,
+                       "opaqueColors":  32,
+                       "height":  96
+                   },
+                   {
+                       "number":  2,
+                       "width":  96,
+                       "y":  0,
+                       "image":  "scarlet-nw-walk-v2-frame-1.png",
+                       "x":  96,
+                       "opaqueColors":  30,
+                       "height":  96
+                   },
+                   {
+                       "number":  3,
+                       "width":  96,
+                       "y":  0,
+                       "image":  "scarlet-nw-walk-v1-frame-2.png",
+                       "x":  192,
+                       "opaqueColors":  32,
+                       "height":  96
+                   },
+                   {
+                       "number":  4,
+                       "width":  96,
+                       "y":  0,
+                       "image":  "scarlet-nw-walk-v2-frame-3.png",
+                       "x":  288,
+                       "opaqueColors":  31,
+                       "height":  96
+                   }
+               ]
+}

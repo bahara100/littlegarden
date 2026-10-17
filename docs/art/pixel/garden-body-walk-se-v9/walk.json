@@ -1,0 +1,51 @@
+{
+ "version": 9,
+ "stage": "frame1-left-leg-forward-frame3-legs-awaiting-user-review",
+ "from": "garden-body-walk-se-v3",
+ "frame1": {
+  "tool": "Pixelorama MCP",
+  "project": "garden-body-se-frame1-v9.pxo",
+  "legsFrom": "frame 3",
+  "walkDirection": "down-right",
+  "frontFoot": "lower right, left leg out of the screen-right opening",
+  "backFoot": "upper left, right leg out of the screen-left opening"
+ },
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 3,
+   "bottom": 89,
+   "colors": 32,
+   "source": "Pixelorama garden-body-se-frame1-v9.pxo: V3 frame 1 body; frame 3's front leg +5 px as the left leg forward; frame 3's back shin and shoe as the right leg back"
+  },
+  {
+   "number": 2,
+   "top": 2,
+   "bottom": 88,
+   "colors": 32,
+   "source": "V3 frame 2, unchanged"
+  },
+  {
+   "number": 3,
+   "top": 3,
+   "bottom": 89,
+   "colors": 32,
+   "source": "V3 frame 3, unchanged"
+  },
+  {
+   "number": 4,
+   "top": 3,
+   "bottom": 88,
+   "colors": 32,
+   "source": "V3 frame 4, unchanged"
+  }
+ ],
+ "runtimeConnected": false
+}

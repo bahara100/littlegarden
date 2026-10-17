@@ -1,0 +1,1 @@
+{"name":"@playground/server","private":true,"type":"module","scripts":{"dev":"tsx watch src/index.ts","build":"tsc","start":"node dist/apps/server/src/index.js"},"dependencies":{"@colyseus/core":"^0.18.18","@colyseus/schema":"^5.0.8","@colyseus/ws-transport":"^0.18.4"},"devDependencies":{"@types/express":"^5.0.6"}}

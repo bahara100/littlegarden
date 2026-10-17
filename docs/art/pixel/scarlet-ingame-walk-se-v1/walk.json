@@ -1,0 +1,70 @@
+{
+  "stage": "approved-art",
+  "direction": "se",
+  "frameCount": 4,
+  "fps": 6,
+  "frameSize": [
+    96,
+    96
+  ],
+  "anchor": [
+    48,
+    88
+  ],
+  "sharedCrop": [
+    66,
+    0,
+    552,
+    627
+  ],
+  "scale": 0.13078149920255183,
+  "runtimeConnected": true,
+  "frames": [
+    {
+      "number": 1,
+      "colors": 24,
+      "hatTop": 10,
+      "bottom": 87,
+      "registration": [
+        -2,
+        0
+      ],
+      "sha256": "1bb8d1681a2d7f7aba6f41a0dd240592e32befa4def2e6628889aea60bd76ae6"
+    },
+    {
+      "number": 2,
+      "colors": 24,
+      "hatTop": 9,
+      "bottom": 86,
+      "registration": [
+        4,
+        -1
+      ],
+      "sha256": "5732708038b10c2cc633b6c3e001c6da5318939d5c7cac1b8b84722c80fc2f28"
+    },
+    {
+      "number": 3,
+      "colors": 24,
+      "hatTop": 10,
+      "bottom": 87,
+      "registration": [
+        -1,
+        4
+      ],
+      "sha256": "65af6594cc8d5dab93c7ea748c44246f41ecf558a847daffc97f0c4b2ef96f66"
+    },
+    {
+      "number": 4,
+      "colors": 24,
+      "hatTop": 9,
+      "bottom": 85,
+      "registration": [
+        4,
+        2
+      ],
+      "sha256": "8c9368cb7b919e421cd22cb7b85a40c8fb04a42ec299009d4cf0915d19d289a0"
+    }
+  ],
+  "userApproved": true,
+  "approvedOn": "2026-10-17"
+}

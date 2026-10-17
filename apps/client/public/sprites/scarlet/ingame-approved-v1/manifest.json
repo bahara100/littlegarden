@@ -1,0 +1,47 @@
+{
+  "character": "scarlet",
+  "version": "ingame-approved-v1",
+  "frameSize": 96,
+  "frameCount": 4,
+  "fps": 6,
+  "anchor": [
+    48,
+    88
+  ],
+  "directions": {
+    "se": {
+      "source": "se",
+      "flipX": false
+    },
+    "sw": {
+      "source": "se",
+      "flipX": true
+    },
+    "ne": {
+      "source": "ne",
+      "flipX": false
+    },
+    "nw": {
+      "source": "ne",
+      "flipX": true
+    }
+  },
+  "assets": [
+    {
+      "file": "walk-se.png",
+      "sha256": "87d805f852f689fcbbc25553cf415304c8a110691c506351dcaa8a33d4f8b077"
+    },
+    {
+      "file": "walk-ne.png",
+      "sha256": "4a7145baa85e96cc704f15ca9cc62167b0d30d18d4ff181221e5b333944bc9ee"
+    },
+    {
+      "file": "idle-se.png",
+      "sha256": "2b3ca4174ce3283d766e9dbfcbc73fefb0cdf541be245b8a69a5015e76d0a9f6"
+    },
+    {
+      "file": "idle-ne.png",
+      "sha256": "5b0794d36b08b181544a7606b465f7cdc73f8bfb1aa0aabaf0112f87e3d08136"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "frames": [
+    {
+      "number": 1,
+      "colors": 23,
+      "bottom": 87,
+      "retainedFromV1": true,
+      "sha256": "6ab83906900b5edcf417f81576f84cb5016f36fcad758ccce793c2f1bb37dd27"
+    },
+    {
+      "number": 2,
+      "colors": 22,
+      "bottom": 87,
+      "retainedFromV1": true,
+      "sha256": "4b62acc3eebfc148ecbb683592804ce1e107ef68bea00b4504d88a20a9ce80d8"
+    },
+    {
+      "number": 3,
+      "colors": 23,
+      "bottom": 87,
+      "retainedFromV1": false,
+      "sha256": "de16ad667747607475a91ea5f293bc698529e66b5a0f3bd3eb9bd36fcb6c0410"
+    },
+    {
+      "number": 4,
+      "colors": 22,
+      "bottom": 87,
+      "retainedFromV1": true,
+      "sha256": "a78d32a1dc9440a434204f7984022d2e2926830d8aa62d968075c5425df66616"
+    }
+  ],
+  "fps": 6,
+  "frameSize": [
+    96,
+    96
+  ],
+  "correction": {
+    "sourceVersion": "v1",
+    "changedFrame": 3,
+    "mask": [
+      33,
+      72,
+      34,
+      24
+    ],
+    "changedPixels": 143,
+    "upperBodyMismatches": 0,
+    "sourceHatBounds": [
+      200,
+      87,
+      919
+    ],
+    "scale": 0.07290533188248095
+  },
+  "runtimeConnected": false,
+  "frameCount": 4,
+  "direction": "ne",
+  "stage": "walk-review",
+  "anchor": [
+    48,
+    88
+  ],
+  "sourceVersion": "v1"
+}

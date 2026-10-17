@@ -1,0 +1,48 @@
+{
+ "version": 5,
+ "stage": "frame1-faces-right-awaiting-user-review",
+ "from": "garden-body-walk-se-v4",
+ "frame1": {
+  "pelvis": "V3 frame 1 rows 0..69",
+  "leftLegFront": "V3 frame 4 standing leg",
+  "rightLegBack": "V2 frame 3 back leg, x -2"
+ },
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 3,
+   "bottom": 88,
+   "colors": 32,
+   "source": "V3 frame 1 head/body/pelvis + frame 4 standing leg (left, front) + V2 frame 3 back leg (right, back)"
+  },
+  {
+   "number": 2,
+   "top": 2,
+   "bottom": 88,
+   "colors": 32,
+   "source": "V4 frame 2, unchanged (= V3)"
+  },
+  {
+   "number": 3,
+   "top": 3,
+   "bottom": 89,
+   "colors": 32,
+   "source": "V4 frame 3, unchanged (= V3)"
+  },
+  {
+   "number": 4,
+   "top": 3,
+   "bottom": 88,
+   "colors": 32,
+   "source": "V4 frame 4, unchanged (= V3)"
+  }
+ ],
+ "runtimeConnected": false
+}

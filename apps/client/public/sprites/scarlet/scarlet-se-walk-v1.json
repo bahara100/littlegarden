@@ -1,0 +1,43 @@
+{
+  "fps": 6,
+  "anchor": {
+    "x": 48,
+    "y": 88
+  },
+  "direction": "se",
+  "version": 1,
+  "frames": [
+    {
+      "y": 0,
+      "opaqueColors": 31,
+      "x": 0,
+      "height": 96,
+      "width": 96,
+      "frame": 0
+    },
+    {
+      "y": 0,
+      "opaqueColors": 32,
+      "x": 96,
+      "height": 96,
+      "width": 96,
+      "frame": 1
+    },
+    {
+      "y": 0,
+      "opaqueColors": 32,
+      "x": 192,
+      "height": 96,
+      "width": 96,
+      "frame": 2
+    },
+    {
+      "y": 0,
+      "opaqueColors": 32,
+      "x": 288,
+      "height": 96,
+      "width": 96,
+      "frame": 3
+    }
+  ]
+}

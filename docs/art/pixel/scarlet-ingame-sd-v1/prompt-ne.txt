@@ -1,0 +1,21 @@
+Use case: identity-preserve / pixel sprite turnaround.
+Create exactly ONE neutral standing REAR-RIGHT/NE pixel-art sprite of the SAME approved SD Scarlet in images1 and2.
+Image1 = approved front-right96x96 sprite shown nearest6x; exact pixel-art style, color group sizes and body proportions.
+Image2 = its enlarged generated pixel underdrawing; identity/design reference only.
+Image3 = user's actual IN-GAME SD rear screenshot, authoritative round bob hairstyle, short nape locks, WHITE waist bow, hip panels.
+Image4 = actual in-game side screenshot, supporting hat and sheathed sword orientation.
+Do NOT reproduce the game's UI, display base/platform, background purple band, buttons, shadows or text.
+
+Turn the whole character to face diagonally UPPER-RIGHT/NE, THREE-QUARTER BACK. Rear hair dominates, only a tiny right ear/cheek at screen-right, no front-facing eyes or visible face looking back. Both knees and boot toes point NE together. Standing still with short thick legs planted at ease, arms down slightly away from waist. Keep EXACT approved front-view proportions: enormous round head under wide flat hat, tiny torso, short thick legs, head brim-to-chin about same height as chin-to-feet. No taller or long-legged figure, no change of art style.
+Strict native-looking COARSE PIXEL ART meant for a logical96x96 sprite, enlarged with visible chunky square pixels. Dark1logical-pixel stepped outlines, solid color clusters, ~24 muted flat colors,2tones/material, NO antialiased/vector outlines, gradients, fabric texture, decorative fine linework, or high-detail concept painting. Same approximate logical pixel density as image1.
+Character including BOTH horn tips, hat ends, hanging charm, sword tip, cloth and both boots fits in78x82logical-pixels with transparent margin inside96x96logical frame. Full square image, same apparent sprite scale as approved front.
+
+Retain these simplified SD features:
+- Ash-lavender gray hair as ONE BIG rounded BOB mass from hat brim down to shoulders, a few SHORT nape points directly below round mass as screenshot3. Back hair only3-4large shade clusters, no braids/ponytail/end tie/long cascading hair/twin tails.
+- Same wide shallow WHITE hat with dark brim/peach underside, two slim GOLD fork prongs on FRONT/FOREHEAD SIDE of crown (screen RIGHT for NE-facing character), leaning UP-RIGHT. The prongs must NOT accidentally face backwards/left. Their base alignment follows perspective from upper-left/far to lower-right/near. Same hat width, narrow prong thickness and silhouette as front.
+- Simple WHITE rope loop as few large lobes, two small white pom shapes, one short white/violet tassel, small hanging brass/violet plaque and thin black side cords, matching approved front. Not huge extra pompoms.
+- Tiny WHITE back torso, black off-shoulder bands, VIOLET angular hip panels, broad WHITE rear waist BOW made of two clear triangular wings and a center knot, with a short split white fabric tail. This bow should be clearly visible below the hair as the in-game rear screenshot. No giant red sash, no detailed embroidery. Front dark burgundy triangle is hidden on the body's front.
+- ONE straight simple WHITE/SILVER sheathed sword secured at her anatomical LEFT waist, trailing diagonally DOWN-LEFT behind her in this rear-right view. Match approved front sword length/thickness with dark end cap and2-3dark slot pixels only. Don't add a second blade, bow/rifle, huge horizontal crossbar, black-gold medieval sword, or a floating unattached weapon. Keep waist bow readable around attachment.
+- OWN RIGHT leg is sleek white armor/boot with small dark cutout/band, near/right side in this rear view (screen RIGHT). OWN LEFT lower leg is loose white gaiter with two black/dark-gray straps (screen LEFT). Both legs short/sturdy. Keep same simplified boot shapes and dark soles as approved front. NO black X stockings, no reversed garment identity.
+
+Palette and detail density EXACTLY match approved front: muted lavender-gray, white/cool gray, violet panels, dark gray straps, sparse beige-gold and pale skin. Whole figure centered, entire body visible, true alpha transparency, no text/swatch/grid/platform/base/drop shadow/background/second pose/animation sheet.

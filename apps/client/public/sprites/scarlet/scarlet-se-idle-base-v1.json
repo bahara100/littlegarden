@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "image": "scarlet-se-idle-base-v1.png",
+  "frame": { "width": 96, "height": 96 },
+  "direction": "SE",
+  "pose": "standing",
+  "anchor": { "x": 48, "y": 88 },
+  "contentLimit": { "width": 78, "height": 82 },
+  "light": "upper-left",
+  "opaqueColors": 32,
+  "alphaValues": [0, 255],
+  "pipeline": "builtin-imagegen-reference-then-nearest-sampling-and-fixed-palette-export",
+  "status": "base-draft"
+}

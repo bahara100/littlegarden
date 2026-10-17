@@ -1,0 +1,105 @@
+{
+  "character": "scarlet",
+  "status": "user-approved",
+  "approvedOn": "2026-10-17",
+  "approvalText": "좋아. 여기까지 캐릭터 걷기 모션은 완성이야.",
+  "frameSize": [
+    96,
+    96
+  ],
+  "sheetSize": [
+    384,
+    96
+  ],
+  "frameCount": 4,
+  "fps": 6,
+  "anchor": [
+    48,
+    88
+  ],
+  "runtimeConnected": true,
+  "sources": {
+    "se": {
+      "sha256": "87d805f852f689fcbbc25553cf415304c8a110691c506351dcaa8a33d4f8b077",
+      "sheet": "docs/art/pixel/scarlet-ingame-walk-se-v1/walk.png",
+      "frames": [
+        {
+          "sha256": "1bb8d1681a2d7f7aba6f41a0dd240592e32befa4def2e6628889aea60bd76ae6",
+          "path": "docs/art/pixel/scarlet-ingame-walk-se-v1/frame-1.png",
+          "number": 1
+        },
+        {
+          "sha256": "5732708038b10c2cc633b6c3e001c6da5318939d5c7cac1b8b84722c80fc2f28",
+          "path": "docs/art/pixel/scarlet-ingame-walk-se-v1/frame-2.png",
+          "number": 2
+        },
+        {
+          "sha256": "65af6594cc8d5dab93c7ea748c44246f41ecf558a847daffc97f0c4b2ef96f66",
+          "path": "docs/art/pixel/scarlet-ingame-walk-se-v1/frame-3.png",
+          "number": 3
+        },
+        {
+          "sha256": "8c9368cb7b919e421cd22cb7b85a40c8fb04a42ec299009d4cf0915d19d289a0",
+          "path": "docs/art/pixel/scarlet-ingame-walk-se-v1/frame-4.png",
+          "number": 4
+        }
+      ]
+    },
+    "ne": {
+      "sha256": "4a7145baa85e96cc704f15ca9cc62167b0d30d18d4ff181221e5b333944bc9ee",
+      "sheet": "docs/art/pixel/scarlet-ingame-walk-ne-v9/walk.png",
+      "frames": [
+        {
+          "sha256": "068c7c73b625a840cefc656925432d8ed5248cd13ca485c16e5782002b358ce1",
+          "path": "docs/art/pixel/scarlet-ingame-walk-ne-v9/frame-1.png",
+          "number": 1
+        },
+        {
+          "sha256": "2b8cb6b07d6b810c152804c8d4a6ce1f3f5487ce8c9594753aacba886747d63f",
+          "path": "docs/art/pixel/scarlet-ingame-walk-ne-v9/frame-2.png",
+          "number": 2
+        },
+        {
+          "sha256": "aed6c9db50983afd2ceb2b56c9ef3eea44acd858fc8db091c5f1923cd6ae7ad2",
+          "path": "docs/art/pixel/scarlet-ingame-walk-ne-v9/frame-3.png",
+          "number": 3
+        },
+        {
+          "sha256": "797da4d2401f86377fc3299246f06bb0bcd3a2f10fdb0b42d583b9b90ea48581",
+          "path": "docs/art/pixel/scarlet-ingame-walk-ne-v9/frame-4.png",
+          "number": 4
+        }
+      ]
+    }
+  },
+  "directions": {
+    "se": {
+      "source": "se",
+      "flipX": false
+    },
+    "sw": {
+      "source": "se",
+      "flipX": true
+    },
+    "ne": {
+      "source": "ne",
+      "flipX": false
+    },
+    "nw": {
+      "source": "ne",
+      "flipX": true
+    }
+  },
+  "mirrorMode": "flip-each-frame-without-reversing-frame-order",
+  "runtime": {
+    "connectedOn": "2026-10-17",
+    "assetRoot": "apps/client/public/sprites/scarlet/ingame-approved-v1",
+    "renderers": [
+      "phaser",
+      "canvas"
+    ],
+    "review": "sprites/scarlet/ingame-approved-v1/review.html",
+    "settings": "apps/client/src/scarletApproved.ts",
+    "note": "docs/art/pixel/SCARLET_INGAME_RUNTIME_V1.md"
+  }
+}

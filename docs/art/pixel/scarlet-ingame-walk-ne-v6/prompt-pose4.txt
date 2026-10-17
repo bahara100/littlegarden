@@ -1,0 +1,6 @@
+Edit ONLY the legs of this exact rear-right pixel-art character. Use SCREEN LEFT and SCREEN RIGHT, NOT anatomical labels.
+REQUIRED NEW POSE:
+- The leg seen on the LEFT SIDE OF THE IMAGE (the wrinkled white gaiter with dark bands) MUST BEND AT THE KNEE and LIFT ITS FOOT, close under the left side of the waist. Its shoe must be HIGHER, tucked back, not touching the ground.
+- The leg seen on the RIGHT SIDE OF THE IMAGE (smooth white armor/boot) MUST STRAIGHTEN DOWN and PLANT ITS FOOT under the right side of the waist. Its white shoe must be LOWER and support the body.
+Keep each leg on its respective screen side: LEFT folded and raised, RIGHT straight and lowered. Do not cross the legs, do not change them into the opposite screen positions, do not swap only the clothing patterns. Change the knee geometry and foot height. Left foot clearly above the right foot.
+Preserve all other pixels/design: same head, hat, hair, arms, white rear bow, purple hip plate, white sheath, body pose, size, rear-right view, pixel clusters, colors. One full character on transparent background. No floor, shadow, words or extra objects.

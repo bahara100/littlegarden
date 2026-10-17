@@ -1,0 +1,33 @@
+﻿{
+    "stage":  "ai-standing-draft",
+    "runtimeConnected":  false,
+    "walkFps":  6,
+    "mirror":  {
+                   "nw":  "ne",
+                   "sw":  "se"
+               },
+    "originalDirections":  [
+                               "se",
+                               "ne"
+                           ],
+    "mirroredAsymmetryAllowed":  true,
+    "framesPerWalk":  4,
+    "drafts":  [
+                   {
+                       "sha256":  "05decc09b869f0155e82370bd0204c451758330769aa4107e3196ec009a7a015",
+                       "direction":  "se",
+                       "width":  1254,
+                       "transparentPixels":  961612,
+                       "height":  1254,
+                       "file":  "draft-se.png"
+                   },
+                   {
+                       "sha256":  "11bab64840f425cd02c0d829663a185c58edb4bb59718fb1b22cdfa76081e395",
+                       "direction":  "ne",
+                       "width":  1254,
+                       "transparentPixels":  1004368,
+                       "height":  1254,
+                       "file":  "draft-ne.png"
+                   }
+               ]
+}

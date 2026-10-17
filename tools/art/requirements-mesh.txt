@@ -1,0 +1,5 @@
+# Isolated local mesh cleanup tools; installed into tools/art/pydeps.
+trimesh==5.1.1
+fast-simplification==0.2.0
+scipy==1.18.1
+numpy==2.5.4

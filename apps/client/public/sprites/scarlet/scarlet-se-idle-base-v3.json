@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "image": "scarlet-se-idle-base-v3.png",
+  "frame": { "width": 96, "height": 96 },
+  "direction": "SE",
+  "pose": "standing",
+  "anchor": { "x": 48, "y": 88 },
+  "contentLimit": { "width": 78, "height": 82 },
+  "light": "upper-left",
+  "paletteLimit": 32,
+  "alphaValues": [0, 255],
+  "hair": "long loose back hair gathered once at bottom on rear spinal midline, occluded by torso in front three-quarter view; no lateral tied bundles",
+  "pipeline": "builtin-imagegen-edit-then-nearest-sampling-and-fixed-palette-export",
+  "status": "base-draft"
+}
+

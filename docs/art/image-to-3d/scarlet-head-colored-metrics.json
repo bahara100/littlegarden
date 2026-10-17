@@ -1,0 +1,18 @@
+{
+  "source": "scarlet-head-hunyuan-shape.glb",
+  "output": "scarlet-head-hunyuan-colored-v1.glb",
+  "method": "front image projection + inferred rear palette",
+  "originalTriangles": 918640,
+  "triangles": 150000,
+  "frontTriangles": 47776,
+  "backTriangles": 102224,
+  "bytes": 5660028,
+  "inputImageBounds": [
+    32,
+    8,
+    1233,
+    1213
+  ],
+  "hasRig": false,
+  "hasAnimation": false
+}

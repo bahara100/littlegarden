@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "sheet": "scarlet-four-idle-v2.png",
+  "pose": "standing",
+  "anchor": {
+    "x": 48,
+    "y": 88
+  },
+  "frames": [
+    {
+      "x": 0,
+      "image": "scarlet-se-idle-base-v3.png",
+      "opaqueColors": 32,
+      "height": 96,
+      "direction": "se",
+      "width": 96,
+      "y": 0
+    },
+    {
+      "x": 96,
+      "image": "scarlet-sw-idle-four-v1.png",
+      "opaqueColors": 32,
+      "height": 96,
+      "direction": "sw",
+      "width": 96,
+      "y": 0
+    },
+    {
+      "x": 192,
+      "image": "scarlet-nw-idle-four-v2.png",
+      "opaqueColors": 31,
+      "height": 96,
+      "direction": "nw",
+      "width": 96,
+      "y": 0
+    },
+    {
+      "x": 288,
+      "image": "scarlet-ne-idle-four-v2.png",
+      "opaqueColors": 31,
+      "height": 96,
+      "direction": "ne",
+      "width": 96,
+      "y": 0
+    }
+  ]
+}

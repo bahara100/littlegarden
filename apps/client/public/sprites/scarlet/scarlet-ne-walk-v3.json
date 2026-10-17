@@ -1,0 +1,44 @@
+﻿{
+    "fps":  6,
+    "version":  3,
+    "frame2Override":  "apps/client/public/sprites/scarlet/scarlet-ne-walk-v3-frame2-fix-source.png",
+    "anchor":  {
+                   "y":  88,
+                   "x":  48
+               },
+    "direction":  "ne",
+    "frames":  [
+                   {
+                       "frame":  0,
+                       "width":  96,
+                       "y":  0,
+                       "x":  0,
+                       "opaqueColors":  32,
+                       "height":  96
+                   },
+                   {
+                       "frame":  1,
+                       "width":  96,
+                       "y":  0,
+                       "x":  96,
+                       "opaqueColors":  31,
+                       "height":  96
+                   },
+                   {
+                       "frame":  2,
+                       "width":  96,
+                       "y":  0,
+                       "x":  192,
+                       "opaqueColors":  32,
+                       "height":  96
+                   },
+                   {
+                       "frame":  3,
+                       "width":  96,
+                       "y":  0,
+                       "x":  288,
+                       "opaqueColors":  30,
+                       "height":  96
+                   }
+               ]
+}

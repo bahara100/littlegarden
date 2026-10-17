@@ -1,0 +1,9 @@
+Add-Type -AssemblyName System.Drawing
+Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'ScarletFullWalk.cs') -Raw)
+$taskRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../'))
+$taskPalette=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'scarlet-palette.json') -Raw|ConvertFrom-Json
+$taskColors=[Drawing.Color[]]@($taskPalette|ForEach-Object{[Drawing.ColorTranslator]::FromHtml($_)})
+$taskFolder=Join-Path $taskRoot 'apps/client/public/sprites/scarlet/fullframe-sw-v1'
+$taskSource=Join-Path $taskFolder 'source-keys-fixed.png'
+[ScarletFullWalk]::Export($taskSource,$taskSource,$taskFolder,$taskColors,'sw',$true)
+Get-Content -LiteralPath (Join-Path $taskFolder 'walk.json')

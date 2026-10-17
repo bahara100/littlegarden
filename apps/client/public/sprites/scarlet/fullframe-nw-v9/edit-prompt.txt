@@ -1,0 +1,12 @@
+Precise localized overlap/occlusion correction to a 2x2 four-frame walking sprite sheet, 1254x1254 transparent.
+Image1 is current NW (rear-left) final composite and is the EDIT TARGET. Image2 is the accepted NE (rear-right) direction for reference in how one leg occludes the other. Do not mirror/copy the NE character or alter its file; edit NW in image1.
+USER EXPLICIT CORRECTION: In top-left frame1 and top-right frame2, the RIGHT plain white leg must go BEHIND and be PARTLY HIDDEN BY the LEFT black-ribbon leg. Currently the white thigh/calf overlays the black left leg, making the walk look wrong. Fix this exact depth ordering.
+
+Edit ONLY the legs and their overlap in the TOP TWO cels (frames1,2). BOTTOM TWO cels3,4 must stay exactly unchanged. Keep all top hats, faces, hair, torsos, swords, skirt placement, arm poses, scale, composition and feet endpoints. No change of walking direction; still rear-left upper-left/NW.
+
+The character's LEFT leg is the near/foreground leg with BLACK X RIBBONS. It must have a clear continuous foreground contour from its thigh under the skirt, through its knee, to its ankle/shoe. Where the two limbs overlap, this black-ribbon left leg covers the white leg, never the reverse.
+The character's RIGHT leg is the far/background PLAIN WHITE stocking. Its upper thigh and inner calf disappear BEHIND the near black leg. Only the remaining outer/lower white calf and right boot peek from behind along the existing stride. The white limb must NOT lay a white curved shape across the front of the black calf.
+
+Frame1 top-left: keep existing forward short LEFT black leg and backward long RIGHT white leg endpoints. Bring black left thigh/knee fully in front at overlap; occlude the root/upper part of the white right leg behind it. No big exposed white thigh in front.
+Frame2 top-right: left black leg supports, right white leg swings past BEHIND it. Draw a continuous foreground black X-ribbon knee/calf outline. The white passing knee and shin are interrupted/hidden behind that black leg; only a short white lower shin and right boot show out to the right behind it. Remove the current long white curve draped ON TOP of the black support leg.
+Do not swap garment patterns. Both shoes remain dark with gold cuffs/white trim. Do not invent legs or widen stride. Style/linework unchanged. Transparent background. No labels or skeleton. Bottom cels exact same.

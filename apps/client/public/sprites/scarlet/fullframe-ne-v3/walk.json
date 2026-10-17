@@ -1,0 +1,90 @@
+﻿{
+    "version":  3,
+    "direction":  "ne",
+    "frameCount":  4,
+    "fps":  6,
+    "anchor":  [
+                   48,
+                   88
+               ],
+    "sourceCell":  [
+                       627,
+                       627
+                   ],
+    "sharedCrop":  [
+                       133,
+                       32,
+                       398,
+                       565
+                   ],
+    "scale":  0.14513274336283186,
+    "frames":  [
+                   {
+                       "number":  1,
+                       "kind":  "key",
+                       "sourceCell":  1,
+                       "x":  0,
+                       "y":  0,
+                       "width":  96,
+                       "height":  96,
+                       "translation":  [
+                                           -2,
+                                           0
+                                       ],
+                       "top":  6,
+                       "bottom":  87,
+                       "colors":  32
+                   },
+                   {
+                       "number":  2,
+                       "kind":  "key",
+                       "sourceCell":  2,
+                       "x":  96,
+                       "y":  0,
+                       "width":  96,
+                       "height":  96,
+                       "translation":  [
+                                           3,
+                                           1
+                                       ],
+                       "top":  7,
+                       "bottom":  87,
+                       "colors":  32,
+                       "sha256":  "d7ee99d9982f51ca09543da157c45ba2f6bde91177c4e5b6e04af9f7c6e180ef"
+                   },
+                   {
+                       "number":  3,
+                       "kind":  "key",
+                       "sourceCell":  3,
+                       "x":  192,
+                       "y":  0,
+                       "width":  96,
+                       "height":  96,
+                       "translation":  [
+                                           -2,
+                                           1
+                                       ],
+                       "top":  10,
+                       "bottom":  87,
+                       "colors":  32,
+                       "sha256":  "ae815a5f6df1ddf53b3e23cf4c9ea4c9a9650c7fe32be3c4ec062a8a64f0b8bc"
+                   },
+                   {
+                       "number":  4,
+                       "kind":  "key",
+                       "sourceCell":  4,
+                       "x":  288,
+                       "y":  0,
+                       "width":  96,
+                       "height":  96,
+                       "translation":  [
+                                           4,
+                                           0
+                                       ],
+                       "top":  9,
+                       "bottom":  87,
+                       "colors":  32,
+                       "sha256":  "e0f536e26f95a05d36ede61b1b118bba20f09ad9675c60d5fff7e8f4c3296b7d"
+                   }
+               ]
+}
