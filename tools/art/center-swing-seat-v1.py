@@ -40,6 +40,35 @@ PIECES = {
 }
 
 
+# The near A-frame's inner edge (its outline included) beside the seat, measured on v1 (cell-local px): x at row y,
+# slope in x per row; side +1: the post is right of the edge (row 1), -1: left of it (row 0).
+NEAR_POST = {
+    0: dict(x=161, y=300, slope=.21, side=-1, top=150, bottom=390),
+    1: dict(x=283, y=300, slope=-.22, side=1, top=150, bottom=390),
+}
+
+
+def components(mask):
+    """8-connected pieces of a mask, as (ys, xs) index arrays."""
+    seen = np.zeros_like(mask)
+    h, w = mask.shape
+    out = []
+    for y0, x0 in zip(*np.nonzero(mask)):
+        if seen[y0, x0]:
+            continue
+        stack, ys, xs = [(y0, x0)], [], []
+        seen[y0, x0] = True
+        while stack:
+            y, x = stack.pop(); ys.append(y); xs.append(x)
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    ny, nx = y + dy, x + dx
+                    if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not seen[ny, nx]:
+                        seen[ny, nx] = True; stack.append((ny, nx))
+        out.append((np.array(ys), np.array(xs)))
+    return out
+
+
 def shift(layer, dx, dy):
     out = np.zeros_like(layer)
     h, w = layer.shape[:2]
@@ -81,13 +110,71 @@ def main():
         seat_area = split_swing.dilate(split_swing.inside(split_swing.CELLS[2 + row]['seat'], CELL, CELL), 4)
         stray = (near[..., 3] > 0) & split_swing.dilate(hang[..., 3] > 0, 3) & ~np.vectorize(rule)(*np.mgrid[0:CELL, 0:CELL][::-1]) & ~seat_area
         hang[stray] = near[stray]; near[stray] = 0
+        # The near post is in front of the seat and ropes, so by its own straight edge: what lies outside the post (and
+        # is not a vine) is seat or rope and swings; what lies on the post is post and stays.
+        post = NEAR_POST[row]
+        seat_zone = split_swing.dilate(split_swing.inside(split_swing.CELLS[2 + row]['seat'], CELL, CELL), 3)
+        yy, xx = np.mgrid[0:CELL, 0:CELL]
+        edge = post['x'] + (yy - post['y']) * post['slope']
+        on_post = (xx >= edge) if post['side'] > 0 else (xx <= edge)
+        span = (yy >= post['top']) & (yy <= post['bottom'])
+        vine = split_swing.dilate(green_of(near), 2) & (near[..., 3] > 0)
+        rope_or_seat = split_swing.inside(split_swing.CELLS[2 + row]['seat'], CELL, CELL)
+        for rope in split_swing.CELLS[2 + row]['ropes']:
+            rope_or_seat |= split_swing.inside(rope['poly'], CELL, CELL)
+        off_post = span & ~on_post & (near[..., 3] > 0) & ~vine & rope_or_seat
+        hang[off_post] = near[off_post]; near[off_post] = 0
+        deep = ((xx >= edge + 2) if post['side'] > 0 else (xx <= edge - 2))
+        dark = hang[..., :3].astype(int).sum(-1) < 250
+        # On the post every pixel is the post (it is in front); by the seat, keep a 2 px margin for the seat's own end.
+        back_on = span & on_post & (hang[..., 3] > 0) & (~seat_zone | dark | deep)
+        empty = back_on & (near[..., 3] == 0)
+        near[empty] = hang[empty]
+        hang[back_on] = 0  # under the post it never shows at rest, and must not swing out from under it
+        # Small pieces of the near layer cut off from the post (leaf tips and outline bits over the rope) swing with it.
+        for comp in components(near[..., 3] > 0):
+            ys, xs = comp
+            if len(ys) < 40 and span[ys, xs].all() and not on_post[ys, xs].any() and not green_of(near)[ys, xs].any()                     and not vine[ys, xs].any():
+                hang[ys, xs] = near[ys, xs]; near[ys, xs] = 0
+        # The far A-frame's wood seen beside the far rope belongs to the frame, not the rope (both move together, so
+        # nothing changes at rest; it just no longer swings).
+        far_rope = np.zeros((CELL, CELL), bool)
+        for rope in split_swing.CELLS[2 + row]['ropes']:
+            if rope['behind']:
+                far_rope |= split_swing.inside(rope['poly'], CELL, CELL)
+        hr, hb = hang[..., 0].astype(int), hang[..., 2].astype(int)
+        hl = (hang[..., 3] > 0) & (np.abs(hr - hb) < 45) & (hang[..., :3].min(-1) > 70)
+        rope_body = (far_rope & split_swing.dilate(hl, 4)) | split_swing.dilate(hl, 1)  # strands, knots, outline
+        frame_wood = split_swing.dilate(far_rope, 8) & (hang[..., 3] > 0) & ~rope_body & ~seat_zone
+        joined = np.zeros_like(frame_wood)
+        for _ in range(12):  # keep only what joins the far frame itself
+            joined |= frame_wood & split_swing.dilate((back[..., 3] > 0) | joined, 1)
+        frame_wood = joined
+        back[frame_wood] = hang[frame_wood]; hang[frame_wood] = 0
+        # Leaf pieces of the near frame's vines that split() hung with the rope (dark leaves, not green enough to be
+        # recognised there) stay with the vines: hang pixels near the vines that are neither rope nor seat.
+        hr, hg, hb = (hang[..., i].astype(int) for i in range(3))
+        lav = (hang[..., 3] > 0) & (np.abs(hr - hb) < 45) & (hang[..., :3].min(-1) > 70)
+        leaves = (hang[..., 3] > 0) & ~split_swing.dilate(lav, 2) & ~seat_zone & split_swing.dilate(green_of(near), 6)
+        near[leaves] = hang[leaves]; hang[leaves] = 0
+        # Whatever split() hung outside the rope and seat shapes is not rope: near the far rope it is the far frame,
+        # elsewhere the near frame's vines.
+        ropes = np.zeros((CELL, CELL), bool)
+        for rope in split_swing.CELLS[2 + row]['ropes']:
+            ropes |= split_swing.inside(rope['poly'], CELL, CELL)
+        stray_hang = (hang[..., 3] > 0) & ~split_swing.dilate(ropes, 2) & ~seat_zone & (yy > 150)
+        to_back = stray_hang & split_swing.dilate(far_rope, 8)
+        to_near = stray_hang & ~to_back
+        back[to_back] = hang[to_back]; near[to_near] = hang[to_near]; hang[stray_hang] = 0
+        faint = (hang[..., 3] > 0) & (hang[..., 3] < 100) & span
+        hang[faint] = 0
         # ...and put the outline of the near frame's vines, where they spill over the near rope, in the hang layer:
         # that stays with the vines. (Rope = lavender strands + 1 px outline; the seat stays with the ropes.)
         cell = split_swing.CELLS[2 + row]
         r, g, b = (hang[..., i].astype(int) for i in range(3))
         rope_colour = (np.abs(r - b) < 45) & (hang[..., :3].min(-1) > 70) & (hang[..., 3] > 0)
         seat = split_swing.inside(cell['seat'], CELL, CELL)
-        vine_edge = split_swing.dilate(green_of(near) | green_of(bar), 2) & (hang[..., 3] > 0) & ~split_swing.dilate(rope_colour, 1) & ~seat
+        vine_edge = split_swing.dilate(green_of(near) | green_of(bar), 2) & (hang[..., 3] > 0) & ~split_swing.dilate(rope_colour, 1) & ~seat_zone
         near[vine_edge] = hang[vine_edge]; hang[vine_edge] = 0
         # Likewise bits of the bar's underside on the far side of the split, outside the near frame: part of the bar.
         cols = np.arange(CELL)
@@ -98,6 +185,24 @@ def main():
         solid = near[..., 3] > 0
         n = sum(np.roll(np.roll(np.pad(solid, 1), dy, 0), dx, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1) if dy or dx)[1:-1, 1:-1]
         near[solid & (n <= 2) & far_cols[None, :] & ~np.vectorize(rule)(*np.mgrid[0:CELL, 0:CELL][::-1])] = 0
+        # The seat's end behind the post was never drawn: when the seat swings out it would end in a raw cut. Carry
+        # the seat 1 px on under the post and close it with a 2 px outline there; at rest the post covers all of it.
+        step = post['side']
+        outline = np.array(split_swing.OUTLINE, np.uint8)
+        solid = hang[..., 3] > 0
+        for y, x in zip(*np.nonzero(solid & seat_zone & span)):
+            body = any(0 <= x - k * step < CELL and hang[y, x - k * step, 3] > 0 and hang[y, x - k * step, :3].astype(int).sum() > 250
+                       for k in range(0, 5))
+            if body and 0 <= x + 3 * step < CELL and on_post[y, x + step] and not solid[y, x + step]:
+                hang[y, x + step] = hang[y, x]
+                if hang[y, x, :3].astype(int).sum() > 250:  # seat body: cap it; its own outline rows just continue
+                    hang[y, x + 2 * step] = outline
+                    hang[y, x + 3 * step] = outline
+                else:
+                    hang[y, x + 2 * step] = hang[y, x]
+        for ys, xs in components(hang[..., 3] > 0):  # lone specks left by the steps above
+            if len(ys) < 8:
+                hang[ys, xs] = 0
         old_hang = hang[..., 3] > 0
         back = shift(back, *piece['move'])
         hang = shift(hang, *piece['move'])
