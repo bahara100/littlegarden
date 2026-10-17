@@ -53,7 +53,7 @@ export class PixelGarden {
   private async loadArt() {
     try {
       const [friends, friendsSw, image, approved] = await Promise.all([
-        loadPixelAtlas('sprites/garden/garden-friends-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
+        loadPixelAtlas('sprites/garden/garden-friends-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v2.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
           const [idle, walk] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk)]);

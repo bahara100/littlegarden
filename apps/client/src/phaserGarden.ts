@@ -20,8 +20,9 @@ const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.benc
  */
 const SWING_CELL = 444;
 const SWING_RIG = {
-  2: { row: 0, pivots: [[182, 140], [285, 101]], seat: [245, 292], forward: 1 },
-  3: { row: 1, pivots: [[160, 97], [262, 135]], seat: [200, 292], forward: -1 },
+  // playground-swing-v2: ropes and seat moved midway between the A-frames (tools/art/center-swing-seat-v1.py).
+  2: { row: 0, pivots: [[174, 143], [277, 104]], seat: [237, 295], forward: 1 },
+  3: { row: 1, pivots: [[165, 99], [267, 137]], seat: [205, 294], forward: -1 },
 } as const;
 /** Largest rope angle, one back-and-forth in seconds, and pre-drawn poses on each side of hanging still. */
 const SWING = { max: 18 * Math.PI / 180, period: 2.4, poses: 16, pad: 24 } as const;
@@ -144,8 +145,8 @@ class GardenScene extends Phaser.Scene {
   preload() {
     const base = import.meta.env.BASE_URL;
     this.load.on('loaderror', () => this.fail(new Error('Pixel art load failed')));
-    this.load.image('props', `${base}sprites/garden/playground-props-v1.png`);
-    this.load.image('swing-parts', `${base}sprites/garden/playground-swing-v1.png`);
+    this.load.image('props', `${base}sprites/garden/playground-props-v2.png`);
+    this.load.image('swing-parts', `${base}sprites/garden/playground-swing-v2.png`);
     for (const [source, art] of Object.entries(SCARLET_SD.sources)) {
       this.load.image(`idle-${source}`, `${base}${art.idle}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
