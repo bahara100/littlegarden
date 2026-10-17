@@ -16,21 +16,6 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
   tree: { name: '초록 나무', icon: '♣', w: 1.25, d: 1.25 }, flower: { name: '작은 화단', icon: '✿', w: 2, d: 1 },
   fence: { name: '나무 울타리', icon: '▥', w: 2, d: .2 }, path: { name: '길 타일', icon: '▧', w: 1, d: 1 },
 };
-/**
- * How far below the item centre (in tiles of screen height) each prop's lowest art pixel is drawn. The swing's lowest
- * pixel is its near leg's foot, about a tile in front of the frame's middle, so its art drops further than the
- * others; otherwise the frame stands a tile behind its seat and footprint.
- */
-export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2 };
-/**
- * Where the swing art's seat sits from the centre of the art's trimmed box (the game trims each cell to its alpha > 0
- * bounds), in tiles of screen width. In playground-swing-v2.png the seat hangs midway between the A-frames and lands
- * close to that centre: +.06 tile in one turn (seat board centre x 227 vs box centre 221 of 443 px) and −.03 in the
- * other (215 vs 217.5 of 436). Shifting the art by this keeps the seat on the swing's position, where the rider sits.
- */
-export function swingSeatShift(item: PlacedItem) { return (item.turn % 2 ? .06 : -.03) * (item.turn >= 2 ? -1 : 1); }
-/** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
-export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33 }, standing: { bench: .75, swing: -.1 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
   const angle = item.turn * Math.PI / 2, c = Math.round(Math.cos(angle)), s = Math.round(Math.sin(angle));
   return { x: item.x + local.x * c + local.z * s, z: item.z - local.x * s + local.z * c };
