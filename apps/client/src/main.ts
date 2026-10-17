@@ -111,7 +111,6 @@ try {
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
   el('zoom-in').onclick = () => garden?.zoomBy(1.15); el('zoom-out').onclick = () => garden?.zoomBy(1 / 1.15); el('reset-view').onclick = () => garden?.reset();
   el<HTMLInputElement>('grid-toggle').onchange = e => garden?.setGrid((e.target as HTMLInputElement).checked);
-  el<HTMLInputElement>('shadow-toggle').onchange = e => garden?.setShadows((e.target as HTMLInputElement).checked);
   el('wave').onclick = () => garden?.wave();
   el('focus-friend').onclick = () => { garden?.focusFriend(); notice('친구를 가까이 살펴봐요. ⌖ 버튼을 누르면 전체 놀이터로 돌아가요.'); };
   el('resume').onclick = () => garden?.resume();

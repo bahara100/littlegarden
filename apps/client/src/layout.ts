@@ -24,7 +24,7 @@ function oriented(item: PlacedItem, w: number, d: number) { const swap = item.tu
 /** Whole floor tiles an art size covers (floor tiles are 1×1 with edges on whole units). */
 export const tileSpan = (size: number) => Math.max(1, Math.round(size));
 /**
- * Ground footprint in whole tiles (overlap checks, editor highlight, prop shadow). A fence stays a thin line along
+ * Ground footprint in whole tiles (overlap checks, editor highlight). A fence stays a thin line along
  * its tiles. Navigation keeps its own tighter collision boxes (worldFrom).
  */
 export function footprint(item: PlacedItem) {

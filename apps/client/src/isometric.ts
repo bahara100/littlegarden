@@ -8,12 +8,3 @@ export function unproject(x: number, y: number, unit: number): Point {
   return { x: (x / 2 + y) / unit, z: (y - x / 2) / unit };
 }
 export function depth(p: Point) { return p.x + p.z; }
-/** Hard-edged filled ellipse, one pixel row at a time (no anti-aliased rim on the pixel floor). */
-export function pixelEllipse(c: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number) {
-  for (let y = Math.floor(cy - ry); y < Math.ceil(cy + ry); y++) {
-    const dy = (y + .5 - cy) / ry, half = rx * Math.sqrt(Math.max(0, 1 - dy * dy));
-    if (half >= .5) c.fillRect(Math.round(cx - half), y, Math.round(cx + half) - Math.round(cx - half), 1);
-  }
-}
-/** Prop shadow over its footprint tiles; translucent so it reads on grass and path tiles alike. */
-export const PROP_SHADOW = { color: '#5f7a4c', alpha: .32 } as const;

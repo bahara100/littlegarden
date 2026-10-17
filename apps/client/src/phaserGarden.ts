@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
-import { PROP_SHADOW, depth, pixelEllipse, project, unproject } from './isometric';
+import { depth, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
@@ -76,7 +76,6 @@ export class PhaserGarden {
   zoom = 1;
   pan = { x: 0, y: 0 };
   grid = false;
-  shadows = true;
   focus: AvatarId | null = null;
   private game: Phaser.Game;
 
@@ -103,7 +102,6 @@ export class PhaserGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
-  setShadows(show: boolean) { this.shadows = show; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }
@@ -119,7 +117,7 @@ export class PhaserGarden {
   dispose() { this.game.destroy(true); }
 }
 
-type AvatarView = { sprite: Phaser.GameObjects.Sprite; shadow: Phaser.GameObjects.Image; label: Phaser.GameObjects.Text };
+type AvatarView = { sprite: Phaser.GameObjects.Sprite; label: Phaser.GameObjects.Text };
 
 class GardenScene extends Phaser.Scene {
   private ready = false;
@@ -176,9 +174,8 @@ class GardenScene extends Phaser.Scene {
       const sprite = this.add.sprite(0, 0, scarlet ? 'idle-se' : 'friends', scarlet ? undefined : a.id === 'peach' ? 0 : 4)
         .setOrigin(.5, scarlet ? SCARLET_SD.originY : .97).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
       sprite.setData('id', a.id);
-      const shadow = this.add.image(0, 0, 'shadow');
       const label = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '8px', color: '#65556f', resolution: 6 }).setOrigin(.5, 1);
-      this.avatars.set(a.id, { sprite, shadow, label });
+      this.avatars.set(a.id, { sprite, label });
     }
     this.ring = this.add.image(0, 0, 'ring');
     this.input.on('pointerdown', this.pointerDown, this);
@@ -237,8 +234,6 @@ class GardenScene extends Phaser.Scene {
     const shape = (key: string, w: number, h: number, draw: (c: CanvasRenderingContext2D, w: number, h: number) => void) => {
       const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; draw(canvas.getContext('2d')!, w, h); this.textures.addCanvas(key, canvas);
     };
-    // A round foot shadow (2:1 like the floor) rather than a tile-shaped diamond, so it never reads as a grid cell.
-    shape('shadow', Math.round(1.1 * U), Math.round(.55 * U), (c, w, h) => { c.fillStyle = '#8fa67a'; pixelEllipse(c, w / 2, h / 2, w / 2, h / 2); });
     shape('ring', Math.round(1.4 * U) + 2, Math.round(.64 * U) + 2, (c, w, h) => { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(w / 2, h / 2, w / 2 - 1, h / 2 - 1, 0, 0, Math.PI * 2); c.stroke(); });
   }
   private async makeFriends() {
@@ -254,10 +249,10 @@ class GardenScene extends Phaser.Scene {
 
   private get items() { const e = this.g.editor; return e.active ? e.draft.items.filter(i => i.id !== e.pending?.id) : this.g.life.layout; }
 
-  /** Floor, paths and prop shadows, redrawn only when they change. */
+  /** Floor and paths, redrawn only when they change. */
   private drawFloor(items: PlacedItem[]) {
     const lines = this.g.grid || this.g.editor.active;
-    const key = JSON.stringify([lines, this.g.shadows, items.map(i => [i.kind, i.x, i.z, i.turn])]);
+    const key = JSON.stringify([lines, items.map(i => [i.kind, i.x, i.z, i.turn])]);
     if (key === this.floorKey) return; this.floorKey = key;
     const c = this.floor.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
     const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
@@ -276,8 +271,6 @@ class GardenScene extends Phaser.Scene {
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
     diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) diamond(c, { x, z }, .2, .2, '#f7e7d1');
-    // Prop shadows darken exactly the floor tiles each footprint covers.
-    if (this.g.shadows) { c.globalAlpha = PROP_SHADOW.alpha; for (const item of items.filter(i => i.kind !== 'path')) { const f = footprint(item); diamond(c, item, f.w, f.d, PROP_SHADOW.color); } c.globalAlpha = 1; }
     const s = iso(SIGN), sx = Math.round(s.x + FLOOR.ox), sy = Math.round(s.y + FLOOR.oy);
     c.fillStyle = '#766454'; c.fillRect(sx - 1, sy - 14, 2, 14); c.fillStyle = '#f8e8bd'; c.fillRect(sx - 9, sy - 20, 18, 9); c.fillStyle = '#b6b989'; c.fillRect(sx - 6, sy - 17, 10, 2);
     this.floor.refresh();
@@ -361,7 +354,7 @@ class GardenScene extends Phaser.Scene {
   }
   private placeAvatar(a: Avatar, still: boolean) {
     const view = this.avatars.get(a.id)!, p = iso(a), seat = this.g.life.seatOf(a), editing = this.g.editor.active;
-    for (const o of [view.sprite, view.shadow, view.label]) o.setVisible(!editing);
+    for (const o of [view.sprite, view.label]) o.setVisible(!editing);
     view.sprite.input!.enabled = !editing;
     if (editing) return;
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
@@ -379,7 +372,6 @@ class GardenScene extends Phaser.Scene {
     const z = seat && seated ? Math.max(depth(a), equipment ? depth(equipment) : depth(a)) + .35 : depth(a);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
     const x = p.x + swing.x, base = p.y - lift * U + swing.y, moving = a.phase === 'walking' && !still;
-    view.shadow.setPosition(x, p.y + swing.ground).setDepth(z - .01).setVisible(this.g.shadows);
     view.sprite.setPosition(x, base).setDepth(z);
     if (a.id === 'character') {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)];

@@ -2,7 +2,7 @@ import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
-import { PROP_SHADOW, depth, pixelEllipse, project, unproject } from './isometric';
+import { depth, project, unproject } from './isometric';
 import { friendSide, scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
@@ -29,7 +29,6 @@ export class PixelGarden {
   private zoom = 1;
   private pan = { x: 0, y: 0 };
   private grid = false;
-  private shadows = true;
   private frame = 0;
   private last = performance.now();
   private disposed = false;
@@ -138,8 +137,6 @@ export class PixelGarden {
     const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 })[item.kind] * unit;
     const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * .2);
     if (ghost) c.globalAlpha = .65;
-    // Prop shadows darken exactly the floor tiles each footprint covers (same look as the Phaser renderer).
-    if (this.shadows) { const f = footprint(item), alpha = c.globalAlpha; c.globalAlpha = alpha * PROP_SHADOW.alpha; this.tile(item, f.w, f.d, PROP_SHADOW.color); c.globalAlpha = alpha; }
     c.save();
     if (item.turn >= 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
     c.drawImage(art.image, x, y, size, size); c.restore(); c.globalAlpha = 1;
@@ -154,7 +151,6 @@ export class PixelGarden {
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
     const base = p.y - seated * u * .75 + sway;
-    if (this.shadows) { c.fillStyle = '#8fa67a'; pixelEllipse(c, p.x, p.y, u * .55, u * .275); }
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : 2.8)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : .97));
     if (a.id === 'character' && this.approvedArt.size) {
@@ -274,7 +270,6 @@ export class PixelGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
-  setShadows(show: boolean) { this.shadows = show; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }
