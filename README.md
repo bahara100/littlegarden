@@ -96,15 +96,13 @@ npm.cmd run build
 
 ## 배포 (GitHub Pages)
 
-`.github/workflows/pages.yml`이 준비되어 있습니다.
+저장소: https://github.com/bahara100/nikke-playground · 게임: https://bahara100.github.io/nikke-playground/
 
-1. 소스를 GitHub 저장소에 올립니다.
-2. Settings → Pages → Source를 GitHub Actions로 설정합니다.
-3. main 브랜치 push 또는 Publish game to Pages 워크플로로 배포합니다.
+main 브랜치에 push하면 `.github/workflows/pages.yml`이 검사·테스트·빌드 후 자동으로 배포합니다(Settings → Pages → Source: GitHub Actions). `verify.yml`은 push마다 검사합니다.
 
 현재 상태와 주의:
 
-- 이 폴더는 아직 git 저장소가 아니며 원격 저장소·공개 배포를 연결하지 않았습니다. CI(`verify.yml`)도 그래서 돌지 않습니다.
+- 저장소는 Public입니다. 코드와 그림이 모두 공개됩니다.
 - `apps/client/public` 전체가 배포에 들어갑니다. 지금은 아트 검수 페이지와 예전 그림 이력까지 포함되어 결과가 약 130MB입니다. 공개 전에 게임용 파일만 남기도록 정리가 필요합니다.
 - 홍련은 원작 캐릭터의 팬 도트입니다. 공개 배포 전에 원작의 팬 창작 가이드라인을 확인하세요.
 

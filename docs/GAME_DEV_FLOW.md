@@ -92,7 +92,7 @@
 | 편집 원본과 게임용 결과 분리 | ✅ .pxo(레이어 원본) ↔ walk.png |
 | 결과를 스크립트로 다시 만들 수 있게 | ✅ `tools/art/*.py` |
 | 아트 규격을 한 문서에 | 🟡 `docs/art/pixel/CHARACTER_PRODUCTION_WORKFLOW.md` + AGENTS.md에 흩어져 있음 |
-| **버전 관리(git)** | ❌ **이 폴더는 git 저장소가 아님.** 되돌리기·비교가 버전 폴더(v1~v18) 복사로만 가능. `.github/workflows`(검사·배포)가 있어도 돌지 않음 |
+| **버전 관리(git)** | ✅ 2026-10-17 git 시작, GitHub `bahara100/nikke-playground`(Public)에 올림. 그림 버전 폴더(v1~v18)는 이력으로 남아 있음 |
 | 옛 이력 정리 | 🟡 코드·3D 정리 완료. **public/sprites 등 옛 그림 이력 약 128MB 남음** |
 | 역할 분담 | ✅ 코덱스=AI 초안 생성, Claude=코드·Pixelorama 수정, 사용자=검수·결정 |
 
@@ -112,7 +112,7 @@
 | 보통 하는 일 | 이 프로젝트 |
 | --- | --- |
 | 빌드 | ✅ Vite, `npm run build` |
-| 자동 검사·배포 | 🟡 GitHub Actions 파일은 있으나 git이 없어 미사용. 옛 멀티플레이 서버 검사(`check:legacy`, `test:legacy`)도 아직 포함 |
+| 자동 검사·배포 | ✅ push마다 Verify, main push 시 Pages 배포 (https://bahara100.github.io/nikke-playground/). 🟡 옛 멀티플레이 서버 검사(`check:legacy`, `test:legacy`)도 아직 포함 |
 | 게임용 파일만 배포 | ❌ **public 전체가 dist로 들어감** — 검수 페이지·옛 이력 그림까지 배포 대상 (dist 약 130MB) |
 | 공개 전 권리 확인 | ❌ **홍련은 원작(니케) 팬 도트.** 공개 배포 전에 원작 팬 창작 가이드라인 확인 필요 |
 
@@ -121,7 +121,7 @@
 ## 놓친 것 우선순위 (2026-10-17 기준)
 
 **바로 하면 좋은 것 (작고 효과 큼)**
-1. git 시작 — 모든 되돌리기·비교·자동 검사의 바탕
+1. ~~git 시작~~ (2026-10-17 완료, GitHub 배포 연결)
 2. ~~README를 현재 상태로 고치기~~ (2026-10-17 완료)
 3. 배포 대상에서 검수 페이지·이력 그림 빼기 (게임용 public과 분리)
 
