@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
-import { depth, project, unproject } from './isometric';
+import { depth, pixelEllipse, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
@@ -237,7 +237,8 @@ class GardenScene extends Phaser.Scene {
     const shape = (key: string, w: number, h: number, draw: (c: CanvasRenderingContext2D, w: number, h: number) => void) => {
       const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; draw(canvas.getContext('2d')!, w, h); this.textures.addCanvas(key, canvas);
     };
-    shape('shadow', Math.round(.9 * U * 2), Math.round(.9 * U), (c, w, h) => { c.beginPath(); c.moveTo(w / 2, 0); c.lineTo(w, h / 2); c.lineTo(w / 2, h); c.lineTo(0, h / 2); c.closePath(); c.fillStyle = '#8fa67a'; c.fill(); });
+    // A round foot shadow (2:1 like the floor) rather than a tile-shaped diamond, so it never reads as a grid cell.
+    shape('shadow', Math.round(1.1 * U), Math.round(.55 * U), (c, w, h) => { c.fillStyle = '#8fa67a'; pixelEllipse(c, w / 2, h / 2, w / 2, h / 2); });
     shape('ring', Math.round(1.4 * U) + 2, Math.round(.64 * U) + 2, (c, w, h) => { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(w / 2, h / 2, w / 2 - 1, h / 2 - 1, 0, 0, Math.PI * 2); c.stroke(); });
   }
   private async makeFriends() {

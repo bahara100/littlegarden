@@ -2,7 +2,7 @@ import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
-import { depth, project, unproject } from './isometric';
+import { depth, pixelEllipse, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
@@ -153,7 +153,7 @@ export class PixelGarden {
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
     const base = p.y - seated * u * .75 + sway;
-    if (this.shadows) this.tile(a, .9, .45, '#8fa67a');
+    if (this.shadows) { c.fillStyle = '#8fa67a'; pixelEllipse(c, p.x, p.y, u * .55, u * .275); }
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : 2.8)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : .97));
     if (a.id === 'character' && this.approvedArt.size) {

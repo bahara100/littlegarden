@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LifeSimulation, findPath, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
+import { LifeSimulation, findPath, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
 function advance(sim: LifeSimulation, seconds: number) { for (let t = 0; t < seconds; t += .05) sim.update(.05); }
 function until(sim: LifeSimulation, fn: () => boolean, seconds = 40) { for (let t = 0; t < seconds && !fn(); t += .05) sim.update(.05); assert.ok(fn(), 'expected state not reached'); }
 function seeded() { let n = 12345; return () => { n = n * 16807 % 2147483647; return n / 2147483647; }; }
@@ -13,6 +13,14 @@ test('A* goes around the bench and rejects obstacles/outside/non-finite points',
   const treePath = findPath({ x: 5.75, z: -4.75 }, { x: 6.25, z: -4.75 });
   assert.ok(treePath && treePath.length > 2, 'walkable endpoints must not cut through a round trunk');
   treePath.slice(1).forEach((p, i) => { for (let f = 0; f <= 1; f += .1) assert.ok(walkable({ x: treePath[i].x + (p.x - treePath[i].x) * f, z: treePath[i].z + (p.z - treePath[i].z) * f })); });
+});
+test('paths run down tile centres and turn on them', () => {
+  const centre = (v: number) => Math.abs(v - Math.floor(v) - .5) < 1e-9;
+  const path = findPath({ x: -5.5, z: -2.5 }, { x: -1.5, z: -2.5 });
+  assert.ok(path && path.length > 2);
+  path.forEach(p => assert.ok(centre(p.x) || centre(p.z), `node ${p.x},${p.z} lies on a tile edge line`));
+  path.slice(1).forEach((p, i) => { if (p.x !== path[i].x) assert.ok(centre(p.z)); else assert.ok(centre(p.x)); });
+  assert.deepEqual(tileCentre({ x: -1.25, z: 1.99 }), { x: -1.5, z: 1.5 });
 });
 test('two bench reservations are exclusive before arrival, failed requests preserve existing orders', () => {
   const sim = new LifeSimulation(seeded());
@@ -38,7 +46,7 @@ test('a command interrupts a reservation; manual movement finishes and autonomy 
   const sim = new LifeSimulation(seeded()), a = sim.avatars.get('character')!;
   sim.use(a.id, 'swing'); assert.equal(sim.moveTo(a.id, { x: -1.25, z: 1.25 }), null);
   assert.equal(sim.reservations.has('swing-seat'), false);
-  until(sim, () => a.phase === 'idle'); assert.ok(Math.hypot(a.x + 1.25, a.z - 1.25) < .05);
+  until(sim, () => a.phase === 'idle'); assert.ok(Math.hypot(a.x + 1.5, a.z - 1.5) < .05, 'stops on the clicked tile centre');
   until(sim, () => !a.directed && a.phase === 'walking');
 });
 test('three friends live for ten simulated minutes with consistent reservations and safe paths', () => {

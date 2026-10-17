@@ -5,13 +5,16 @@ export type EquipmentId = string;
 
 export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving';
 export const FRIENDS = [
-  { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.25, z: 2.25 } },
-  { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.25, z: 2.25 } },
-  { id: 'lilac' as const, name: '루루', color: '#b5a4cd', start: { x: 2.25, z: 2.25 } },
+  { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.5, z: 2.5 } },
+  { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.5, z: 2.5 } },
+  { id: 'lilac' as const, name: '루루', color: '#b5a4cd', start: { x: 2.5, z: 2.5 } },
 ];
 const DEFAULT_WORLD = worldFrom(DEFAULT_LAYOUT.items);
 export const SEATS = DEFAULT_WORLD.seats;
-const STEP = .5, MIN = -7.25, N = 30;
+/** Half-tile navigation lattice: floor tiles are 1×1 with centres at k+.5, so odd indices are tile centres, even ones tile edges. */
+const STEP = .5, MIN = -7, N = 29, OFF_CENTRE = 2;
+/** Centre of the floor tile containing p. */
+export function tileCentre(p: Point): Point { return { x: Math.floor(p.x) + .5, z: Math.floor(p.z) + .5 }; }
 /** Foot radius is included here; canopy meshes never block navigation. */
 export function walkable(p: Point, nav: NavigationWorld = DEFAULT_WORLD) {
   return Number.isFinite(p.x) && Number.isFinite(p.z) && Math.abs(p.x) <= 7.25 && Math.abs(p.z) <= 7.25 &&
@@ -35,13 +38,20 @@ function clearSegment(a: Point, b: Point, nav: NavigationWorld = DEFAULT_WORLD) 
   }
   return true;
 }
-function cell(p: Point) { return { x: Math.round((p.x - MIN) / STEP), z: Math.round((p.z - MIN) / STEP) }; }
+const clampIndex = (i: number) => Math.max(0, Math.min(N - 1, i));
+function cell(p: Point) { return { x: clampIndex(Math.round((p.x - MIN) / STEP)), z: clampIndex(Math.round((p.z - MIN) / STEP)) }; }
+/** Lattice node to join a path from p: its tile centre when reachable in a straight line, else the nearest node. */
+function anchor(p: Point, nav: NavigationWorld) {
+  const c = tileCentre(p), centre = cell(c);
+  return clearSegment(p, world(centre.x, centre.z), nav) ? centre : cell(p);
+}
 function world(x: number, z: number): Point { return { x: MIN + x * STEP, z: MIN + z * STEP }; }
 const key = (x: number, z: number) => z * N + x;
-/** Four-neighbour A*: no diagonal corner cutting, no renderer or wall-clock dependency. */
+/** Four-neighbour A*: no diagonal corner cutting, no renderer or wall-clock dependency.
+ * Steps along a tile edge cost extra, so friends walk down tile centres and turn on them, using edges only to squeeze past obstacles. */
 export function findPath(start: Point, destination: Point, nav: NavigationWorld = DEFAULT_WORLD): Point[] | null {
   if (!walkable(start, nav) || !walkable(destination, nav)) return null;
-  const s = cell(start), g = cell(destination);
+  const s = anchor(start, nav), g = anchor(destination, nav);
   if (!clearSegment(start, world(s.x, s.z), nav) || !walkable(world(g.x, g.z), nav)) return null;
   const startKey = key(s.x, s.z), goalKey = key(g.x, g.z);
   const open = [startKey], cost = new Map([[startKey, 0]]), parent = new Map<number, number>();
@@ -62,7 +72,8 @@ export function findPath(start: Point, destination: Point, nav: NavigationWorld 
     for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const nx = x + dx, nz = z + dz;
       if (nx < 0 || nz < 0 || nx >= N || nz >= N || !clearSegment(world(x, z), world(nx, nz), nav)) continue;
-      const next = key(nx, nz), candidate = cost.get(current)! + 1;
+      const onEdge = dx ? z % 2 === 0 : x % 2 === 0;
+      const next = key(nx, nz), candidate = cost.get(current)! + 1 + (onEdge ? OFF_CENTRE : 0);
       if (candidate >= (cost.get(next) ?? Infinity)) continue;
       cost.set(next, candidate); parent.set(next, current); if (!open.includes(next)) open.push(next);
     }
@@ -91,7 +102,7 @@ export class LifeSimulation {
     const occupied: Point[] = [];
     for (const a of this.avatars.values()) {
       const candidates: Point[] = [];
-      for (let x = 0; x < N; x++) for (let z = 0; z < N; z++) candidates.push(world(x, z));
+      for (let x = 1; x < N; x += 2) for (let z = 1; z < N; z += 2) candidates.push(world(x, z));
       candidates.sort((p, q) => Math.hypot(p.x - HUB.x, p.z - HUB.z) - Math.hypot(q.x - HUB.x, q.z - HUB.z));
       const safe = candidates.find(p => occupied.every(o => Math.hypot(p.x - o.x, p.z - o.z) > .8) && findPath(HUB, p, this.world));
       Object.assign(a, safe ?? HUB); occupied.push({ x: a.x, z: a.z });
@@ -112,7 +123,8 @@ export class LifeSimulation {
   moveTo(id: AvatarId, target: Point): string | null {
     const a = this.avatars.get(id)!;
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 이동을 지시해주세요.';
-    const path = findPath(a, target, this.world); if (!path) return '이곳까지 걸어갈 수 없어요. 빈 바닥을 선택해주세요.';
+    // Stop on the centre of the clicked tile; a centre too close to an obstacle falls back to the clicked point.
+    const path = findPath(a, tileCentre(target), this.world) ?? findPath(a, target, this.world); if (!path) return '이곳까지 걸어갈 수 없어요. 빈 바닥을 선택해주세요.';
     this.free(a); a.directed = true; a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return null;
   }
   use(id: AvatarId, equipment: EquipmentId, directed = true): string | null {
@@ -138,7 +150,7 @@ export class LifeSimulation {
       for (const id of options) if (!this.use(a.id, id, false)) return;
     }
     for (let i = 0; i < 20; i++) {
-      const target = world(Math.floor(this.random() * N), Math.floor(this.random() * N));
+      const target = world(1 + 2 * Math.floor(this.random() * (N - 1) / 2), 1 + 2 * Math.floor(this.random() * (N - 1) / 2));
       const path = findPath(a, target, this.world);
       if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return; }
     }
