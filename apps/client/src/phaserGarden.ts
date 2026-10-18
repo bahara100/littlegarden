@@ -9,6 +9,7 @@ import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle }
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
+import { DEFAULT_SEASON, seasonGround, type SeasonId } from './seasons';
 
 type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
 /** Two taps on the same friend within this many ms pat them. */
@@ -81,6 +82,9 @@ export class PhaserGarden {
   grid = false;
   /** Which region's ground colours are drawn (regions.ts). */
   region: RegionId = DEFAULT_REGION;
+  season: SeasonId = DEFAULT_SEASON;
+  /** The ground colours for the current region and season. */
+  get groundTheme() { return seasonGround(region(this.region).ground, this.season); }
   focus: AvatarId | null = null;
   private game: Phaser.Game;
 
@@ -108,6 +112,7 @@ export class PhaserGarden {
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
+  setSeason(id: SeasonId) { this.season = id; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }
@@ -267,7 +272,7 @@ class GardenScene extends Phaser.Scene {
   /** Floor and paths, redrawn only when they change. */
   private drawFloor(items: PlacedItem[]) {
     const lines = this.g.grid || this.g.editor.active;
-    const key = JSON.stringify([this.g.region, lines, items.map(i => [i.kind, i.x, i.z, i.turn])]), g = region(this.g.region).ground;
+    const key = JSON.stringify([this.g.region, this.g.season, lines, items.map(i => [i.kind, i.x, i.z, i.turn])]), g = this.g.groundTheme;
     if (key === this.floorKey) return; this.floorKey = key;
     const c = this.floor.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
     const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
@@ -408,7 +413,7 @@ class GardenScene extends Phaser.Scene {
   }
   private camera() {
     const cam = this.cameras.main, { width, height } = this.scale;
-    cam.setBackgroundColor(region(this.g.region).ground.background);
+    cam.setBackgroundColor(this.g.groundTheme.background);
     cam.setZoom(Math.min(width / 35, height / 24) / U * this.g.zoom);
     const a = this.g.focus && this.g.life.avatars.get(this.g.focus), t = a ? iso(a) : { x: 0, y: 0 };
     cam.centerOn(t.x - this.g.pan.x / cam.zoom, t.y - (this.g.pan.y + height * .06) / cam.zoom);

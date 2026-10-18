@@ -6,6 +6,7 @@ import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
 import { loadGarden, saveLayout, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type Affinity } from './persistence';
 import { SCARLET_SD } from './scarletApproved';
 import { REGIONS, region, type RegionId } from './regions';
+import { SEASONS, season, seasonGround, type SeasonId } from './seasons';
 import { TRACKS, nextTrack, trackLabel, type Track } from './music';
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 function setText(id: string, value: string) { const node = el(id); if (node.textContent !== value) node.textContent = value; }
@@ -146,7 +147,7 @@ try {
     el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
     el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
     el<HTMLInputElement>('fps-toggle').checked = settings.fps; showFps(settings.fps);
-    showRegion(settings.region);
+    showRegion(settings.region); showSeason(settings.season);
     garden.zoomBy(settings.zoom / garden.zoom); garden.select(settings.selected);
     settingsReady = true;
     el('loading').hidden = true; refresh();
@@ -229,7 +230,7 @@ function countFrame(now: number) {
 }
 requestAnimationFrame(countFrame);
 // Map label menus: the region picker and the song list. One open at a time; outside click or Esc closes.
-const MENUS = [['region-button', 'region-menu'], ['music-button', 'music-menu']] as const;
+const MENUS = [['region-button', 'region-menu'], ['season-button', 'season-menu'], ['music-button', 'music-menu']] as const;
 function openMenu(menu: string | null) {
   for (const [button, id] of MENUS) { const open = id === menu; el(id).hidden = !open; el(button).setAttribute('aria-expanded', String(open)); }
 }
@@ -247,7 +248,7 @@ function showRegion(id: RegionId) {
   garden?.setRegion(r.id); remember({ region: r.id });
   setText('region-label', r.label); setText('region-number', r.number);
   el('region-button').title = `${r.name} · 다른 지역 고르기`;
-  el('viewport').style.background = r.ground.background;
+  el('viewport').style.background = seasonGround(r.ground, settings.season).background;
   el('region-list').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.region === r.id)));
 }
 el('region-list').replaceChildren(...REGIONS.map(r => {
@@ -259,6 +260,23 @@ el('region-list').replaceChildren(...REGIONS.map(r => {
     showRegion(r.id); openMenu(null); el('region-button').focus();
     notice(r.ready ? `${r.name}${batchim(r.name) ? '으로' : '로'} 왔어요.` : `${r.name}${batchim(r.name) ? '은' : '는'} 그림을 준비 중이에요. 지금은 바닥 색만 바뀌어요.`);
   };
+  return b;
+}));
+// Seasons (seasons.ts): recolour the ground of every region; their own trees, flowers and snow come later.
+function showSeason(id: SeasonId) {
+  const s = season(id);
+  garden?.setSeason(s.id); remember({ season: s.id });
+  setText('season-icon', s.icon); setText('season-label', s.name);
+  el('season-button').title = `${s.name} · 계절 고르기`;
+  el('viewport').style.background = seasonGround(region(settings.region).ground, s.id).background;
+  el('season-list').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.season === s.id)));
+}
+el('season-list').replaceChildren(...SEASONS.map(s => {
+  const b = document.createElement('button');
+  b.setAttribute('role', 'menuitemradio'); b.dataset.season = s.id; b.setAttribute('aria-checked', String(s.id === settings.season));
+  b.innerHTML = `<i style="background:${seasonGround(REGIONS[0].ground, s.id).tiles[0]}"></i><span><strong></strong><small></small></span>`;
+  b.querySelector('strong')!.textContent = `${s.icon} ${s.name}`; b.querySelector('small')!.textContent = s.note;
+  b.onclick = () => { showSeason(s.id); openMenu(null); el('season-button').focus(); notice(`${s.name}${batchim(s.name) ? '이' : '가'} 왔어요. ${s.note}.`); };
   return b;
 }));
 // Songs (music.ts): the title scrolls right to left beside the label; the list picks one to play, then the next follows.

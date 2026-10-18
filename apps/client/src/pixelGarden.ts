@@ -7,6 +7,7 @@ import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
+import { DEFAULT_SEASON, seasonGround, type SeasonId } from './seasons';
 
 export type Selection = AvatarId | EquipmentId;
 type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
@@ -37,6 +38,9 @@ export class PixelGarden {
   private grid = false;
   /** Which region's ground colours are drawn (regions.ts). */
   region: RegionId = DEFAULT_REGION;
+  season: SeasonId = DEFAULT_SEASON;
+  /** The ground colours for the current region and season. */
+  get groundTheme() { return seasonGround(region(this.region).ground, this.season); }
   private frame = 0;
   private last = performance.now();
   private disposed = false;
@@ -127,7 +131,7 @@ export class PixelGarden {
     this.polygon(points, color, line);
   }
   private drawGround(items: PlacedItem[]) {
-    const c = this.ctx, g = region(this.region).ground;
+    const c = this.ctx, g = this.groundTheme;
     const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => this.screen(p));
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const)
       this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, g.edgeLine);
@@ -227,7 +231,7 @@ export class PixelGarden {
         const a = this.life.avatars.get(before.id)!;
         this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');
       }
-      const c = this.ctx; c.fillStyle = region(this.region).ground.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
+      const c = this.ctx; c.fillStyle = this.groundTheme.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);
       const layers = items.filter(i => i.kind !== 'path').map(i => ({ depth: depth(i), draw: () => this.drawItem(i) }));
@@ -325,6 +329,7 @@ export class PixelGarden {
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
+  setSeason(id: SeasonId) { this.season = id; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }

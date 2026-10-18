@@ -34,3 +34,20 @@ test('the song list plays round in order and labels what is on', () => {
   assert.equal(trackLabel(songs[1], true, songs), '♪ 밤 — 루루');
   assert.equal(trackLabel(songs[0], false, songs), '❚❚ 오후');
 });
+test('seasons recolour any region and are remembered; spring keeps the colours as drawn', async () => {
+  const { SEASONS, DEFAULT_SEASON, seasonGround, mix, isSeasonId } = await import('../../apps/client/src/seasons.js');
+  assert.deepEqual(SEASONS.map(s => s.id), ['spring', 'summer', 'autumn', 'winter']);
+  assert.equal(DEFAULT_SEASON, 'spring');
+  assert.equal(mix('#000000', '#ffffff', .5), '#808080'); assert.equal(mix('#123456', '#abcdef', 0), '#123456');
+  const colour = /^#[0-9a-f]{6}$/;
+  for (const r of REGIONS) for (const s of SEASONS) {
+    const g = seasonGround(r.ground, s.id);
+    for (const c of [g.background, ...g.tiles, g.speck, ...g.edges, g.edgeLine, g.grid, ...g.path]) assert.match(c, colour, `${r.id} ${s.id}`);
+  }
+  assert.deepEqual(seasonGround(REGIONS[0].ground, 'spring').tiles, REGIONS[0].ground.tiles);
+  assert.notDeepEqual(seasonGround(REGIONS[0].ground, 'winter').tiles, REGIONS[0].ground.tiles);
+  assert.equal(isSeasonId('winter'), true); assert.equal(isSeasonId('monsoon'), false);
+  const storage = (value: unknown) => ({ getItem: () => JSON.stringify(value), setItem() {} });
+  assert.equal(loadSettings(storage({ season: 'autumn' })).season, 'autumn');
+  assert.equal(loadSettings(storage({ season: 'monsoon' })).season, 'spring');
+});
