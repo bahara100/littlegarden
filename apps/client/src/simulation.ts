@@ -340,7 +340,7 @@ export function reactionLabel(a: Avatar, time: number) {
 }
 /** How long an unlocked line stays in its speech bubble: a base plus a little per character. */
 export const SPEECH = { base: 2.4, perChar: .12 } as const;
-/** Whether a friend's label is a line in a speech bubble (drawn with a background) rather than a symbol. */
+/** Whether the current bubble contains a line of dialogue rather than an emotion icon. */
 export function speaking(a: Avatar, time: number) { return time < a.speechUntil; }
 /** Patting a friend: seconds of happiness and seconds before another pat counts. */
 export const PET = { duration: 1.8, cooldown: .8 } as const;

@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
-import { LifeSimulation, reactionLabel, speaking, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
+import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
+import { CharacterBubbles } from './characterBubbles';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
@@ -87,8 +88,10 @@ export class PhaserGarden {
   get groundTheme() { return seasonGround(region(this.region).ground, this.season); }
   focus: AvatarId | null = null;
   private game: Phaser.Game;
+  readonly bubbles: CharacterBubbles;
 
   constructor(host: HTMLElement, readonly callbacks: Callbacks) {
+    this.bubbles = new CharacterBubbles(host);
     this.game = new Phaser.Game({
       type: Phaser.AUTO, parent: host, backgroundColor: '#eae9de', pixelArt: true, roundPixels: true,
       scale: { mode: Phaser.Scale.RESIZE, width: Math.max(160, host.clientWidth), height: Math.max(160, host.clientHeight) },
@@ -126,10 +129,10 @@ export class PhaserGarden {
   storeItem() { return this.editor.store(); }
   restoreItem(id: string) { this.editor.restore(id); }
   positionItem(x: number, z: number) { this.editor.position(x, z); }
-  dispose() { this.game.destroy(true); }
+  dispose() { this.game.destroy(true); this.bubbles.dispose(); }
 }
 
-type AvatarView = { sprite: Phaser.GameObjects.Sprite; label: Phaser.GameObjects.Text; bubble?: boolean };
+type AvatarView = { sprite: Phaser.GameObjects.Sprite };
 
 class GardenScene extends Phaser.Scene {
   private ready = false;
@@ -195,8 +198,7 @@ class GardenScene extends Phaser.Scene {
       const sprite = this.add.sprite(0, 0, a.id === 'character' ? 'idle-se' : friendTexture(a.id, 'idle', 'se'))
         .setOrigin(.5, scarlet ? SCARLET_SD.originY : FRIEND_BODY.originY).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
       sprite.setData('id', a.id);
-      const label = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '8px', color: '#65556f', resolution: 6 }).setOrigin(.5, 1);
-      this.avatars.set(a.id, { sprite, label });
+      this.avatars.set(a.id, { sprite });
     }
     this.ring = this.add.image(0, 0, 'ring');
     this.input.addPointer(1);  // a second touch, for pinch zoom
@@ -375,7 +377,7 @@ class GardenScene extends Phaser.Scene {
   }
   private placeAvatar(a: Avatar, still: boolean) {
     const view = this.avatars.get(a.id)!, p = iso(a), seat = this.g.life.seatOf(a), editing = this.g.editor.active;
-    for (const o of [view.sprite, view.label]) o.setVisible(!editing);
+    view.sprite.setVisible(!editing);
     view.sprite.input!.enabled = !editing;
     if (editing) return;
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
@@ -408,11 +410,12 @@ class GardenScene extends Phaser.Scene {
       view.sprite.setTexture(friendTexture(a.id, moving ? 'walk' : 'idle', source), moving ? this.friendCycles[a.id].frame : undefined)
         .setFlipX(flipX).setOrigin(.5, FRIEND_BODY.originY).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     }
-    // An unlocked line shows in a little speech bubble; symbols (♡ ♪ ···) stay bare.
-    const bubble = speaking(a, this.g.life.time);
-    if (bubble !== view.bubble) { view.bubble = bubble; view.label.setBackgroundColor(bubble ? '#fffef8' : null as unknown as string).setPadding(bubble ? 2 : 0, bubble ? 1 : 0); }
-    view.label.setText(reactionLabel(a, this.g.life.time) || (seated ? seat?.kind === 'swing' ? '♪' : '···' : ''))
-      .setPosition(x, base - view.sprite.displayHeight * view.sprite.originY - 3).setDepth(z + .02);
+    const cam = this.cameras.main;
+    const head = base - view.sprite.displayHeight * view.sprite.originY;
+    this.g.bubbles.update(a, this.g.life.time,
+      (x - cam.scrollX - cam.width / 2) * cam.zoom + cam.width / 2,
+      (head - cam.scrollY - cam.height / 2) * cam.zoom + cam.height / 2,
+      seated ? seat?.kind : undefined);
     if (a.id === this.g.selectedAvatar) this.ring.setPosition(x, p.y + swing.ground).setDepth(z - .005);
   }
   private camera() {
@@ -437,9 +440,10 @@ class GardenScene extends Phaser.Scene {
     }
     const items = this.items;
     this.drawFloor(items); this.drawOverlay(); this.syncProps(items);
+    this.camera();
+    this.g.bubbles.begin(this.scale.width, this.scale.height, editing);
     for (const a of this.g.life.avatars.values()) this.placeAvatar(a, still);
     this.ring.setVisible(!editing);
-    this.camera();
   }
 
   private ground(p: Phaser.Input.Pointer) { const w = this.cameras.main.getWorldPoint(p.x, p.y); return unproject(w.x, w.y, U); }

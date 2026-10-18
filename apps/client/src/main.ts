@@ -1,4 +1,5 @@
 import './style.css';
+import './garden-ui.css';
 import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
@@ -68,11 +69,12 @@ function refresh() {
     el('model-review').hidden = false;
     setText('model-review', friend.id === 'character' ? '홍련 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
-    setText('selection-subtitle', friend.id === 'character' ? 'SCARLET / PIXEL · V2' : 'PIXEL / ORIGINAL GARDEN FRIEND');
+    el('selection-icon').dataset.friend = friend.id;
+    setText('selection-subtitle', '우리 정원의 작은 친구');
     setText('selection-description', '자유롭게 산책하고 빈 기구를 찾아 쉬어요. 바닥이나 기구를 눌러 이 친구에게 부탁할 수도 있어요.');
     if (friend.id === 'character') {
-      setText('selection-subtitle', garden.scarletModel === 'ready' ? 'SCARLET / SD · FOUR DIRECTION WALK' : 'SCARLET / LOADING');
-      setText('selection-description', '새 SD 홍련이 네 방향으로 걸어요. 빈 바닥을 눌러 이동시키고, 친구 가까이 보기로 살펴보세요.');
+      setText('selection-subtitle', '오늘도 정원에서 함께 쉬어요');
+      setText('selection-description', '바닥을 누르면 그곳으로 걸어가요. 벤치에서 쉬거나, 가까이 다가가 작은 인사를 건네보세요.');
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}${SCARLET_SD.review}`;
     } else {
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
@@ -81,6 +83,7 @@ function refresh() {
     details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요'], ['해금', unlockSummary(life.unlocks, friend.id, points)]]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
+    el('selection-icon').removeAttribute('data-friend');
     const equipment = life.layout.find(i => i.id === selected)?.kind === 'bench' ? 'bench' : 'swing', slots = life.seats.filter(s => s.equipment === selected);
     setText('selection-kind', 'FURNITURE'); setText('selection-icon', equipment === 'bench' ? '▤' : '⋂');
     setText('selection-title', equipment === 'bench' ? '햇살 나무 벤치' : '산들바람 그네');
@@ -370,6 +373,7 @@ window.addEventListener('pagehide', () => { if (track) rememberMusic({ trackTime
 showVolume();
 function showMusic() {
   const playing = !!track && !audio.paused, text = trackLabel(track, playing, TRACKS), title = el('track-title');
+  title.classList.toggle('is-idle', !track);
   if (title.textContent !== text) { title.textContent = text; title.style.animationDuration = `${Math.max(9, text.length * .45)}s`; }
   el('music-list').replaceChildren(...(TRACKS.length ? TRACKS.map(t => {
     const b = document.createElement('button');

@@ -35,6 +35,25 @@ test('the Canvas renderer opens too', async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
+for (const renderer of ['phaser', 'canvas']) {
+  test(`${renderer} shows a head bubble for emotions and hides it while decorating`, async ({ page }) => {
+    const problems = await open(page, renderer === 'canvas' ? '/?renderer=canvas' : '/');
+    await page.click('#resume');
+    await page.click('#wave');
+    const bubble = page.locator('.character-bubble[data-friend=character]');
+    await expect(bubble).toBeVisible();
+    await expect(bubble).toHaveText('♡');
+    await expect(bubble).toHaveAttribute('data-kind', 'emote');
+    const width = (await bubble.boundingBox())!.width;
+    await page.click('#zoom-in');
+    await expect(bubble).toBeVisible();
+    expect((await bubble.boundingBox())!.width).toBeCloseTo(width, 0);
+    await page.click('#edit-mode');
+    await expect(bubble).toBeHidden();
+    expect(problems).toEqual([]);
+  });
+}
+
 test('regions and seasons are picked from the map label and remembered', async ({ page }) => {
   await open(page);
   await page.click('#region-button');
@@ -53,6 +72,7 @@ test('regions and seasons are picked from the map label and remembered', async (
 
 test('view switches are remembered and the FPS readout counts frames', async ({ page }) => {
   await open(page);
+  await page.click('.display-panel summary');  // the settings fold out
   await page.locator('label:has(#grid-toggle)').click();
   await page.locator('label:has(#fps-toggle)').click();
   await expect(page.locator('#fps')).toBeVisible();

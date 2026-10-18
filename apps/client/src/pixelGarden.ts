@@ -1,6 +1,7 @@
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
-import { LifeSimulation, reactionLabel, speaking, type AvatarId, type EquipmentId, type Avatar } from './simulation';
+import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
+import { CharacterBubbles } from './characterBubbles';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
@@ -25,6 +26,7 @@ export class PixelGarden {
   selection: Selection = 'character';
   private canvas = document.createElement('canvas');
   private ctx: CanvasRenderingContext2D;
+  private bubbles: CharacterBubbles;
   private resizeObserver: ResizeObserver;
   private walkCycle = new ScarletWalkCycle();
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
@@ -52,6 +54,7 @@ export class PixelGarden {
     const ctx = this.canvas.getContext('2d'); if (!ctx) throw new Error('Canvas 2D unavailable'); this.ctx = ctx;
     this.canvas.setAttribute('aria-label', '도트 놀이터');
     host.append(this.canvas);
+    this.bubbles = new CharacterBubbles(host);
     this.resizeObserver = new ResizeObserver(() => this.resize()); this.resizeObserver.observe(host);
     this.canvas.addEventListener('pointerdown', this.pointerDown);
     this.canvas.addEventListener('pointermove', this.pointerMove);
@@ -212,12 +215,8 @@ export class PixelGarden {
       rect(-5, -26, 4, 3, peach ? '#f9d68f' : '#e6d8a3'); c.restore();
     }
     this.hits.push({ id: a.id, x: p.x - size * .28, y: base - size * .8, w: size * .56, h: size * .8 });
-    const label = reactionLabel(a, this.life.time) || (seated ? seat?.kind === 'swing' ? '♪' : '···' : '');
-    if (label) {
-      c.font = '8px sans-serif'; c.textAlign = 'center';
-      if (speaking(a, this.life.time)) { const w = c.measureText(label).width + 4; c.fillStyle = '#fffef8'; c.fillRect(Math.round(p.x - w / 2), y - 13, Math.ceil(w), 12); }
-      c.fillStyle = '#65556f'; c.fillText(label, p.x, y - 3);
-    }
+    this.bubbles.update(a, this.life.time, p.x * this.host.clientWidth / this.canvas.width,
+      y * this.host.clientHeight / this.canvas.height, seated ? seat?.kind : undefined);
   }
   private animate = () => {
     if (this.disposed) return;
@@ -232,6 +231,7 @@ export class PixelGarden {
         const a = this.life.avatars.get(before.id)!;
         this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');
       }
+      this.bubbles.begin(this.host.clientWidth, this.host.clientHeight, this.editor.active);
       const c = this.ctx; c.fillStyle = this.groundTheme.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);
@@ -346,6 +346,7 @@ export class PixelGarden {
   positionItem(x: number, z: number) { this.editor.position(x, z); }
   dispose() {
     this.disposed = true; cancelAnimationFrame(this.frame); this.resizeObserver.disconnect();
+    this.bubbles.dispose();
     this.canvas.removeEventListener('pointerdown', this.pointerDown); this.canvas.removeEventListener('pointermove', this.pointerMove); this.canvas.removeEventListener('pointerup', this.pointerUp);
     this.canvas.removeEventListener('pointercancel', this.pointerCancel); this.canvas.removeEventListener('wheel', this.wheel); this.canvas.removeEventListener('contextmenu', this.contextMenu); this.canvas.remove();
   }
