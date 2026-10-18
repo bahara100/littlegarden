@@ -306,16 +306,17 @@ export class LifeSimulation {
     return false;
   }
   /** Friends meeting: two free friends (not on a seat, not following an order) who come close stop, turn to each
-   * other and greet. Each pair rolls once per meeting and then waits a while before greeting again. */
+   * other and greet. Each pair rolls once per meeting; once they have greeted, the pair's greeting is recorded and they
+   * pass each other without stopping for REACTION.cooldown (3 minutes of play). */
   private react() {
     const free = [...this.avatars.values()].filter(a => (a.phase === 'idle' || a.phase === 'walking') && !a.directed && !a.seatId);
     for (let i = 0; i < free.length; i++) for (let j = i + 1; j < free.length; j++) {
       const a = free[i], b = free[j], key = [a.id, b.id].sort().join('+'), d = Math.hypot(a.x - b.x, a.z - b.z);
       if (d > REACTION.leave) { this.met.delete(key); continue; }
-      if (d > REACTION.meet || this.met.has(key) || this.time < (this.greetedUntil.get(key) ?? 0)) continue;
+      if (d > REACTION.meet || this.met.has(key) || this.time - (this.greetedAt.get(key) ?? -Infinity) < REACTION.cooldown) continue;
       this.met.add(key);
       if (!twins(a.id, b.id) && this.random() >= REACTION.greet) continue;  // twins always stop for each other
-      this.greetedUntil.set(key, this.time + REACTION.cooldown);
+      this.greetedAt.set(key, this.time);
       for (const [p, q] of [[a, b], [b, a]] as const) {
         p.phase = 'greeting'; p.path = []; p.partner = q.id; p.since = this.time; p.until = this.time + REACTION.duration;
         p.yaw = Math.atan2(q.x - p.x, q.z - p.z);
@@ -324,7 +325,10 @@ export class LifeSimulation {
     }
   }
   private readonly met = new Set<string>();
-  private readonly greetedUntil = new Map<string, number>();
+  /** When each pair of friends (ids sorted, joined by +) last greeted, in play seconds. */
+  private readonly greetedAt = new Map<string, number>();
+  /** Play seconds since these two friends last greeted, or null if they have not yet. */
+  sinceGreeting(a: AvatarId, b: AvatarId): number | null { const at = this.greetedAt.get([a, b].sort().join('+')); return at === undefined ? null : this.time - at; }
   update(seconds: number) {
     const dt = Math.min(.1, Math.max(0, seconds)); this.time += dt;
     for (const a of this.avatars.values()) {
@@ -383,7 +387,7 @@ export function activityLabel(a: Avatar) {
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
-export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, duration: 3.6, sitTogether: .5, walkAlong: .3 } as const;
+export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 180, duration: 3.6, sitTogether: .5, walkAlong: .3 } as const;
 /**
  * The symbol over a friend's head while waving or greeting ('' otherwise; seats add their own). A greeting starts with
  * a heart, then the pair take turns chatting (···) and humming (♪). When drawn greeting/waving art exists, the

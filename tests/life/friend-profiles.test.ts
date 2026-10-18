@@ -48,3 +48,19 @@ test("the twins' chosen lines: a greeting line only for the other twin", () => {
   assert.equal(momo2.phase, 'greeting'); assert.equal(momo2.speech, '', 'Momo greets Scarlet without the twin line');
   assert.equal(other.pet('peach', '2026-10-18')?.gained, true); assert.equal(momo2.speech, '헤헤, 오늘도 산책 가자!');
 });
+test('after greeting, the same two friends pass each other without stopping for 3 minutes', async () => {
+  const { REACTION } = await import('../../apps/client/src/simulation.js');
+  assert.equal(REACTION.cooldown, 180);
+  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  const meet = () => {
+    for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: 9.5, until: 1e9, phase: 'idle', path: [] });
+    Object.assign(momo, { x: 5.5, z: 4.5 }); sim.update(.05);   // apart: the meeting is over
+    Object.assign(lulu, { x: 6.5, z: 4.5 }); sim.update(.05);   // together again
+  };
+  meet(); assert.equal(momo.phase, 'greeting'); assert.equal(sim.sinceGreeting('lilac', 'peach'), 0);
+  for (let t = 0; t < 100; t += .1) sim.update(.1);
+  meet(); assert.equal(momo.phase, 'idle', 'greeted 100 s ago: no second stop');
+  Object.assign(lulu, { x: 9.5, z: 9.5 });  // apart while the rest of the 3 minutes passes
+  for (let t = 0; t < 90; t += .1) sim.update(.1);
+  meet(); assert.equal(momo.phase, 'greeting', 'more than 3 minutes later they greet again');
+});
