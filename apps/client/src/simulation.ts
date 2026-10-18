@@ -83,6 +83,8 @@ export function findPath(start: Point, destination: Point, nav: NavigationWorld 
 export interface Avatar extends Point {
   id: AvatarId; name: string; phase: Phase; yaw: number; path: Point[]; seatId: string | null;
   progress: number; until: number; deadline: number; directed: boolean; lastEquipment: EquipmentId | null;
+  /** The equipment just stepped off: skipped until the friend has done something else, so she does not climb straight back on. */
+  leftItem: string | null;
   /** While greeting: the friend being greeted and when it started. */
   partner: AvatarId | null; since: number;
   /** Until when a petted friend who stays put (e.g. on a seat) shows a heart. */
@@ -105,7 +107,7 @@ export class LifeSimulation {
   get night() { return dayPart(this.dayFraction()) === 'night'; }
   private lastPet: Partial<Record<AvatarId, number>> = {};
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, partner: null, since: 0, cheerUntil: 0 }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0 }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -169,16 +171,17 @@ export class LifeSimulation {
   }
   private choose(a: Avatar) {
     a.directed = false;
+    const left = a.leftItem; a.leftItem = null;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
     if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
-      const beside = this.seats.find(s => s.kind === 'bench' && !this.reservations.has(s.id) &&
+      const beside = this.seats.find(s => s.kind === 'bench' && s.equipment !== left && !this.reservations.has(s.id) &&
         this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id) && this.reservations.get(o.id) !== a.id));
       if (beside && !this.use(a.id, beside.equipment, false)) return;
     }
     // At night friends mostly rest on benches; by day they take turns between bench and swing.
     const preferred: EquipmentId = this.night && a.lastEquipment !== null ? 'bench' : a.lastEquipment === 'bench' ? 'swing' : a.lastEquipment === 'swing' ? 'bench' : a.id === 'lilac' ? 'swing' : 'bench';
     if (a.lastEquipment === null || this.random() < .7) {
-      const options = [...new Set(this.seats.filter(s => s.kind === preferred).map(s => s.equipment))];
+      const options = [...new Set(this.seats.filter(s => s.kind === preferred && s.equipment !== left).map(s => s.equipment))];
       for (const id of options) if (!this.use(a.id, id, false)) return;
     }
     // Walk along: head for a tile beside where a strolling friend is going.
@@ -195,7 +198,7 @@ export class LifeSimulation {
       const path = findPath(a, target, this.world);
       if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return; }
     }
-    a.until = this.time + 2;
+    a.leftItem = left; a.until = this.time + 2;  // nothing to do yet: try again soon, still skipping that equipment
   }
   /** Friends meeting: two free friends (not on a seat, not following an order) who come close stop, turn to each
    * other and greet. Each pair rolls once per meeting and then waits a while before greeting again. */
@@ -242,7 +245,7 @@ export class LifeSimulation {
         a.progress = Math.min(1, Math.max(0, a.progress + (a.phase === 'boarding' ? dt : -dt) / .7));
         a.x = s.approach.x + (s.x - s.approach.x) * a.progress; a.z = s.approach.z + (s.z - s.approach.z) * a.progress; a.yaw = s.yaw;
         if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1); }
-        else if (a.phase === 'leaving' && a.progress === 0) this.settle(a, 2.5);
+        else if (a.phase === 'leaving' && a.progress === 0) { a.leftItem = s.equipment; this.settle(a, 2.5); }
       } else if (this.time >= a.until) this.beginExit(a);
     }
     this.react();

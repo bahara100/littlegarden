@@ -106,3 +106,17 @@ test('a friend often picks the free bench seat beside a sitting friend', () => {
   assert.equal(lulu.seatId?.startsWith('bench'), true, 'Lulu joins Momo on the bench');
   assert.notEqual(lulu.seatId, momo.seatId);
 });
+test('a friend who steps off a bench does not sit straight back down beside the friend still on it', () => {
+  const sim = new LifeSimulation(seeded()), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  assert.equal(sim.use('character', 'swing'), null);  // the swing is taken, so the bench is her only other seat
+  assert.equal(sim.use('peach', 'bench'), null);
+  for (let i = 0; i < 12; i++) {  // many rounds of the sit-together roll
+    assert.equal(sim.use('lilac', 'bench'), null);
+    until(sim, () => momo.phase === 'seated' && lulu.phase === 'seated'); momo.until = sim.avatars.get('character')!.until = 1e9;
+    sim.leave('lilac'); until(sim, () => lulu.phase === 'idle');
+    until(sim, () => lulu.phase !== 'idle', 60);
+    assert.equal(lulu.seatId, null, 'Lulu goes for a walk instead of climbing back on');
+    assert.equal(lulu.leftItem, null, 'once she walks, the bench is hers to choose again');
+    sim.moveTo('lilac', { x: -3.5, z: 1.5 }); until(sim, () => lulu.phase === 'idle', 60);
+  }
+});
