@@ -57,6 +57,25 @@ def fish():
                    ('k', lambda x, y: 11.5 <= x <= 12.5 and 7 <= y <= 8)], outline_from='fhswk')
 
 
+def fishing():
+    """A fishing rod held from the bottom-left, its line hanging from the tip to a red-and-white float on a ripple."""
+    def near_segment(ax, ay, bx, by, r):
+        def test(x, y):
+            t = max(0, min(1, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)))
+            return math.hypot(x - ax - t * (bx - ax), y - ay - t * (by - ay)) <= r
+        return test
+    rod = near_segment(2.2, 13.8, 10.6, 2.6, .75)
+    grip = lambda x, y: rod(x, y) and y > 10.6
+    bobber = disc(11.5, 11.6, 2.3)
+    return shaped([('f', rod), ('c', grip),
+                   ('h', lambda x, y: rod(x, y) and not rod(x - 1, y) and not grip(x, y)),
+                   ('l', lambda x, y: 10 <= x <= 11 and 1 <= y <= 2),
+                   ('l', lambda x, y: 11 <= x <= 12 and 2 <= y <= 9.4),
+                   ('r', lambda x, y: bobber(x, y) and y < 11.6),
+                   ('w', lambda x, y: bobber(x, y) and y >= 11.6),
+                   ('b', lambda x, y: 13.8 <= y <= 14.6 and (6 <= x <= 9 or 14 <= x <= 16))], outline_from='fchrw')
+
+
 def flower():
     cx, cy, petals = 7.75, 7.75, []
     for i in range(5):
@@ -222,6 +241,11 @@ ICONS = {
     'fish': {
         'palette': {'o': '#6e3418', 'f': '#f39054', 'h': '#ffdcbc', 's': '#cc6a33', 'w': '#fff4ea', 'k': '#2f1a10'},
         'grid': fish(),
+    },
+    # 🎣 a fishing rod and float, for fishing at the pond.
+    'fishing': {
+        'palette': {'o': '#4a2d1c', 'f': '#b07a45', 'h': '#e2b47a', 'c': '#5d7a4a', 'l': '#8c97a3', 'r': '#e5574b', 'w': '#ffffff', 'b': '#6aa9c4'},
+        'grid': fishing(),
     },
     # Seasons for the picker in the map's top-left corner (sprites/ui/seasons/).
     'spring': {

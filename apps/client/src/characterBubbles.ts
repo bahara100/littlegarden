@@ -7,7 +7,7 @@ export function bubbleContent(a: Avatar, time: number, seat?: 'bench' | 'swing')
 }
 
 /** Emotions drawn as pixel icons (tools/art/make-emote-icons.py); any other emotion shows as text. */
-export const EMOTE_ICONS: Readonly<Record<string, string>> = { '♡': 'heart', '♪': 'note', '👋': 'wave', '!': 'exclaim', '···': 'dots', '🐟': 'fish' };
+export const EMOTE_ICONS: Readonly<Record<string, string>> = { '♡': 'heart', '♪': 'note', '👋': 'wave', '!': 'exclaim', '···': 'dots', '🐟': 'fish', '🎣': 'fishing' };
 /** Screen pixels per tile at which an emotion icon shows at 1x; one more step per this many pixels. */
 export const EMOTE_TILE = 24;
 export function emoteScale(tile: number) { return Math.max(1, Math.min(3, Math.round(tile / EMOTE_TILE))); }
