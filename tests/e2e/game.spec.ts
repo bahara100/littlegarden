@@ -32,9 +32,10 @@ test('the playground opens with no errors or missing files', async ({ page }) =>
   await expect(page).toHaveTitle(/작은 쉼표/);
   for (const id of ['#region-button', '#season-button', '#music-button', '#track-title', '#day-clock']) await expect(page.locator(id)).toBeVisible();
   await expect(page.locator('#region-label')).toHaveText('LITTLE GARDEN');
-  // No zoom buttons and no standing help text: the hint box only shows while a message is up.
+  // No zoom buttons and no message box on the map; messages go to an invisible status area for screen readers.
   await expect(page.locator('.view-controls')).toHaveCount(0);
-  await expect(page.locator('#scene-hint')).toBeHidden({ timeout: 6000 });
+  await expect(page.locator('.scene-hint')).toHaveCount(0);
+  expect((await page.locator('#announcer').boundingBox())!.width).toBeLessThanOrEqual(1);
   await expect(page.locator('.scene-tag')).toBeVisible();
   await page.waitForTimeout(1500);  // let the friends start moving
   expect(problems).toEqual([]);
@@ -109,13 +110,13 @@ test('a pat raises affinity once a day', async ({ page }) => {
   await open(page);
   await page.click('#friend-lilac');
   await page.click('#pet');
-  await expect(page.locator('#scene-hint')).toContainText('친밀도 1');
+  await expect(page.locator('#announcer')).toContainText('친밀도 1');
   await expect(page.locator('#selection-details')).toContainText('♥ 1 · 처음 만난 사이');
   await expect(page.locator('#selection-details')).toContainText('했어요 ♡');
   // Pats closer than the cooldown (game time, which runs slower on a slow machine) are ignored: try until one counts.
   await expect(async () => {
     await page.click('#pet');
-    await expect(page.locator('#scene-hint')).toContainText('이미 올랐어요', { timeout: 700 });
+    await expect(page.locator('#announcer')).toContainText('이미 올랐어요', { timeout: 700 });
   }).toPass({ timeout: 20_000 });
   await expect(page.locator('#selection-details')).toContainText('♥ 1 ·');
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
@@ -243,6 +244,6 @@ test.describe('on a phone', () => {
     const wide = await percent();
     await pinch(200, 80);
     await expect.poll(percent).toBeLessThan(wide);
-    await expect(page.locator('#scene-hint')).not.toContainText('이동을 부탁했어요');
+    await expect(page.locator('#announcer')).not.toContainText('이동을 부탁했어요');
   });
 });

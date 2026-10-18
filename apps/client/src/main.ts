@@ -28,7 +28,8 @@ function rememberMusic(change: Partial<typeof settings>) { Object.assign(setting
 let currentRegion: RegionId = settings.region, regionLayouts: GardenSave['regions'] = {};
 /** The stored save could not be read: automatic saves leave it alone until the player applies, loads or resets on purpose. */
 let saveUnreadable = false;
-function notice(message: string) { setText('scene-hint', message); toastUntil = performance.now() + 3500; }
+/** Short messages (a move was asked for, no path, a pat…) are not shown on screen; screen readers announce them. */
+function notice(message: string) { setText('announcer', message); toastUntil = performance.now() + 3500; }
 function details(rows: [string, string][]) {
   const key = JSON.stringify(rows); if (key === panelKey) return; panelKey = key;
   el('selection-details').replaceChildren(...rows.map(([label, value]) => { const row = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = label; dd.textContent = value; row.append(dt, dd); return row; }));
@@ -93,8 +94,7 @@ function refresh() {
     setText('use-equipment', `${active.name}에게 이용 부탁하기`);
     setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
   }
-  // The hint box only shows a short message after something happens; it hides when empty.
-  if (performance.now() > toastUntil) setText('scene-hint', '');
+  if (performance.now() > toastUntil) setText('announcer', '');
 }
 const UNLOCK_KIND = { line: '대사', emote: '감정', action: '행동' } as const;
 /** Unlocked lines, emotions and actions for a friend, and how many points the next one needs. */
@@ -155,7 +155,7 @@ function refreshEditor() {
     const buttons = editor.draft.stored.map((i, n) => { const button = document.createElement('button'); button.textContent = `${CATALOG[i.kind].icon} ${CATALOG[i.kind].name} ${n + 1} · 다시 놓기`; button.onclick = () => { garden?.restoreItem(i.id); refresh(); }; return button; });
     el('stored-items').replaceChildren(...buttons); el('stored-empty').hidden = buttons.length > 0;
   }
-  if (performance.now() > toastUntil) setText('scene-hint', '');
+  if (performance.now() > toastUntil) setText('announcer', '');
 }
 el('help').onclick = () => el<HTMLDialogElement>('help-dialog').showModal();
 el('close-help').onclick = () => el<HTMLDialogElement>('help-dialog').close();
