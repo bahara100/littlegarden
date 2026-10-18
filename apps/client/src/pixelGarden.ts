@@ -231,7 +231,7 @@ export class PixelGarden {
         const a = this.life.avatars.get(before.id)!;
         this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');
       }
-      this.bubbles.begin(this.host.clientWidth, this.host.clientHeight, this.editor.active);
+      this.bubbles.begin(this.host.clientWidth, this.host.clientHeight, this.editor.active, this.unit * this.host.clientWidth / this.canvas.width);
       const c = this.ctx; c.fillStyle = this.groundTheme.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);

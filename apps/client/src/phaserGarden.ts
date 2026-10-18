@@ -441,7 +441,7 @@ class GardenScene extends Phaser.Scene {
     const items = this.items;
     this.drawFloor(items); this.drawOverlay(); this.syncProps(items);
     this.camera();
-    this.g.bubbles.begin(this.scale.width, this.scale.height, editing);
+    this.g.bubbles.begin(this.scale.width, this.scale.height, editing, U * this.cameras.main.zoom);
     for (const a of this.g.life.avatars.values()) this.placeAvatar(a, still);
     this.ring.setVisible(!editing);
   }

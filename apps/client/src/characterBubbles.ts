@@ -8,6 +8,9 @@ export function bubbleContent(a: Avatar, time: number, seat?: 'bench' | 'swing')
 
 /** Emotions drawn as pixel icons (tools/art/make-emote-icons.py); any other emotion shows as text. */
 export const EMOTE_ICONS: Readonly<Record<string, string>> = { '♡': 'heart', '♪': 'note' };
+/** Screen pixels per tile at which an emotion icon shows at 1x; one more step per this many pixels. */
+export const EMOTE_TILE = 24;
+export function emoteScale(tile: number) { return Math.max(1, Math.min(3, Math.round(tile / EMOTE_TILE))); }
 const iconUrl = (name: string) => `${import.meta.env.BASE_URL}sprites/ui/emotes/${name}.png`;
 
 /** Shared screen-space overlay: text stays readable at every map zoom in either renderer. */
@@ -22,8 +25,14 @@ export class CharacterBubbles {
     host.append(this.layer);
   }
 
-  begin(width: number, height: number, hidden: boolean) {
+  /**
+   * `tile` is how many screen pixels one floor tile spans right now. Emotion icons grow with the map in whole steps
+   * (16 px art at 1x, 2x, 3x) so they stay sharp and in proportion to the friends; lines keep their readable size.
+   */
+  begin(width: number, height: number, hidden: boolean, tile = EMOTE_TILE) {
     this.width = width; this.height = height; this.layer.hidden = hidden;
+    const scale = emoteScale(tile);
+    if (this.layer.style.getPropertyValue('--emote-scale') !== String(scale)) this.layer.style.setProperty('--emote-scale', String(scale));
   }
 
   update(a: Avatar, time: number, x: number, headY: number, seat?: 'bench' | 'swing') {

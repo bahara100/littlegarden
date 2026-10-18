@@ -20,3 +20,13 @@ test('ordinary greetings and seat reactions also use bubbles without new unlock 
   assert.equal(bubbleContent(a, 0, 'bench').value, '···');
   assert.equal(bubbleContent(a, 0, 'swing').value, '♪');
 });
+
+test('emotion icons grow with the map in whole steps (1x, 2x, 3x)', async () => {
+  const { emoteScale, EMOTE_TILE, EMOTE_ICONS } = await import('../../apps/client/src/characterBubbles.js');
+  assert.equal(emoteScale(EMOTE_TILE), 1);          // the starting zoom
+  assert.equal(emoteScale(EMOTE_TILE * .6), 1);     // never smaller than the art itself
+  assert.equal(emoteScale(EMOTE_TILE * 1.6), 2);
+  assert.equal(emoteScale(EMOTE_TILE * 3), 3);
+  assert.equal(emoteScale(EMOTE_TILE * 9), 3);      // capped so a close-up does not swallow the friend
+  assert.deepEqual(EMOTE_ICONS, { '♡': 'heart', '♪': 'note' });
+});

@@ -70,10 +70,13 @@ for (const renderer of ['phaser', 'canvas']) {
     await expect(bubble.locator('img.emote-icon')).toHaveAttribute('alt', '♡');
     expect(await bubble.locator('img.emote-icon').evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBe(16);
     await expect(bubble).toHaveAttribute('data-kind', 'emote');
-    const width = (await bubble.boundingBox())!.width;
-    await wheelZoomIn(page);
+    // At the starting zoom the icon is its 16 px art at 1x; zooming in grows it in whole steps with the friends.
+    const icon = bubble.locator('img.emote-icon'), iconWidth = async () => (await icon.boundingBox())!.width;
+    expect(await iconWidth()).toBe(16);
+    await page.mouse.move(...await (async () => { const b = (await page.locator('#game').boundingBox())!; return [b.x + b.width / 2, b.y + b.height / 2] as [number, number]; })());
+    await page.mouse.wheel(0, -600);
     await expect(bubble).toBeVisible();
-    expect((await bubble.boundingBox())!.width).toBeCloseTo(width, 0);
+    await expect.poll(iconWidth).toBe(32);
     await page.click('#edit-mode');
     await expect(bubble).toBeHidden();
     expect(problems).toEqual([]);
