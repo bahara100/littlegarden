@@ -1,0 +1,27 @@
+{
+  "version": 7,
+  "from": "garden-body-walk-ne-v6",
+  "stage": "hand-volume-repair-awaiting-review",
+  "checks": [
+    {
+      "frame": 1,
+      "changedPixels": 0,
+      "outsideHandsUnchanged": true
+    },
+    {
+      "frame": 2,
+      "changedPixels": 94,
+      "outsideHandsUnchanged": true
+    },
+    {
+      "frame": 3,
+      "changedPixels": 0,
+      "outsideHandsUnchanged": true
+    },
+    {
+      "frame": 4,
+      "changedPixels": 94,
+      "outsideHandsUnchanged": true
+    }
+  ]
+}

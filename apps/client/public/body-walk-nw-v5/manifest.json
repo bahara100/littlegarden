@@ -1,0 +1,74 @@
+{
+ "version": 5,
+ "from": "garden-body-walk-ne-v4",
+ "stage": "passing-arms-2-4-awaiting-review",
+ "preservedFrames": [
+  1,
+  3
+ ],
+ "preservedHeadRows": [
+  0,
+  44
+ ],
+ "preservedLowerBodyRows": [
+  68,
+  95
+ ],
+ "checks": [
+  {
+   "frame": 1,
+   "changedPixels": 0
+  },
+  {
+   "frame": 2,
+   "changedPixels": 371
+  },
+  {
+   "frame": 3,
+   "changedPixels": 0
+  },
+  {
+   "frame": 4,
+   "changedPixels": 395
+  }
+ ],
+ "direction": "nw",
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V4 with only passing arms 2/4 refined"
+  },
+  {
+   "number": 2,
+   "top": 1,
+   "bottom": 87,
+   "colors": 32,
+   "source": "V4 with only passing arms 2/4 refined"
+  },
+  {
+   "number": 3,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V4 with only passing arms 2/4 refined"
+  },
+  {
+   "number": 4,
+   "top": 1,
+   "bottom": 89,
+   "colors": 32,
+   "source": "V4 with only passing arms 2/4 refined"
+  }
+ ],
+ "runtimeConnected": false
+}

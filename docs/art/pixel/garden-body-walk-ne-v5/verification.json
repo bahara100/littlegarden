@@ -1,0 +1,35 @@
+{
+  "version": 5,
+  "from": "garden-body-walk-ne-v4",
+  "stage": "passing-arms-2-4-awaiting-review",
+  "preservedFrames": [
+    1,
+    3
+  ],
+  "preservedHeadRows": [
+    0,
+    44
+  ],
+  "preservedLowerBodyRows": [
+    68,
+    95
+  ],
+  "checks": [
+    {
+      "frame": 1,
+      "changedPixels": 0
+    },
+    {
+      "frame": 2,
+      "changedPixels": 371
+    },
+    {
+      "frame": 3,
+      "changedPixels": 0
+    },
+    {
+      "frame": 4,
+      "changedPixels": 395
+    }
+  ]
+}

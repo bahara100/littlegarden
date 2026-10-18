@@ -1,0 +1,66 @@
+{
+ "version": 7,
+ "from": "garden-body-walk-ne-v6",
+ "stage": "hand-volume-repair-awaiting-review",
+ "checks": [
+  {
+   "frame": 1,
+   "changedPixels": 0,
+   "outsideHandsUnchanged": true
+  },
+  {
+   "frame": 2,
+   "changedPixels": 94,
+   "outsideHandsUnchanged": true
+  },
+  {
+   "frame": 3,
+   "changedPixels": 0,
+   "outsideHandsUnchanged": true
+  },
+  {
+   "frame": 4,
+   "changedPixels": 94,
+   "outsideHandsUnchanged": true
+  }
+ ],
+ "direction": "ne",
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V6 with hand-only volume repair"
+  },
+  {
+   "number": 2,
+   "top": 1,
+   "bottom": 87,
+   "colors": 32,
+   "source": "V6 with hand-only volume repair"
+  },
+  {
+   "number": 3,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V6 with hand-only volume repair"
+  },
+  {
+   "number": 4,
+   "top": 1,
+   "bottom": 89,
+   "colors": 32,
+   "source": "V6 with hand-only volume repair"
+  }
+ ],
+ "runtimeConnected": false
+}

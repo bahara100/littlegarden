@@ -1,0 +1,138 @@
+{
+  "version": 5,
+  "stage": "lower-wider-arms-momo-sole-repair-review",
+  "armOffsetY": 3,
+  "armWidthAdded": 2,
+  "fps": 6,
+  "frameSize": 96,
+  "frameCount": 4,
+  "baseSource": "garden-body-walk-ne-v8",
+  "baseSha256": "06ff9beb071485c5a187fa0cbb5678f67e709c69ae24ac62476133069edc7bcd",
+  "gameRootPreserved": "sprites/garden/base-walk-v2",
+  "characters": {
+    "momo": {
+      "checks": [
+        {
+          "direction": "se",
+          "frame": 1,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 2
+        },
+        {
+          "direction": "se",
+          "frame": 2,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "se",
+          "frame": 3,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 2
+        },
+        {
+          "direction": "se",
+          "frame": 4,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "ne",
+          "frame": 1,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 196
+        },
+        {
+          "direction": "ne",
+          "frame": 2,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 216
+        },
+        {
+          "direction": "ne",
+          "frame": 3,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 256
+        },
+        {
+          "direction": "ne",
+          "frame": 4,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 219
+        }
+      ],
+      "idlePreserved": true,
+      "rearSha256": "bcf5f6fc8adaa799d2ddd644b314dbcc4fd601d42e0451bca438585fc3fa2c24"
+    },
+    "lulu": {
+      "checks": [
+        {
+          "direction": "se",
+          "frame": 1,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "se",
+          "frame": 2,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "se",
+          "frame": 3,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "se",
+          "frame": 4,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 0
+        },
+        {
+          "direction": "ne",
+          "frame": 1,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 194
+        },
+        {
+          "direction": "ne",
+          "frame": 2,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 221
+        },
+        {
+          "direction": "ne",
+          "frame": 3,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 255
+        },
+        {
+          "direction": "ne",
+          "frame": 4,
+          "hairPreserved": true,
+          "outsideArmAndSolePreserved": true,
+          "changedPixels": 222
+        }
+      ],
+      "idlePreserved": true,
+      "rearSha256": "942d6e1d34d084ab115bab27315b6c75a5be3fdb8fee2c0bf3893ef4038fceec"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+ "version": 8,
+ "stage": "user-manually-edited-authoritative-source",
+ "source": "manual-edit-2026-10-18/source-user-edited.pxo",
+ "pixelSha256": "b990fe11a3a1480170e37c7e2109c2e20e07336852580ea1019920598fe2687b",
+ "changedPixelsByFrame": [
+  14,
+  6,
+  1,
+  11
+ ],
+ "method": "Pixelorama composite exported verbatim; no redraw, resize or palette conversion",
+ "direction": "nw",
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "User manual V8 Pixelorama export"
+  },
+  {
+   "number": 2,
+   "top": 1,
+   "bottom": 87,
+   "colors": 32,
+   "source": "User manual V8 Pixelorama export"
+  },
+  {
+   "number": 3,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "User manual V8 Pixelorama export"
+  },
+  {
+   "number": 4,
+   "top": 1,
+   "bottom": 89,
+   "colors": 32,
+   "source": "User manual V8 Pixelorama export"
+  }
+ ],
+ "runtimeConnected": false
+}
