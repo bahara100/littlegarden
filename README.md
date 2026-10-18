@@ -119,7 +119,7 @@ GitHub의 Verify는 이 게임의 검사·테스트·빌드·화면 테스트를
 
 저장소: https://github.com/bahara100/nikke-playground · 게임: https://bahara100.github.io/nikke-playground/
 
-main 브랜치에 push하면 `.github/workflows/pages.yml`이 검사·테스트·빌드 후 자동으로 배포합니다(Settings → Pages → Source: GitHub Actions). `verify.yml`은 push마다 검사합니다.
+main 브랜치에 push하면 `.github/workflows/pages.yml`이 검사·테스트·빌드 후 자동으로 배포합니다(Settings → Pages → Source: GitHub Actions). `verify.yml`은 push마다 검사합니다. GitHub CLI(`gh`)로 로그인해 두면 `gh run list`로 최근 검사·배포 결과를, `gh run view <번호> --log-failed`로 실패한 단계의 로그를 볼 수 있습니다.
 
 현재 상태와 주의:
 
