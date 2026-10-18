@@ -177,6 +177,19 @@ test('a volume change before the playground is ready is remembered', async ({ pa
   await expect(page.locator('#music-mute')).toHaveAttribute('aria-pressed', 'true');
 });
 
+test('a pond can be placed from the decoration list', async ({ page }) => {
+  const problems = await open(page);
+  await page.click('#edit-mode');
+  const before = await placedCount(page);
+  await page.click('[data-catalog=pond]');
+  await page.fill('#item-x', '4'); await page.fill('#item-z', '4.5');
+  await page.click('#item-place');
+  expect(await placedCount(page)).toBe(before + 1);
+  await page.click('#editor-apply');
+  await expect(page.locator('#edit-mode')).toContainText('꾸미기');
+  expect(problems).toEqual([]);
+});
+
 test('each region keeps its own layout', async ({ page }) => {
   await open(page);
   await page.click('#edit-mode'); const gardenCount = await placedCount(page); await page.click('#edit-mode');

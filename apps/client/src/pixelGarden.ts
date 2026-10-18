@@ -1,7 +1,8 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
+import { paintPond, type Point3 } from './pondArt';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
@@ -129,6 +130,8 @@ export class PixelGarden {
     const c = this.ctx; c.beginPath(); points.forEach((p, i) => i ? c.lineTo(Math.round(p.x), Math.round(p.y)) : c.moveTo(Math.round(p.x), Math.round(p.y))); c.closePath();
     c.fillStyle = color; c.fill(); if (outline) { c.strokeStyle = outline; c.lineWidth = 1; c.stroke(); }
   }
+  /** A polygon of ground points with height (tiles), for the pond's banks, water and stones. */
+  private polygon3(pts: Point3[], color: string, line?: string) { this.polygon(pts.map(p => { const s = this.screen(p); return { x: s.x, y: s.y - p.h * this.unit }; }), color, line); }
   private tile(p: Point, w: number, d: number, color: string, line?: string) {
     const points = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => this.screen({ x: p.x + x, z: p.z + z }));
     this.polygon(points, color, line);
@@ -147,6 +150,7 @@ export class PixelGarden {
       const f = footprint(item); this.tile(item, f.w, f.d, g.path[0], g.path[1]);
       const p = this.screen(item); c.fillStyle = g.path[2]; c.fillRect(p.x - 2, p.y - 1, 3, 1);
     }
+    for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => this.polygon3(pts, color, line));
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
     this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
@@ -158,7 +162,7 @@ export class PixelGarden {
     const odd = item.turn % 2;
     const index = item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd;
     const art = this.props[index]; if (!art) return;
-    const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 })[item.kind] * unit;
+    const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 })[item.kind] * unit;
     const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
     if (ghost) c.globalAlpha = .65;
     c.save();
@@ -235,11 +239,16 @@ export class PixelGarden {
       const c = this.ctx; c.fillStyle = this.groundTheme.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);
-      const layers = items.filter(i => i.kind !== 'path').map(i => ({ depth: depth(i), draw: () => this.drawItem(i) }));
+      const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: depth(i), draw: () => this.drawItem(i) }));
       if (!this.editor.active) for (const a of this.life.avatars.values()) layers.push({ depth: depth(a) + (this.life.seatOf(a) ? .35 : 0), draw: () => this.drawAvatar(a) });
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');
+        else if (this.editor.pending.kind === 'pond') {
+          const pond = this.editor.pending, f = footprint(pond);
+          c.globalAlpha = .75; paintPond(pond, (pts, color, line) => this.polygon3(pts, color, line));
+          c.globalAlpha = .45; this.tile(pond, f.w, f.d, this.editor.error ? '#d07880' : '#fff4bc', '#66547b'); c.globalAlpha = 1;
+        }
         else this.drawItem(this.editor.pending, true);
       }
     }

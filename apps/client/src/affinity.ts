@@ -27,9 +27,10 @@ export function affinityLevel(points: number): { level: AffinityLevel; index: nu
  * When a line or an emotion can show:
  * - pet: right after a pat · levelUp: a pat that reaches a new level (shown instead of a pet line)
  * - greet: meeting another friend · seat: sitting down on a bench or swing · idle: now and then while free
+ * - watch: arriving at a pond's shore to look at it
  */
-export type Moment = 'pet' | 'levelUp' | 'greet' | 'seat' | 'idle';
-export const MOMENTS: Record<Moment, string> = { pet: '쓰다듬었을 때', levelUp: '단계가 올랐을 때', greet: '친구와 인사할 때', seat: '기구에 앉았을 때', idle: '쉬다가 가끔' };
+export type Moment = 'pet' | 'levelUp' | 'greet' | 'seat' | 'idle' | 'watch';
+export const MOMENTS: Record<Moment, string> = { pet: '쓰다듬었을 때', levelUp: '단계가 올랐을 때', greet: '친구와 인사할 때', seat: '기구에 앉았을 때', idle: '쉬다가 가끔', watch: '호수를 바라볼 때' };
 interface UnlockBase {
   /** Affinity points needed (0..99); the level thresholds in AFFINITY_LEVELS are good values. */
   at: number;

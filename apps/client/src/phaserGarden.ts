@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
+import { paintPond, type Point3 } from './pondArt';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
@@ -18,7 +19,7 @@ const DOUBLE_TAP_MS = 400;
 
 /** Logical pixels per ground unit. The camera scales this to the viewport, nearest-neighbour. */
 const U = 18;
-const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1 };
+const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 };
 /**
  * Swing layers from tools/art/split-swing-v1.py: rows are props cells 2 (seat faces down-right) and 3 (down-left),
  * columns [far frame, ropes + seat, top bar, near frame], 444 source pixels each. `pivots` are the rope tops on the bar
@@ -65,6 +66,12 @@ function drawFit(cell: HTMLCanvasElement, f: CellFit) {
   return out;
 }
 
+/** A polygon of ground points with height (tiles) on the floor texture: used for the pond's banks, water and stones. */
+function floorPolygon(c: CanvasRenderingContext2D, pts: Point3[], color: string, line?: string) {
+  c.beginPath();
+  pts.forEach((p, i) => { const q = iso(p), x = Math.round(q.x + FLOOR.ox), y = Math.round(q.y + FLOOR.oy - p.h * U); if (i) c.lineTo(x, y); else c.moveTo(x, y); });
+  c.closePath(); c.fillStyle = color; c.fill(); if (line) { c.strokeStyle = line; c.lineWidth = 1; c.stroke(); }
+}
 function diamond(c: CanvasRenderingContext2D, p: Point, w: number, d: number, color: string, line?: string) {
   const pts = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => iso({ x: p.x + x, z: p.z + z }));
   c.beginPath(); pts.forEach((q, i) => i ? c.lineTo(Math.round(q.x + FLOOR.ox), Math.round(q.y + FLOOR.oy)) : c.moveTo(Math.round(q.x + FLOOR.ox), Math.round(q.y + FLOOR.oy))); c.closePath();
@@ -291,6 +298,7 @@ class GardenScene extends Phaser.Scene {
       const f = footprint(item); diamond(c, item, f.w, f.d, g.path[0], g.path[1]);
       const p = iso(item); c.fillStyle = g.path[2]; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
     }
+    for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => floorPolygon(c, pts, color, line));
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
     diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) diamond(c, { x, z }, .2, .2, '#f7e7d1');
@@ -307,6 +315,8 @@ class GardenScene extends Phaser.Scene {
     const c = this.overlay.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
     if (pending?.kind === 'path') diamond(c, pending, 1, 1, error ? '#d07880' : '#fff4bc', '#66547b');
     else {
+      // A pond being placed shows itself (faded) under the footprint highlight.
+      if (pending?.kind === 'pond') { c.globalAlpha = .75; paintPond(pending, (pts, color, line) => floorPolygon(c, pts, color, line)); }
       c.globalAlpha = .45;
       for (const item of [pending, selected]) if (item) { const f = footprint(item); diamond(c, item, f.w, f.d, item === pending && error ? '#d07880' : '#fff4bc', '#66547b'); }
       c.globalAlpha = 1;
@@ -361,7 +371,7 @@ class GardenScene extends Phaser.Scene {
   private syncProps(items: PlacedItem[]) {
     const editing = this.g.editor.active, live = new Set<string>();
     for (const item of items) {
-      if (item.kind === 'path') continue;
+      if (onFloor(item.kind)) continue;
       live.add(item.id);
       let image = this.props.get(item.id);
       if (!image) { image = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); image.setData('id', item.id); this.props.set(item.id, image); }
@@ -372,8 +382,8 @@ class GardenScene extends Phaser.Scene {
     for (const [id, image] of this.props) if (!live.has(id)) { image.destroy(); this.props.delete(id); }
     for (const [id, view] of this.swingViews) if (!live.has(id)) { for (const o of Object.values(view)) o.destroy(); this.swingViews.delete(id); }
     const pending = this.g.editor.pending;
-    this.ghost.setVisible(!!pending && pending.kind !== 'path');
-    if (pending && pending.kind !== 'path') this.placeProp(this.ghost, pending);
+    this.ghost.setVisible(!!pending && !onFloor(pending.kind));
+    if (pending && !onFloor(pending.kind)) this.placeProp(this.ghost, pending);
   }
   private placeAvatar(a: Avatar, still: boolean) {
     const view = this.avatars.get(a.id)!, p = iso(a), seat = this.g.life.seatOf(a), editing = this.g.editor.active;

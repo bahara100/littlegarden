@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
+import { DEFAULT_LAYOUT, HUB, cloneLayout, footprint, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
 export type { Point, Seat } from './layout';
 import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type AffinityLevel, type Moment, type Unlock } from './affinity';
 import { UNLOCKS } from './unlocks';
@@ -6,7 +6,7 @@ import type { ActionId } from './friendActions';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
-export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting' | 'happy';
+export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting' | 'happy' | 'watching';
 export const FRIENDS = [
   { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.5, z: 2.5 } },
   { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.5, z: 2.5 } },
@@ -94,6 +94,8 @@ export interface Avatar extends Point {
   cheerUntil: number;
   /** An unlocked line in a speech bubble and an unlocked emotion over the head, each shown until its time. */
   speech: string; speechUntil: number; emote: string; emoteUntil: number;
+  /** Going to or watching a pond: the shore tile to stand on and the pond centre to face. */
+  watchSpot: Point | null; lookAt: Point | null;
 }
 export class LifeSimulation {
   time = 0;
@@ -147,7 +149,7 @@ export class LifeSimulation {
     }
   }
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0 }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0, watchSpot: null, lookAt: null }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -165,7 +167,36 @@ export class LifeSimulation {
     }
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
-  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; }
+  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.watchSpot = null; a.lookAt = null; }
+  /** Ponds in the current layout. */
+  get ponds() { return this.layout.filter(i => i.kind === 'pond'); }
+  /** The pond a ground point is on, if any. */
+  pondAt(p: Point) { return this.ponds.find(i => { const f = footprint(i); return Math.abs(p.x - f.x) <= f.w / 2 && Math.abs(p.z - f.z) <= f.d / 2; }); }
+  /** Shore tiles around a pond that a friend can stand on (tile centres just outside its footprint), not taken by another watcher. */
+  shoreSpots(pond: PlacedItem, except?: AvatarId): Point[] {
+    const f = footprint(pond), spots: Point[] = [];
+    for (let x = f.x - f.w / 2 + .5; x < f.x + f.w / 2; x++) spots.push({ x, z: f.z - f.d / 2 - .5 }, { x, z: f.z + f.d / 2 + .5 });
+    for (let z = f.z - f.d / 2 + .5; z < f.z + f.d / 2; z++) spots.push({ x: f.x - f.w / 2 - .5, z }, { x: f.x + f.w / 2 + .5, z });
+    const taken = [...this.avatars.values()].filter(o => o.id !== except && o.watchSpot).map(o => o.watchSpot!);
+    return spots.filter(p => walkable(p, this.world) && !taken.some(t => Math.hypot(t.x - p.x, t.z - p.z) < .5));
+  }
+  /**
+   * Go and watch a pond (the nearest one when none is given): walk to the closest free shore tile, then stand facing
+   * the water for a while (phase 'watching'). Returns an error message when there is nowhere to stand.
+   */
+  watchPond(id: AvatarId, pondId: string | null = null, directed = true): string | null {
+    const a = this.avatars.get(id)!;
+    if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 호수를 보러 갈 수 있어요.';
+    const ponds = pondId ? this.ponds.filter(p => p.id === pondId) : [...this.ponds].sort((p, q) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(q.x - a.x, q.z - a.z));
+    for (const pond of ponds) {
+      const routes = this.shoreSpots(pond, a.id).map(spot => ({ spot, path: findPath(a, spot, this.world) })).filter(r => r.path).sort((p, q) => p.path!.length - q.path!.length);
+      const best = routes[0]; if (!best) continue;
+      this.free(a); a.directed = directed; a.path = best.path!; a.phase = 'walking'; a.deadline = this.time + 40;
+      a.watchSpot = best.spot; a.lookAt = { x: footprint(pond).x, z: footprint(pond).z };
+      return null;
+    }
+    return '호숫가에 설 자리가 없어요.';
+  }
   private settle(a: Avatar, delay = 2) { this.free(a); a.phase = 'idle'; a.path = []; a.progress = 0; a.until = this.time + delay; }
   private beginExit(a: Avatar) { if (a.phase !== 'boarding') a.progress = 1; a.phase = 'leaving'; a.path = []; a.deadline = this.time + 2; }
   leave(id: AvatarId) {
@@ -178,6 +209,8 @@ export class LifeSimulation {
   moveTo(id: AvatarId, target: Point): string | null {
     const a = this.avatars.get(id)!;
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 이동을 지시해주세요.';
+    // A tap on a pond means "go and look at it".
+    const pond = this.pondAt(target); if (pond) return this.watchPond(id, pond.id);
     // Stop on the centre of the clicked tile; a centre too close to an obstacle falls back to the clicked point.
     const path = findPath(a, tileCentre(target), this.world) ?? findPath(a, target, this.world); if (!path) return '이곳까지 걸어갈 수 없어요. 빈 바닥을 선택해주세요.';
     this.free(a); a.directed = true; a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return null;
@@ -221,6 +254,8 @@ export class LifeSimulation {
     // Unlocked lines and emotions for a quiet moment, then any unlocked action that wins its roll.
     this.moment(a, 'idle');
     for (const action of actionsToTry(this.unlocks, a.id, this.affinity[a.id], this.random)) if (this.perform(a, action)) return;
+    // Now and then a free friend goes to look at a pond (only rolled when there is one, so pond-less gardens behave as before).
+    if (this.ponds.length && this.random() < LAKE.visit && !this.watchPond(a.id, null, false)) return;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
     if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
       const beside = this.seats.find(s => s.kind === 'bench' && s.equipment !== left && !this.reservations.has(s.id) &&
@@ -272,7 +307,7 @@ export class LifeSimulation {
   update(seconds: number) {
     const dt = Math.min(.1, Math.max(0, seconds)); this.time += dt;
     for (const a of this.avatars.values()) {
-      if (a.phase === 'idle' || a.phase === 'waving' || a.phase === 'greeting' || a.phase === 'happy') {
+      if (a.phase === 'idle' || a.phase === 'waving' || a.phase === 'greeting' || a.phase === 'happy' || a.phase === 'watching') {
         if (this.time >= a.until) { if (a.phase === 'idle') this.choose(a); else { a.partner = null; this.settle(a, 1.5); } }
       } else if (a.phase === 'walking') {
         if (this.time > a.deadline) { this.settle(a, 1); continue; }
@@ -288,6 +323,11 @@ export class LifeSimulation {
         }
         if (!a.path.length) {
           if (a.seatId) { a.phase = 'boarding'; a.progress = 0; }
+          else if (a.lookAt) {
+            // At the shore: face the water and watch it for a while.
+            a.phase = 'watching'; a.yaw = Math.atan2(a.lookAt.x - a.x, a.lookAt.z - a.z); a.since = this.time;
+            a.until = this.time + LAKE.watch + this.random() * LAKE.extra; this.moment(a, 'watch');
+          }
           else this.settle(a, 2 + this.random() * 2);
         }
       } else if (a.phase === 'boarding' || a.phase === 'leaving') {
@@ -317,7 +357,8 @@ export class LifeSimulation {
   }
 }
 export function activityLabel(a: Avatar) {
-  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중' };
+  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중', watching: '호수 구경하는 중' };
+  if (a.phase === 'walking' && a.lookAt) return '호수 보러 가는 중';
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
@@ -341,6 +382,8 @@ export function reactionLabel(a: Avatar, time: number) {
   const turn = Math.floor((t - GREET.hello) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
   return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
 }
+/** Ponds: chance a free friend goes to look when choosing what to do, and how long they watch (s). */
+export const LAKE = { visit: .25, watch: 6, extra: 5 } as const;
 /** A meeting's opening, in seconds from its start: "!" until `notice`, then a wave until `hello`, then chat. */
 export const GREET = { notice: .6, hello: 1.4 } as const;
 /** How long an unlocked line stays in its speech bubble: a base plus a little per character. */

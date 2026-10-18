@@ -28,7 +28,7 @@ test('the unlock list in the game is valid, and bad entries are caught', () => {
     { kind: 'action', at: 1, action: 'wave', chance: 0 },
   ] as unknown as Unlock[];
   assert.equal(unlockErrors(bad, ACTION_IDS).length, 6);
-  assert.deepEqual(Object.keys(MOMENTS).sort(), ['greet', 'idle', 'levelUp', 'pet', 'seat']);
+  assert.deepEqual(Object.keys(MOMENTS).sort(), ['greet', 'idle', 'levelUp', 'pet', 'seat', 'watch']);
 });
 
 test('unlocks follow points and friend', () => {

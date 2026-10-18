@@ -1,5 +1,5 @@
 export type Point = { x: number; z: number };
-export type ItemKind = 'bench' | 'swing' | 'tree' | 'flower' | 'fence' | 'path';
+export type ItemKind = 'bench' | 'swing' | 'tree' | 'flower' | 'fence' | 'path' | 'pond';
 export interface PlacedItem extends Point { id: string; kind: ItemKind; turn: number; w?: number; d?: number }
 export interface Layout { items: PlacedItem[]; stored: PlacedItem[] }
 /**
@@ -15,13 +15,16 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
   bench: { name: '나무 벤치', icon: '▤', w: 4.3 * B, d: 3.2 * B }, swing: { name: '산들 그네', icon: '⋂', w: 4.2 * S, d: 4.1 * S },
   tree: { name: '초록 나무', icon: '♣', w: 1.25, d: 1.25 }, flower: { name: '작은 화단', icon: '✿', w: 2, d: 1 },
   fence: { name: '나무 울타리', icon: '▥', w: 2, d: .2 }, path: { name: '길 타일', icon: '▧', w: 1, d: 1 },
+  pond: { name: '호수', icon: '≈', w: 4, d: 5 },
 };
+/** Kinds drawn into the floor itself (no standing art): path tiles under everything, and ponds. */
+export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond';
 /**
  * How far below the item centre (in tiles of screen height) each prop's lowest art pixel is drawn. The swing's lowest
  * pixel is its near leg's foot, about a tile in front of the frame's middle, so its art drops further than the
  * others; otherwise the frame stands a tile behind its seat and footprint.
  */
-export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2 };
+export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2, pond: .2 };
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
 export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33 }, standing: { bench: .75, swing: -.1 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
