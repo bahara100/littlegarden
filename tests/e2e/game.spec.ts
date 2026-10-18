@@ -96,6 +96,39 @@ test('decorating can be undone and redone', async ({ page }) => {
   await page.click('#editor-cancel');
 });
 
+test('decorating and a friend close-up keep the zoom the player chose', async ({ page }) => {
+  await open(page);
+  const zoom = page.locator('#zoom-value');
+  await page.click('#zoom-in'); await page.click('#zoom-in');
+  await expect(zoom).toHaveText('132%');
+  await page.click('#edit-mode');
+  await expect(zoom).toHaveText('132%');
+  await page.click('#edit-mode');
+  await page.click('#focus-friend');
+  await expect(zoom).toHaveText('300%');
+  await page.reload(); await expect(page.locator('#loading')).toBeHidden();
+  await expect(zoom).toHaveText('132%');
+  await page.click('#focus-friend'); await page.click('#edit-mode');
+  await expect(zoom).toHaveText('132%');
+});
+
+test('a volume change before the playground is ready is remembered', async ({ page }) => {
+  // Hold the Phaser download back so the playground is still loading while the volume changes.
+  await page.route(/phaserGarden-.*\.js$/, async route => { await new Promise(r => setTimeout(r, 4000)); await route.continue(); });
+  await page.goto('/');
+  await expect(page.locator('#loading')).toBeVisible();
+  // The loading screen covers the map, so this is the keyboard path: events go straight to the controls.
+  await page.locator('#music-button').dispatchEvent('click');
+  await page.locator('#music-volume').evaluate((input: HTMLInputElement) => { input.value = '25'; input.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.locator('#music-mute').dispatchEvent('click');
+  await expect(page.locator('#loading')).toBeVisible();
+  await expect(page.locator('#loading')).toBeHidden({ timeout: 20_000 });
+  await page.unroute(/phaserGarden-.*\.js$/);
+  await page.reload(); await expect(page.locator('#loading')).toBeHidden();
+  await expect(page.locator('#music-volume-value')).toHaveText('25');
+  await expect(page.locator('#music-mute')).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('each region keeps its own layout', async ({ page }) => {
   await open(page);
   await page.click('#edit-mode'); const gardenCount = await placedCount(page); await page.click('#edit-mode');

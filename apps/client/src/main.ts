@@ -21,6 +21,8 @@ let inventoryKey = '';
 const settings = loadSettings(window.localStorage);
 let settingsReady = false;
 function remember(change: Partial<typeof settings>) { if (settingsReady) { Object.assign(settings, change); saveSettings(window.localStorage, settings); } }
+/** Song settings only ever change by the player's hand (or the song itself), so they are kept even before the garden is ready. */
+function rememberMusic(change: Partial<typeof settings>) { Object.assign(settings, change); saveSettings(window.localStorage, settings); }
 // Each region keeps its own layout (persistence.ts). The garden shows the current region's; the others wait here.
 let currentRegion: RegionId = settings.region, regionLayouts: GardenSave['regions'] = {};
 /** The stored save could not be read: automatic saves leave it alone until the player applies, loads or resets on purpose. */
@@ -156,7 +158,7 @@ el('help').onclick = () => el<HTMLDialogElement>('help-dialog').showModal();
 el('close-help').onclick = () => el<HTMLDialogElement>('help-dialog').close();
 el('retry').onclick = () => location.reload();
 try {
-  const callbacks = { select: showSelection, notice, pet, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; remember({ zoom: percent / 100 }); }, error: () => { el('render-error').hidden = false; } };
+  const callbacks = { select: showSelection, notice, pet, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; if (!garden?.focus) remember({ zoom: percent / 100 }); /* a friend close-up is not the player's zoom */ }, error: () => { el('render-error').hidden = false; } };
   // Phaser (about 1.2 MB) is its own chunk, loaded after the page and its controls are up; ?renderer=canvas never loads it.
   const created = usePhaser ? import('./phaserGarden').then(m => new m.PhaserGarden(el('game'), callbacks)) : Promise.resolve(new PixelGarden(el('game'), callbacks));
   created.then(created => {
@@ -196,7 +198,8 @@ try {
   el('use-equipment').onclick = () => garden?.commandUse(selected);
   el('edit-mode').onclick = () => {
     if (!garden) return;
-    if (garden.editor.active) garden.cancelEdit(); else garden.enterEdit();
+    if (garden.editor.active) garden.cancelEdit();
+    else { garden.enterEdit(); garden.zoomBy(settings.zoom / garden.zoom); }  // back from a close-up to the player's zoom
     toastUntil = 0; refresh();
   };
   document.querySelectorAll<HTMLButtonElement>('[data-catalog]').forEach(button => { button.onclick = () => { const error = garden?.beginPlacement(button.dataset.catalog as ItemKind); if (error) notice(error); refresh(); }; });
@@ -361,9 +364,9 @@ function showVolume() {
 }
 el<HTMLInputElement>('music-volume').oninput = e => { audio.volume = Number((e.target as HTMLInputElement).value) / 100; if (audio.muted && audio.volume > 0) audio.muted = false; };
 el('music-mute').onclick = () => { audio.muted = !audio.muted; };
-audio.addEventListener('volumechange', () => { showVolume(); remember({ volume: audio.volume, muted: audio.muted }); });
-audio.addEventListener('timeupdate', () => { if (track && Math.abs(audio.currentTime - savedAt) >= 3) { savedAt = audio.currentTime; remember({ trackTime: audio.currentTime }); } });
-window.addEventListener('pagehide', () => { if (track) remember({ trackTime: audio.currentTime }); });
+audio.addEventListener('volumechange', () => { showVolume(); rememberMusic({ volume: audio.volume, muted: audio.muted }); });
+audio.addEventListener('timeupdate', () => { if (track && Math.abs(audio.currentTime - savedAt) >= 3) { savedAt = audio.currentTime; rememberMusic({ trackTime: audio.currentTime }); } });
+window.addEventListener('pagehide', () => { if (track) rememberMusic({ trackTime: audio.currentTime }); });
 showVolume();
 function showMusic() {
   const playing = !!track && !audio.paused, text = trackLabel(track, playing, TRACKS), title = el('track-title');
@@ -379,15 +382,15 @@ function showMusic() {
 }
 function play(next: Track | null) {
   track = next;
-  if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); remember({ track: null, trackTime: 0, playing: false }); showMusic(); return; }
-  if (next.id !== settings.track) { savedAt = 0; remember({ track: next.id, trackTime: 0 }); }
+  if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); rememberMusic({ track: null, trackTime: 0, playing: false }); showMusic(); return; }
+  if (next.id !== settings.track) { savedAt = 0; rememberMusic({ track: next.id, trackTime: 0 }); }
   if (!audio.src.endsWith(next.src)) audio.src = next.src;
   audio.play().catch(() => notice('노래를 재생하지 못했어요.'));
   showMusic();
 }
 audio.addEventListener('ended', () => play(nextTrack(TRACKS, track?.id ?? null)));
-audio.addEventListener('play', () => { remember({ playing: true }); showMusic(); });
-audio.addEventListener('pause', () => { if (track) remember({ playing: false, trackTime: audio.currentTime }); showMusic(); });
+audio.addEventListener('play', () => { rememberMusic({ playing: true }); showMusic(); });
+audio.addEventListener('pause', () => { if (track) rememberMusic({ playing: false, trackTime: audio.currentTime }); showMusic(); });
 audio.addEventListener('error', () => { if (track) notice(`'${track.title}'을(를) 불러오지 못했어요.`); });
 el('music-stop').onclick = () => play(null);
 showMusic();

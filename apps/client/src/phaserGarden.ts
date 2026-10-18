@@ -113,7 +113,8 @@ export class PhaserGarden {
   setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
   setSeason(id: SeasonId) { this.season = id; }
-  enterEdit() { this.reset(); this.editor.enter(); }
+  /** Decorating starts on the whole map (no friend close-up, centred) at the zoom the player chose. */
+  enterEdit() { this.focus = null; this.pan = { x: 0, y: 0 }; this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }
   restoreLayout(layout: Layout) { this.editor.committed = cloneLayout(layout); this.editor.enter(); return this.applyEdit(); }
