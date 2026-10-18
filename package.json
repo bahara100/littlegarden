@@ -12,10 +12,12 @@
     "check:legacy": "tsc --noEmit -p apps/server",
     "dev:server": "npm run dev -w apps/server",
     "test:legacy": "tsx --test tests/*.test.ts",
-    "test": "tsx --test tests/life/*.test.ts"
+    "test": "tsx --test tests/life/*.test.ts",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@colyseus/sdk": "^0.18.5",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^24.0.0",
     "concurrently": "^9.2.1",
     "tsx": "^4.20.0",
