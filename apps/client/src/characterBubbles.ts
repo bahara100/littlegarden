@@ -6,6 +6,10 @@ export function bubbleContent(a: Avatar, time: number, seat?: 'bench' | 'swing')
   return { value, kind: speaking(a, time) ? 'speech' : 'emote' } as const;
 }
 
+/** Emotions drawn as pixel icons (tools/art/make-emote-icons.py); any other emotion shows as text. */
+export const EMOTE_ICONS: Readonly<Record<string, string>> = { '♡': 'heart', '♪': 'note' };
+const iconUrl = (name: string) => `${import.meta.env.BASE_URL}sprites/ui/emotes/${name}.png`;
+
 /** Shared screen-space overlay: text stays readable at every map zoom in either renderer. */
 export class CharacterBubbles {
   private layer = document.createElement('div');
@@ -33,8 +37,15 @@ export class CharacterBubbles {
     // Hide off-screen speakers rather than pinning their bubbles to the map edge.
     view.hidden = !value || x < 0 || x > this.width || headY < 18 || headY > this.height;
     if (view.hidden) return;
-    if (view.textContent !== value) {
-      view.textContent = value; view.setAttribute('aria-label', `${a.name}: ${value}`);
+    const icon = kind === 'emote' ? EMOTE_ICONS[value] : undefined;
+    if (view.dataset.value !== value) {
+      view.dataset.value = value; view.setAttribute('aria-label', `${a.name}: ${value}`);
+      if (icon) {
+        const img = document.createElement('img');
+        img.className = 'emote-icon'; img.src = iconUrl(icon); img.alt = value; img.draggable = false;
+        view.replaceChildren(img);
+      } else view.textContent = value;
+      if (icon) view.dataset.emote = icon; else delete view.dataset.emote;
     }
     view.dataset.kind = kind;
     const half = view.offsetWidth / 2;

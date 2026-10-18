@@ -58,6 +58,9 @@ h1 > span { color: #b99b67; }
   border-radius: 50%; transform: translateX(-50%); box-shadow: -3px 7px 0 -2px white;
 }
 .character-bubble[data-kind=emote] { min-width: 58px; padding: 10px 19px; font-size: 20px; line-height: 1.35; color: #ad7084; }
+/* Pixel emote icons (16x16 art at 2x, kept sharp). */
+.character-bubble[data-emote] { padding: 9px 17px; line-height: 0; }
+.character-bubble .emote-icon { display: block; width: 32px; height: 32px; image-rendering: pixelated; }
 .viewport-bottom { min-height: 50px; padding: 12px 19px; background: #fffef8; color: #596c50; }
 .viewport-bottom small, .input-hint, .input-hint b { color: #718166; }
 .scene-bar, .music-bar { top: 16px; gap: 7px; }

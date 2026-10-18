@@ -66,7 +66,9 @@ for (const renderer of ['phaser', 'canvas']) {
     await page.click('#wave');
     const bubble = page.locator('.character-bubble[data-friend=character]');
     await expect(bubble).toBeVisible();
-    await expect(bubble).toHaveText('♡');
+    await expect(bubble).toHaveAttribute('data-emote', 'heart');  // ♡ is a pixel icon
+    await expect(bubble.locator('img.emote-icon')).toHaveAttribute('alt', '♡');
+    expect(await bubble.locator('img.emote-icon').evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBe(16);
     await expect(bubble).toHaveAttribute('data-kind', 'emote');
     const width = (await bubble.boundingBox())!.width;
     await wheelZoomIn(page);
