@@ -118,7 +118,7 @@ GitHub의 Verify는 이 게임의 검사·테스트·빌드·화면 테스트를
 
 ## 배포 (GitHub Pages)
 
-저장소: https://github.com/bahara100/nikke-playground · 게임: https://bahara100.github.io/nikke-playground/
+저장소: https://github.com/bahara100/littlegarden · 게임: https://bahara100.github.io/littlegarden/
 
 push마다 `verify.yml`(Verify)이 타입 검사·규칙 테스트·빌드·화면 테스트를 돌리고, main의 Verify가 **통과했을 때만** `.github/workflows/pages.yml`이 배포합니다(Settings → Pages → Source: GitHub Actions). 검사가 늦게 끝난 옛 커밋은 더 새 커밋을 덮어쓰지 않도록 배포를 건너뜁니다. Actions 화면에서 Pages를 직접 실행하면 지금의 main을 다시 배포합니다. 두 작업 모두 `ubuntu-24.04`로 고정했습니다. GitHub CLI(`gh`)로 로그인해 두면 `gh run list`로 최근 검사·배포 결과를, `gh run view <번호> --log-failed`로 실패한 단계의 로그를 볼 수 있습니다.
 

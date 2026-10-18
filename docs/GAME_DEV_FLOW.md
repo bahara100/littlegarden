@@ -96,7 +96,7 @@
 | 편집 원본과 게임용 결과 분리 | ✅ .pxo(레이어 원본) ↔ walk.png |
 | 결과를 스크립트로 다시 만들 수 있게 | ✅ `tools/art/*.py` |
 | 아트 규격을 한 문서에 | 🟡 `docs/art/pixel/CHARACTER_PRODUCTION_WORKFLOW.md` + AGENTS.md에 흩어져 있음 |
-| **버전 관리(git)** | ✅ 2026-10-17 git 시작, GitHub `bahara100/nikke-playground`(Public)에 올림. 그림 버전 폴더(v1~v18)는 이력으로 남아 있음 |
+| **버전 관리(git)** | ✅ 2026-10-17 git 시작, GitHub `bahara100/nikke-playground`(Public)에 올림, 2026-10-18 저장소 이름을 `bahara100/littlegarden`으로 바꿈. 그림 버전 폴더(v1~v18)는 이력으로 남아 있음 |
 | 옛 이력 정리 | 🟡 코드·3D 정리 완료. **public/sprites 등 옛 그림 이력 약 128MB 남음** |
 | 역할 분담 | ✅ 코덱스=AI 초안 생성, Claude=코드·Pixelorama 수정, 사용자=검수·결정 |
 
@@ -117,7 +117,7 @@
 | 보통 하는 일 | 이 프로젝트 |
 | --- | --- |
 | 빌드 | ✅ Vite, `npm run build` |
-| 자동 검사·배포 | ✅ push마다 Verify(게임 검사·테스트·빌드·화면 테스트), main의 Verify가 통과해야 Pages 배포 (https://bahara100.github.io/nikke-playground/). 검사 컴퓨터 ubuntu-24.04 고정. 옛 멀티플레이 검사는 필요할 때 손으로 |
+| 자동 검사·배포 | ✅ push마다 Verify(게임 검사·테스트·빌드·화면 테스트), main의 Verify가 통과해야 Pages 배포 (https://bahara100.github.io/littlegarden/). 검사 컴퓨터 ubuntu-24.04 고정. 옛 멀티플레이 검사는 필요할 때 손으로 |
 | 게임용 파일만 배포 | ✅ 2026-10-18 빌드가 게임 코드·페이지가 가리키는 `sprites/...` 파일만 남김(vite.config.ts gameFilesOnly). 검수 페이지·이력 그림은 개발 서버에서만 (dist 약 130MB → 8MB) |
 | 공개 전 권리 확인 | ❌ **홍련은 원작(니케) 팬 도트.** 공개 배포 전에 원작 팬 창작 가이드라인 확인 필요 |
 
