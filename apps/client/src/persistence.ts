@@ -1,4 +1,4 @@
-import { CATALOG, DEFAULT_LAYOUT, cloneLayout, snapToTiles, type Layout, type PlacedItem } from './layout';
+import { CATALOG, DEFAULT_LAYOUT, HALF, MAX_ITEMS, ZOOM, cloneLayout, snapToTiles, type Layout, type PlacedItem } from './layout';
 import { layoutError } from './editor';
 import { DAY, type AvatarId } from './simulation';
 import { DEFAULT_REGION, REGIONS, isRegionId, type RegionId } from './regions';
@@ -76,12 +76,12 @@ export function decodeGarden(text: string): GardenSave {
 /** One region's placements and storage, checked like an editor would. */
 function decodeLayout(value: unknown): Layout {
   const layout = value as Layout;
-  if (!layout || !Array.isArray(layout.items) || !Array.isArray(layout.stored) || layout.items.length + layout.stored.length > 160) throw new Error('배치 또는 보관함 형식이 올바르지 않아요.');
+  if (!layout || !Array.isArray(layout.items) || !Array.isArray(layout.stored) || layout.items.length + layout.stored.length > MAX_ITEMS) throw new Error('배치 또는 보관함 형식이 올바르지 않아요.');
   const ids = new Set<string>();
   function item(value: unknown): PlacedItem {
     const v = value as PlacedItem;
     if (!v || typeof v.id !== 'string' || !v.id.length || v.id.length > 100 || ['character', 'peach', 'lilac'].includes(v.id) || ids.has(v.id) || !Object.hasOwn(CATALOG, v.kind) ||
-      !Number.isFinite(v.x) || !Number.isFinite(v.z) || Math.abs(v.x) > 8 || Math.abs(v.z) > 8 || !Number.isInteger(v.turn) || v.turn < 0 || v.turn > 3 ||
+      !Number.isFinite(v.x) || !Number.isFinite(v.z) || Math.abs(v.x) > HALF || Math.abs(v.z) > HALF || !Number.isInteger(v.turn) || v.turn < 0 || v.turn > 3 ||
       [v.w, v.d].some(n => n !== undefined && (typeof n !== 'number' || !Number.isFinite(n) || n <= 0 || n > 16))) throw new Error('기구 정보나 고유 번호가 올바르지 않아요.');
     ids.add(v.id);
     return { id: v.id, kind: v.kind, x: v.x, z: v.z, turn: v.turn, ...(v.w === undefined ? {} : { w: v.w }), ...(v.d === undefined ? {} : { d: v.d }) };
@@ -114,7 +114,7 @@ export function loadSettings(storage: SaveStorage): Settings {
   try {
     const v = JSON.parse(storage.getItem(SETTINGS_KEY) ?? '{}') as Partial<Settings>, out = { ...DEFAULT_SETTINGS };
     if (typeof v.grid === 'boolean') out.grid = v.grid;
-    if (typeof v.zoom === 'number' && Number.isFinite(v.zoom)) out.zoom = Math.max(.65, Math.min(5, v.zoom));
+    if (typeof v.zoom === 'number' && Number.isFinite(v.zoom)) out.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, v.zoom));
     if (v.selected === 'character' || v.selected === 'peach' || v.selected === 'lilac') out.selected = v.selected;
     if (typeof v.dayCycle === 'boolean') out.dayCycle = v.dayCycle;
     if (typeof v.fps === 'boolean') out.fps = v.fps;

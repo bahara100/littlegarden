@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { HALF } from '../../apps/client/src/layout.js';
 import assert from 'node:assert/strict';
 import { DEFAULT_LAYOUT, BENCH_SEAT, cloneLayout, footprint, worldFrom, transform, type PlacedItem } from '../../apps/client/src/layout.js';
 import { LayoutEditor, layoutError } from '../../apps/client/src/editor.js';
@@ -61,7 +62,7 @@ test('storage and restoration preserve instance identity without duplicating obj
 test('objects cannot overlap or seal the routes between the hub and seats', () => {
   const e = new LayoutEditor(); e.enter(); e.begin('tree'); e.position(3, -2);
   assert.match(e.error!, /겹쳐/);
-  const barrier: PlacedItem[] = Array.from({ length: 8 }, (_, i) => ({ id: `wall-${i}`, kind: 'fence', x: -7 + i * 2, z: .75, turn: 0 }));
+  const barrier: PlacedItem[] = Array.from({ length: HALF }, (_, i) => ({ id: `wall-${i}`, kind: 'fence', x: -HALF + 1 + i * 2, z: .75, turn: 0 }));
   assert.match(layoutError([...DEFAULT_LAYOUT.items, ...barrier])!, /접근|길/);
 });
 test('applying a changed layout releases riders and their reservations, then uses rotated furniture', () => {

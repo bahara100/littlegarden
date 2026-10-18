@@ -1,4 +1,10 @@
 export type Point = { x: number; z: number };
+/** The garden is GARDEN×GARDEN floor tiles centred on 0 (edges at ±HALF); everything sizes itself from this. */
+export const GARDEN = 24, HALF = GARDEN / 2;
+/** Most decorations a region can hold, placed and stored together. */
+export const MAX_ITEMS = 300;
+/** Map zoom (1 = the whole garden fits): the closest view and a friend close-up keep the size they had on the 16-tile map. */
+export const ZOOM = { min: .65, max: 5 * GARDEN / 16, friend: 3 * GARDEN / 16 } as const;
 export type ItemKind = 'bench' | 'swing' | 'tree' | 'flower' | 'fence' | 'path' | 'pond';
 export interface PlacedItem extends Point { id: string; kind: ItemKind; turn: number; w?: number; d?: number }
 export interface Layout { items: PlacedItem[]; stored: PlacedItem[] }
@@ -50,7 +56,7 @@ export function snapToTiles<T extends PlacedItem>(item: T): T {
 }
 /** The two fixed floor features, on whole tiles: a picnic rug and a garden sign. */
 export const PICNIC = { x: -3, z: 4, w: 2, d: 2 } as const;
-export const SIGN = { x: -.5, z: -6.5, w: .4, d: .4 } as const;
+export const SIGN = { x: -.5, z: -HALF + 1.5, w: .4, d: .4 } as const;
 export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing'; approach: Point; height: number; yaw: number }
 export interface NavigationWorld { rectangles: { x: number; z: number; w: number; d: number }[]; trunks: (Point & { r: number })[]; seats: Seat[] }
 export function worldFrom(items: PlacedItem[]): NavigationWorld {
@@ -77,7 +83,7 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
 }
 /** Same clearance as the simulation's walkable(): foot radius .34 around obstacles, inside the garden. */
 function clear(p: Point, rectangles: NavigationWorld['rectangles'], trunks: NavigationWorld['trunks']) {
-  return Math.abs(p.x) <= 7.25 && Math.abs(p.z) <= 7.25 &&
+  return Math.abs(p.x) <= HALF - .75 && Math.abs(p.z) <= HALF - .75 &&
     !rectangles.some(r => Math.abs(p.x - r.x) < r.w / 2 + .34 && Math.abs(p.z - r.z) < r.d / 2 + .34) &&
     !trunks.some(t => Math.hypot(p.x - t.x, p.z - t.z) < t.r);
 }
@@ -89,22 +95,24 @@ function approachTile(raw: Point, rectangles: NavigationWorld['rectangles'], tru
 }
 export function cloneLayout(layout: Layout): Layout { return { items: layout.items.map(i => ({ ...i })), stored: layout.stored.map(i => ({ ...i })) }; }
 function makeDefault(): Layout {
+  const E = HALF - 1.5;   // the tile row/column just inside the fence line
   const items: PlacedItem[] = [
     // Every footprint fills whole floor tiles (snapToTiles): bench 3×2, swing 3×3, tree 1×1, beds 3×1 / 2×1 / 1×2.
+    // Benches, swing and picnic stay in the middle; trees, beds and fences follow the garden's edges (E = edge tile).
     { id: 'bench', kind: 'bench', x: -3.5, z: -2, turn: 0 }, { id: 'swing', kind: 'swing', x: 3.5, z: -1.5, turn: 0 },
-    ...[[-6.5, -5.5], [6.5, -5.5], [-6.5, 5.5], [6.5, 5.5]].map(([x, z], i) => ({ id: `tree-${i}`, kind: 'tree' as const, x, z, turn: 0 })),
-    { id: 'flower-0', kind: 'flower', x: -4.5, z: -6.5, turn: 0, w: 2.7, d: 1 },
-    { id: 'flower-1', kind: 'flower', x: 4, z: -6.5, turn: 0, w: 2.4, d: 1 },
-    { id: 'flower-2', kind: 'flower', x: -6.5, z: 3, turn: 0, w: 1.3, d: 1.6 },
-    { id: 'flower-3', kind: 'flower', x: 6.5, z: 3, turn: 0, w: 1.4, d: 1.5 },
+    ...[[-E, -E + 1], [E, -E + 1], [-E, E - 1], [E, E - 1]].map(([x, z], i) => ({ id: `tree-${i}`, kind: 'tree' as const, x, z, turn: 0 })),
+    { id: 'flower-0', kind: 'flower', x: -4.5, z: -E, turn: 0, w: 2.7, d: 1 },
+    { id: 'flower-1', kind: 'flower', x: 4, z: -E, turn: 0, w: 2.4, d: 1 },
+    { id: 'flower-2', kind: 'flower', x: -E, z: 3, turn: 0, w: 1.3, d: 1.6 },
+    { id: 'flower-3', kind: 'flower', x: E, z: 3, turn: 0, w: 1.4, d: 1.5 },
   ];
   // Fences run down the middle of the outermost tile row/column.
-  for (let x = -6; x <= 6; x += 2) items.push({ id: `fence-top-${x}`, kind: 'fence', x, z: -7.5, turn: 0 });
-  for (let z = -6; z <= -2; z += 2) items.push({ id: `fence-left-${z}`, kind: 'fence', x: -7.5, z, turn: 1 });
+  for (let x = -HALF + 2; x <= HALF - 2; x += 2) items.push({ id: `fence-top-${x}`, kind: 'fence', x, z: -HALF + .5, turn: 0 });
+  for (let z = -HALF + 2; z <= -2; z += 2) items.push({ id: `fence-left-${z}`, kind: 'fence', x: -HALF + .5, z, turn: 1 });
   const cells = new Set<string>();
   // Path tiles sit exactly on floor tiles: a two-tile band across (z .5, 1.5) and down (x -.5, .5) the garden.
-  for (let x = -7.5; x <= 7.5; x++) for (const z of [.5, 1.5]) cells.add(`${x},${z}`);
-  for (let z = -7.5; z <= 7.5; z++) for (const x of [-.5, .5]) {
+  for (let x = -HALF + .5; x <= HALF - .5; x++) for (const z of [.5, 1.5]) cells.add(`${x},${z}`);
+  for (let z = -HALF + .5; z <= HALF - .5; z++) for (const x of [-.5, .5]) {
     if (z === .5 || z === 1.5) continue;
     cells.add(`${x},${z}`);
   }
@@ -114,12 +122,12 @@ function makeDefault(): Layout {
 export const DEFAULT_LAYOUT = makeDefault();
 export const HUB = { x: -.25, z: 2.75 };
 export function geometryError(items: PlacedItem[]): string | null {
-  if (items.length > 160) return '놀이터에는 최대 160개까지 놓을 수 있어요.';
+  if (items.length > MAX_ITEMS) return `놀이터에는 최대 ${MAX_ITEMS}개까지 놓을 수 있어요.`;
   const ids = new Set<string>();
   for (const item of items) {
     if (!CATALOG[item.kind] || typeof item.id !== 'string' || !item.id || !Number.isFinite(item.x) || !Number.isFinite(item.z) || !Number.isInteger(item.turn) || item.turn < 0 || item.turn > 3 || ids.has(item.id) || (item.w !== undefined && (!Number.isFinite(item.w) || item.w <= 0)) || (item.d !== undefined && (!Number.isFinite(item.d) || item.d <= 0))) return '올바르지 않은 배치 정보예요.';
     ids.add(item.id); const a = footprint(item);
-    if (Math.abs(a.x) + a.w / 2 > 8.001 || Math.abs(a.z) + a.d / 2 > 8.001) return '놀이터 경계 안에 놓아주세요.';
+    if (Math.abs(a.x) + a.w / 2 > HALF + .001 || Math.abs(a.z) + a.d / 2 > HALF + .001) return '놀이터 경계 안에 놓아주세요.';
     if (item.kind === 'path') continue;
     if (Math.abs(a.x - PICNIC.x) < (a.w + PICNIC.w) / 2 - .001 && Math.abs(a.z - PICNIC.z) < (a.d + PICNIC.d) / 2 - .001) return '피크닉 공간은 비워주세요.';
     if (Math.abs(a.x - SIGN.x) < (a.w + SIGN.w) / 2 && Math.abs(a.z - SIGN.z) < (a.d + SIGN.d) / 2) return '안내판과 겹쳐요.';

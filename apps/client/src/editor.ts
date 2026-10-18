@@ -1,4 +1,4 @@
-import { CATALOG, DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, snapToTiles, worldFrom, type Layout, type PlacedItem, type ItemKind } from './layout';
+import { MAX_ITEMS, CATALOG, DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, snapToTiles, worldFrom, type Layout, type PlacedItem, type ItemKind } from './layout';
 import { findPath, walkable } from './simulation';
 export function layoutError(items: PlacedItem[]): string | null {
   const error = geometryError(items); if (error) return error;
@@ -43,7 +43,7 @@ export class LayoutEditor {
   enter() { this.draft = cloneLayout(this.committed); this.selected = null; this.pending = null; this.active = true; this.forget(); }
   cancel() { this.draft = cloneLayout(this.committed); this.pending = null; this.selected = null; this.active = false; this.forget(); }
   begin(kind: ItemKind): string | null {
-    if (this.draft.items.length + this.draft.stored.length >= 160) return '기구와 장식은 보관함을 포함해 최대 160개까지 만들 수 있어요.';
+    if (this.draft.items.length + this.draft.stored.length >= MAX_ITEMS) return `기구와 장식은 보관함을 포함해 최대 ${MAX_ITEMS}개까지 만들 수 있어요.`;
     let id: string; do { id = `placed-${this.sequence++}`; } while ([...this.draft.items, ...this.draft.stored].some(i => i.id === id));
     this.source = 'new'; this.pending = snapToTiles({ id, kind, x: 0, z: 4.5, turn: 0 }); this.positionLocked = false; this.selected = null; return null;
   }

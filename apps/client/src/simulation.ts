@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT, HUB, cloneLayout, footprint, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
+import { DEFAULT_LAYOUT, HALF, HUB, cloneLayout, footprint, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
 export type { Point, Seat } from './layout';
 import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type AffinityLevel, type Moment, type Unlock } from './affinity';
 import { UNLOCKS } from './unlocks';
@@ -15,12 +15,12 @@ export const FRIENDS = [
 const DEFAULT_WORLD = worldFrom(DEFAULT_LAYOUT.items);
 export const SEATS = DEFAULT_WORLD.seats;
 /** Half-tile navigation lattice: floor tiles are 1×1 with centres at k+.5, so odd indices are tile centres, even ones tile edges. */
-const STEP = .5, MIN = -7, N = 29, OFF_CENTRE = 2;
+const STEP = .5, MIN = -(HALF - 1), N = Math.round(2 * (HALF - 1) / STEP) + 1, OFF_CENTRE = 2;
 /** Centre of the floor tile containing p. */
 export function tileCentre(p: Point): Point { return { x: Math.floor(p.x) + .5, z: Math.floor(p.z) + .5 }; }
 /** Foot radius is included here; canopy meshes never block navigation. */
 export function walkable(p: Point, nav: NavigationWorld = DEFAULT_WORLD) {
-  return Number.isFinite(p.x) && Number.isFinite(p.z) && Math.abs(p.x) <= 7.25 && Math.abs(p.z) <= 7.25 &&
+  return Number.isFinite(p.x) && Number.isFinite(p.z) && Math.abs(p.x) <= HALF - .75 && Math.abs(p.z) <= HALF - .75 &&
     !nav.rectangles.some(r => Math.abs(p.x - r.x) < r.w / 2 + .34 && Math.abs(p.z - r.z) < r.d / 2 + .34) &&
     !nav.trunks.some(t => Math.hypot(p.x - t.x, p.z - t.z) < t.r);
 }

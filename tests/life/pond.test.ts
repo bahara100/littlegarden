@@ -14,7 +14,7 @@ test('a pond is a 4x5 decoration that fills whole tiles and cannot be walked on'
   assert.deepEqual([snapped.x, snapped.z], [4, 4.5], 'even width on a tile edge, odd depth on a tile centre');
   assert.deepEqual(footprint({ ...POND, turn: 1 }).w, 5, 'turning it swaps width and depth');
   assert.equal(layoutError(withPond()), null);
-  assert.ok(layoutError([...DEFAULT_LAYOUT.items, { ...POND, x: 5 }]), 'it may not overlap the tree');
+  assert.ok(layoutError([...DEFAULT_LAYOUT.items, { ...POND, x: 10, z: 8.5 }]), 'it may not overlap the tree');
   const sim = new LifeSimulation(() => .5); sim.applyLayout(withPond());
   assert.equal(walkable({ x: 4, z: 4.5 }, sim.world), false);
   const e = new LayoutEditor(); e.enter(); assert.equal(e.begin('pond'), null);

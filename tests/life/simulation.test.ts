@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { HALF } from '../../apps/client/src/layout.js';
 import assert from 'node:assert/strict';
 import { GREET, LifeSimulation, REACTION, findPath, reactionLabel, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
 function advance(sim: LifeSimulation, seconds: number) { for (let t = 0; t < seconds; t += .05) sim.update(.05); }
@@ -9,7 +10,7 @@ test('A* goes around the bench and rejects obstacles/outside/non-finite points',
   assert.ok(path && path.length > 9);
   path.forEach(p => assert.ok(walkable(p)));
   path.slice(1).forEach((p, i) => assert.ok(Math.abs(p.x - path[i].x) + Math.abs(p.z - path[i].z) <= .501));
-  for (const target of [{ x: -3.25, z: -2 }, { x: 100, z: 0 }, { x: NaN, z: 0 }, { x: 6, z: -5.4 }]) assert.equal(findPath({ x: -.25, z: 2.25 }, target), null);
+  for (const target of [{ x: -3.25, z: -2 }, { x: 100, z: 0 }, { x: NaN, z: 0 }, { x: 10, z: -9.4 }]) assert.equal(findPath({ x: -.25, z: 2.25 }, target), null);
   const treePath = findPath({ x: 5.75, z: -4.75 }, { x: 6.25, z: -4.75 });
   assert.ok(treePath && treePath.length > 2, 'walkable endpoints must not cut through a round trunk');
   treePath.slice(1).forEach((p, i) => { for (let f = 0; f <= 1; f += .1) assert.ok(walkable({ x: treePath[i].x + (p.x - treePath[i].x) * f, z: treePath[i].z + (p.z - treePath[i].z) * f })); });
@@ -64,7 +65,7 @@ test('three friends live for ten simulated minutes with consistent reservations 
     sim.update(.1);
     for (const a of sim.avatars.values()) {
       assert.ok(Number.isFinite(a.x) && Number.isFinite(a.z));
-      assert.ok(Math.abs(a.x) <= 7.25 && Math.abs(a.z) <= 7.25);
+      assert.ok(Math.abs(a.x) <= HALF - .75 && Math.abs(a.z) <= HALF - .75);
       if (['walking', 'idle', 'waving'].includes(a.phase)) assert.ok(walkable(a), `${a.name} entered obstacle at ${a.x},${a.z}`);
       if (a.seatId) { assert.equal(sim.reservations.get(a.seatId), a.id); assert.ok(SEATS.some(s => s.id === a.seatId)); }
       if (a.phase === 'seated' || a.phase === 'swinging') visited.get(a.id)!.add(a.phase);

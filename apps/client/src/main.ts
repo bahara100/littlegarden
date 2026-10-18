@@ -308,7 +308,7 @@ function enterRegion(id: RegionId) {
 function showRegion(id: RegionId) {
   const r = region(id);
   garden?.setRegion(r.id); remember({ region: r.id });
-  setText('region-label', r.label); setText('region-number', r.number);
+  setText('region-label', r.name); setText('region-number', r.number);
   el('region-button').title = `${r.name} · 다른 지역 고르기`;
   el('viewport').style.background = seasonGround(r.ground, settings.season).background;
   el('region-list').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.region === r.id)));

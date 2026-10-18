@@ -1,5 +1,5 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -118,7 +118,7 @@ export class PixelGarden {
     this.canvas.height = Math.max(160, Math.round(this.host.clientHeight / 2));
     this.ctx.imageSmoothingEnabled = false;
   }
-  private get unit() { return Math.min(this.canvas.width / 35, this.canvas.height / 24) * this.zoom; }
+  private get unit() { return Math.min(this.canvas.width / (2 * GARDEN + 3), this.canvas.height / (GARDEN * 1.5)) * this.zoom; }
   private get origin() {
     const a = this.focus && this.life.avatars.get(this.focus);
     const p = a ? project(a, this.unit) : { x: 0, y: 0 };
@@ -138,10 +138,10 @@ export class PixelGarden {
   }
   private drawGround(items: PlacedItem[]) {
     const c = this.ctx, g = this.groundTheme;
-    const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => this.screen(p));
+    const corners = [{ x: -HALF, z: -HALF }, { x: HALF, z: -HALF }, { x: HALF, z: HALF }, { x: -HALF, z: HALF }].map(p => this.screen(p));
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const)
       this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, g.edgeLine);
-    for (let x = -7.5; x < 8; x++) for (let z = -7.5; z < 8; z++) {
+    for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
       this.tile({ x, z }, 1, 1, g.tiles[hash], this.grid || this.editor.active ? g.grid : undefined);
       if (hash === 2) { const p = this.screen({ x, z }); c.fillStyle = g.speck; c.fillRect(p.x, p.y - 1, 1, 2); c.fillRect(p.x + 2, p.y, 2, 1); }
@@ -334,9 +334,9 @@ export class PixelGarden {
   leaveSeat() { this.life.leave(this.selectedAvatar); }
   resume() { this.life.resume(this.selectedAvatar); this.callbacks.notice('자유롭게 놀도록 했어요.'); }
   wave() { const error = this.life.wave(this.selectedAvatar); this.callbacks.notice(error ?? '반가워요! ♡'); }
-  zoomBy(factor: number) { this.zoom = Math.max(.65, Math.min(5, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
+  zoomBy(factor: number) { this.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
-  focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
+  focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = ZOOM.friend; this.callbacks.zoom(Math.round(ZOOM.friend * 100)); }
   setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
   setSeason(id: SeasonId) { this.season = id; }

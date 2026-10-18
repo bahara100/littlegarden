@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { MAX_ITEMS } from '../../apps/client/src/layout.js';
 import assert from 'node:assert/strict';
 import { DEFAULT_LAYOUT, cloneLayout, type Layout } from '../../apps/client/src/layout.js';
 import { LayoutEditor } from '../../apps/client/src/editor.js';
@@ -43,7 +44,7 @@ test('malformed, future-version, oversized and unsafe backups are rejected', () 
   reject(d => { garden(d).items[0].w = -1; });
   reject(d => { garden(d).stored.push(garden(d).items[0]); });
   reject(d => { garden(d).items[1].x = garden(d).items[0].x; garden(d).items[1].z = garden(d).items[0].z; });
-  reject(d => { garden(d).stored = Array.from({ length: 161 }, (_, n) => ({ ...garden(d).items[0], id: `stored-${n}` })); });
+  reject(d => { garden(d).stored = Array.from({ length: MAX_ITEMS + 1 }, (_, n) => ({ ...garden(d).items[0], id: `stored-${n}` })); });
   reject(d => { d.regions.moon = garden(d); });
   reject(d => { d.world.clock = 1.5; });
   reject(d => { d.friends.petted = { lilac: 'yesterday' }; });
@@ -57,10 +58,10 @@ test('storage failures are reported without replacing recoverable source data', 
 test('saves from before tile alignment load onto whole tiles', () => {
   const old = cloneLayout(DEFAULT_LAYOUT);
   Object.assign(old.items.find(i => i.id === 'bench')!, { x: -3.25, z: -2 });
-  Object.assign(old.items.find(i => i.id === 'tree-0')!, { x: -6.2, z: -5.3 });
+  Object.assign(old.items.find(i => i.id === 'tree-0')!, { x: -10.2, z: -9.3 });
   const loaded = decodeSave(encode(old));
   assert.deepEqual(loaded.items.find(i => i.id === 'bench'), { id: 'bench', kind: 'bench', x: -3.5, z: -2, turn: 0 });
-  assert.deepEqual(loaded.items.find(i => i.id === 'tree-0'), { id: 'tree-0', kind: 'tree', x: -6.5, z: -5.5, turn: 0 });
+  assert.deepEqual(loaded.items.find(i => i.id === 'tree-0'), { id: 'tree-0', kind: 'tree', x: -10.5, z: -9.5, turn: 0 });
 });
 test('older saves upgrade step by step: v1 and v2 layouts become the garden region', () => {
   const v1 = JSON.stringify({ app: 'little-garden', version: 1, savedAt: '2026-10-17T00:00:00Z', layout: cloneLayout(DEFAULT_LAYOUT) });

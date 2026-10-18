@@ -31,7 +31,7 @@ test('the playground opens with no errors or missing files', async ({ page }) =>
   const problems = await open(page);
   await expect(page).toHaveTitle(/작은 쉼표/);
   for (const id of ['#region-button', '#season-button', '#music-button', '#track-title', '#day-clock']) await expect(page.locator(id)).toBeVisible();
-  await expect(page.locator('#region-label')).toHaveText('LITTLE GARDEN');
+  await expect(page.locator('#region-label')).toHaveText('작은 공원');
   // No zoom buttons and no message box on the map; messages go to an invisible status area for screen readers.
   await expect(page.locator('.view-controls')).toHaveCount(0);
   await expect(page.locator('.scene-hint')).toHaveCount(0);
@@ -71,12 +71,13 @@ for (const renderer of ['phaser', 'canvas']) {
     expect(await bubble.locator('img.emote-icon').evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBe(16);
     await expect(bubble).toHaveAttribute('data-kind', 'emote');
     // At the starting zoom the icon is its 16 px art at 1x; zooming in grows it in whole steps with the friends.
-    const icon = bubble.locator('img.emote-icon'), iconWidth = async () => (await icon.boundingBox())!.width;
+    // (A friend close-up keeps the friend in view on the big map; the icon then grows to 2x or 3x.)
+    const icon = bubble.locator('img.emote-icon'), iconWidth = async () => (await icon.boundingBox())?.width ?? 0;
     expect(await iconWidth()).toBe(16);
-    await page.mouse.move(...await (async () => { const b = (await page.locator('#game').boundingBox())!; return [b.x + b.width / 2, b.y + b.height / 2] as [number, number]; })());
-    await page.mouse.wheel(0, -600);
+    await page.click('#focus-friend');
     await expect(bubble).toBeVisible();
-    await expect.poll(iconWidth).toBe(32);
+    await expect.poll(iconWidth).toBeGreaterThan(16);
+    expect(await iconWidth() % 16).toBe(0);
     await page.click('#edit-mode');
     await expect(bubble).toBeHidden();
     expect(problems).toEqual([]);
@@ -90,7 +91,7 @@ test('regions and seasons are picked from the map label and remembered', async (
   await page.keyboard.press('Escape');
   await expect(page.locator('#region-menu')).toBeHidden();
   await page.click('#region-button'); await page.click('[data-region=onsen]');
-  await expect(page.locator('#region-label')).toHaveText('HOT SPRING');
+  await expect(page.locator('#region-label')).toHaveText('온천 마을');
   await expect(page.locator('[data-region=onsen]')).toHaveAttribute('aria-checked', 'true');
   await page.click('#season-button');
   for (const id of ['spring', 'summer', 'autumn', 'winter']) {  // each season shows its pixel icon
@@ -102,7 +103,7 @@ test('regions and seasons are picked from the map label and remembered', async (
   await expect(page.locator('#season-label')).toHaveText('겨울');
   await expect(page.locator('#season-icon img')).toHaveAttribute('src', /winter\.png$/);
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
-  await expect(page.locator('#region-label')).toHaveText('HOT SPRING');
+  await expect(page.locator('#region-label')).toHaveText('온천 마을');
   await expect(page.locator('#season-label')).toHaveText('겨울');
 });
 
@@ -160,7 +161,7 @@ test('decorating and a friend close-up keep the zoom the player chose', async ({
   expect(await zoomPercent(page)).toBe(chosen);
   await page.click('#edit-mode');
   await page.click('#focus-friend');
-  expect(await zoomPercent(page)).toBe(300);
+  expect(await zoomPercent(page)).toBe(450);
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   await expect.poll(() => zoomPercent(page)).toBe(chosen);
   await page.click('#focus-friend'); await page.click('#edit-mode');

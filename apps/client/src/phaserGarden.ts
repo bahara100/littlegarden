@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -17,6 +17,8 @@ type Callbacks = { select(id: Selection): void; zoom(value: number): void; error
 /** Two taps on the same friend within this many ms pat them. */
 const DOUBLE_TAP_MS = 400;
 
+/** Screen room the whole garden needs, in ground units across and down (a 2:1 diamond plus a little margin). */
+export const FIT = { w: 2 * GARDEN + 3, h: GARDEN * 1.5 } as const;
 /** Logical pixels per ground unit. The camera scales this to the viewport, nearest-neighbour. */
 const U = 18;
 const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 };
@@ -34,7 +36,7 @@ const SWING_RIG = {
 const SWING = { max: 18 * Math.PI / 180, period: 2.4, poses: 16, pad: 24 } as const;
 type SwingCell = keyof typeof SWING_RIG;
 type SwingView = { hang: Phaser.GameObjects.Image; bar: Phaser.GameObjects.Image; near: Phaser.GameObjects.Image };
-const FLOOR = { w: 32 * U + 4, h: 16 * U + 16, ox: 16 * U + 2, oy: 8 * U + 2 };
+const FLOOR = { w: 2 * GARDEN * U + 4, h: GARDEN * U + 16, ox: GARDEN * U + 2, oy: GARDEN / 2 * U + 2 };
 const iso = (p: Point) => project(p, U);
 const propIndex = (item: PlacedItem) => { const odd = item.turn % 2; return item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd; };
 
@@ -117,9 +119,9 @@ export class PhaserGarden {
   leaveSeat() { this.life.leave(this.selectedAvatar); }
   resume() { this.life.resume(this.selectedAvatar); this.callbacks.notice('자유롭게 놀도록 했어요.'); }
   wave() { const error = this.life.wave(this.selectedAvatar); this.callbacks.notice(error ?? '반가워요! ♡'); }
-  zoomBy(factor: number) { this.zoom = Math.max(.65, Math.min(5, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
+  zoomBy(factor: number) { this.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
-  focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
+  focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = ZOOM.friend; this.callbacks.zoom(Math.round(ZOOM.friend * 100)); }
   setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
   setSeason(id: SeasonId) { this.season = id; }
@@ -285,11 +287,11 @@ class GardenScene extends Phaser.Scene {
     const key = JSON.stringify([this.g.region, this.g.season, lines, items.map(i => [i.kind, i.x, i.z, i.turn])]), g = this.g.groundTheme;
     if (key === this.floorKey) return; this.floorKey = key;
     const c = this.floor.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
-    const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
+    const corners = [{ x: -HALF, z: -HALF }, { x: HALF, z: -HALF }, { x: HALF, z: HALF }, { x: -HALF, z: HALF }].map(p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const) {
       c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.lineTo(b.x, b.y + 9); c.lineTo(a.x, a.y + 9); c.closePath(); c.fillStyle = color; c.fill(); c.strokeStyle = g.edgeLine; c.lineWidth = 1; c.stroke();
     }
-    for (let x = -7.5; x < 8; x++) for (let z = -7.5; z < 8; z++) {
+    for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
       diamond(c, { x, z }, 1, 1, g.tiles[hash], lines ? g.grid : undefined);
       if (hash === 2) { const p = iso({ x, z }), px = Math.round(p.x + FLOOR.ox), py = Math.round(p.y + FLOOR.oy); c.fillStyle = g.speck; c.fillRect(px, py - 1, 1, 2); c.fillRect(px + 2, py, 2, 1); }
@@ -431,7 +433,7 @@ class GardenScene extends Phaser.Scene {
   private camera() {
     const cam = this.cameras.main, { width, height } = this.scale;
     cam.setBackgroundColor(this.g.groundTheme.background);
-    cam.setZoom(Math.min(width / 35, height / 24) / U * this.g.zoom);
+    cam.setZoom(Math.min(width / FIT.w, height / FIT.h) / U * this.g.zoom);
     const a = this.g.focus && this.g.life.avatars.get(this.g.focus), t = a ? iso(a) : { x: 0, y: 0 };
     cam.centerOn(t.x - this.g.pan.x / cam.zoom, t.y - (this.g.pan.y + height * .06) / cam.zoom);
   }
