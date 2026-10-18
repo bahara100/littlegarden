@@ -12,6 +12,10 @@
   - 제목 아래 "햇살 좋은 오후, …"
 - 고칠 곳: `index.html`의 `.garden-panel`, `.brand-sub`, `.page-heading`. 지역·계절마다 쓸 글을 `regions.ts`·`seasons.ts`에 넣습니다.
 
+### 검수용 그림까지 배포에 들어감
+- 지금: 게임 코드가 `sprites/garden/` 아래 파일 이름을 조립해서 쓰기 때문에, 배포 필터가 그 폴더 전체를 남깁니다. 그래서 게임이 쓰지 않는 검수용 `base-walk-v1`·`v3`·`v4`·`v5`도 함께 올라갑니다(약 0.5MB, 새 버전이 생길 때마다 늘어남).
+- 고칠 곳: `friendBodyArt.ts`의 경로를 실제로 쓰는 버전 폴더(`sprites/garden/base-walk-v2/`)까지 코드에 적히게 하거나, `vite.config.ts`의 gameFilesOnly에 남길 목록을 더 정확히 줍니다.
+
 ## 기능을 더 살리는 것
 
 ### 친밀도 해금 내용 채우기
