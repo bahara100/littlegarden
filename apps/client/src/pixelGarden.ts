@@ -6,6 +6,7 @@ import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
+import { DEFAULT_REGION, region, type RegionId } from './regions';
 
 export type Selection = AvatarId | EquipmentId;
 type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
@@ -34,6 +35,8 @@ export class PixelGarden {
   zoom = 1;
   private pan = { x: 0, y: 0 };
   private grid = false;
+  /** Which region's ground colours are drawn (regions.ts). */
+  region: RegionId = DEFAULT_REGION;
   private frame = 0;
   private last = performance.now();
   private disposed = false;
@@ -124,18 +127,18 @@ export class PixelGarden {
     this.polygon(points, color, line);
   }
   private drawGround(items: PlacedItem[]) {
-    const c = this.ctx;
+    const c = this.ctx, g = region(this.region).ground;
     const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => this.screen(p));
-    for (const [a, b, color] of [[corners[1], corners[2], '#81966d'], [corners[2], corners[3], '#9cac7c']] as const)
-      this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, '#718666');
+    for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const)
+      this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, g.edgeLine);
     for (let x = -7.5; x < 8; x++) for (let z = -7.5; z < 8; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      this.tile({ x, z }, 1, 1, ['#bdcf98', '#b8ca92', '#b5c88c', '#c2d29d', '#bbce94'][hash], this.grid || this.editor.active ? '#91ab7a' : undefined);
-      if (hash === 2) { const p = this.screen({ x, z }); c.fillStyle = '#8fae77'; c.fillRect(p.x, p.y - 1, 1, 2); c.fillRect(p.x + 2, p.y, 2, 1); }
+      this.tile({ x, z }, 1, 1, g.tiles[hash], this.grid || this.editor.active ? g.grid : undefined);
+      if (hash === 2) { const p = this.screen({ x, z }); c.fillStyle = g.speck; c.fillRect(p.x, p.y - 1, 1, 2); c.fillRect(p.x + 2, p.y, 2, 1); }
     }
     for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); this.tile(item, f.w, f.d, '#e0d1ac', '#c6b88f');
-      const p = this.screen(item); c.fillStyle = '#eee3c7'; c.fillRect(p.x - 2, p.y - 1, 3, 1);
+      const f = footprint(item); this.tile(item, f.w, f.d, g.path[0], g.path[1]);
+      const p = this.screen(item); c.fillStyle = g.path[2]; c.fillRect(p.x - 2, p.y - 1, 3, 1);
     }
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
     this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
@@ -224,7 +227,7 @@ export class PixelGarden {
         const a = this.life.avatars.get(before.id)!;
         this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');
       }
-      const c = this.ctx; c.fillStyle = '#eae9de'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
+      const c = this.ctx; c.fillStyle = region(this.region).ground.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);
       const layers = items.filter(i => i.kind !== 'path').map(i => ({ depth: depth(i), draw: () => this.drawItem(i) }));
@@ -321,6 +324,7 @@ export class PixelGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
+  setRegion(id: RegionId) { this.region = id; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }

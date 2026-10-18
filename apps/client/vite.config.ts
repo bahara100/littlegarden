@@ -5,9 +5,9 @@ import { join, relative, sep } from 'node:path';
 
 /**
  * public/ also holds art review pages and old sprite versions for the dev server. The built game keeps only what it
- * uses: Vite's own output plus every public file under a `sprites/...` path that the built code or pages mention
+ * uses: Vite's own output plus every public file under a `sprites/...` or `music/...` path that the built code or pages mention
  * (e.g. 'sprites/scarlet/ingame-approved-v1', or `sprites/garden/${file}.png` for the whole sprites/garden/ folder).
- * New art is deployed as soon as the game references it; nothing has to be listed by hand.
+ * New art and songs (music.ts) are deployed as soon as the game references them; nothing has to be listed by hand.
  */
 function gameFilesOnly(): Plugin {
   let outDir = '';
@@ -25,7 +25,7 @@ function gameFilesOnly(): Plugin {
       const prefixes = new Set<string>();
       for (const file of files) {
         if (!emitted.has(file) || !/\.(js|html|css)$/.test(file)) continue;
-        for (const match of readFileSync(join(outDir, file), 'utf8').matchAll(/sprites\/[\w./-]*/g)) prefixes.add(match[0]);
+        for (const match of readFileSync(join(outDir, file), 'utf8').matchAll(/(?:sprites|music)\/[\w./-]*/g)) prefixes.add(match[0]);
       }
       const used = (file: string) => emitted.has(file) || [...prefixes].some(p => file === p || file.startsWith(p.endsWith('/') ? p : `${p}/`));
       let removed = 0;

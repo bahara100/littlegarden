@@ -8,6 +8,7 @@ import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCyc
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
+import { DEFAULT_REGION, region, type RegionId } from './regions';
 
 type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
 /** Two taps on the same friend within this many ms pat them. */
@@ -78,6 +79,8 @@ export class PhaserGarden {
   zoom = 1;
   pan = { x: 0, y: 0 };
   grid = false;
+  /** Which region's ground colours are drawn (regions.ts). */
+  region: RegionId = DEFAULT_REGION;
   focus: AvatarId | null = null;
   private game: Phaser.Game;
 
@@ -104,6 +107,7 @@ export class PhaserGarden {
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = 3; this.callbacks.zoom(300); }
   setGrid(show: boolean) { this.grid = show; }
+  setRegion(id: RegionId) { this.region = id; }
   enterEdit() { this.reset(); this.editor.enter(); }
   cancelEdit() { this.editor.cancel(); this.select(this.selectedAvatar); }
   applyEdit() { const error = this.editor.apply(); if (error) return error; this.life.applyLayout(this.editor.committed.items); this.select(this.selectedAvatar); return null; }
@@ -263,21 +267,21 @@ class GardenScene extends Phaser.Scene {
   /** Floor and paths, redrawn only when they change. */
   private drawFloor(items: PlacedItem[]) {
     const lines = this.g.grid || this.g.editor.active;
-    const key = JSON.stringify([lines, items.map(i => [i.kind, i.x, i.z, i.turn])]);
+    const key = JSON.stringify([this.g.region, lines, items.map(i => [i.kind, i.x, i.z, i.turn])]), g = region(this.g.region).ground;
     if (key === this.floorKey) return; this.floorKey = key;
     const c = this.floor.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
     const corners = [{ x: -8, z: -8 }, { x: 8, z: -8 }, { x: 8, z: 8 }, { x: -8, z: 8 }].map(p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
-    for (const [a, b, color] of [[corners[1], corners[2], '#81966d'], [corners[2], corners[3], '#9cac7c']] as const) {
-      c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.lineTo(b.x, b.y + 9); c.lineTo(a.x, a.y + 9); c.closePath(); c.fillStyle = color; c.fill(); c.strokeStyle = '#718666'; c.lineWidth = 1; c.stroke();
+    for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const) {
+      c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.lineTo(b.x, b.y + 9); c.lineTo(a.x, a.y + 9); c.closePath(); c.fillStyle = color; c.fill(); c.strokeStyle = g.edgeLine; c.lineWidth = 1; c.stroke();
     }
     for (let x = -7.5; x < 8; x++) for (let z = -7.5; z < 8; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      diamond(c, { x, z }, 1, 1, ['#bdcf98', '#b8ca92', '#b5c88c', '#c2d29d', '#bbce94'][hash], lines ? '#91ab7a' : undefined);
-      if (hash === 2) { const p = iso({ x, z }), px = Math.round(p.x + FLOOR.ox), py = Math.round(p.y + FLOOR.oy); c.fillStyle = '#8fae77'; c.fillRect(px, py - 1, 1, 2); c.fillRect(px + 2, py, 2, 1); }
+      diamond(c, { x, z }, 1, 1, g.tiles[hash], lines ? g.grid : undefined);
+      if (hash === 2) { const p = iso({ x, z }), px = Math.round(p.x + FLOOR.ox), py = Math.round(p.y + FLOOR.oy); c.fillStyle = g.speck; c.fillRect(px, py - 1, 1, 2); c.fillRect(px + 2, py, 2, 1); }
     }
     for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); diamond(c, item, f.w, f.d, '#e0d1ac', '#c6b88f');
-      const p = iso(item); c.fillStyle = '#eee3c7'; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
+      const f = footprint(item); diamond(c, item, f.w, f.d, g.path[0], g.path[1]);
+      const p = iso(item); c.fillStyle = g.path[2]; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
     }
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
     diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
@@ -404,6 +408,7 @@ class GardenScene extends Phaser.Scene {
   }
   private camera() {
     const cam = this.cameras.main, { width, height } = this.scale;
+    cam.setBackgroundColor(region(this.g.region).ground.background);
     cam.setZoom(Math.min(width / 35, height / 24) / U * this.g.zoom);
     const a = this.g.focus && this.g.life.avatars.get(this.g.focus), t = a ? iso(a) : { x: 0, y: 0 };
     cam.centerOn(t.x - this.g.pan.x / cam.zoom, t.y - (this.g.pan.y + height * .06) / cam.zoom);

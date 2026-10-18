@@ -62,8 +62,8 @@ test('version-1 saves upgrade to the current format; affinity and settings round
   assert.deepEqual(loadGarden(storage)!.affinity, { character: 3, peach: 0, lilac: 12 });
   assert.throws(() => decodeGarden(JSON.stringify({ ...JSON.parse(encodeSave(DEFAULT_LAYOUT)), friends: { affinity: { peach: -1 } } })));
   assert.deepEqual(loadSettings(storage), DEFAULT_SETTINGS);
-  saveSettings(storage, { grid: true, zoom: 9, selected: 'lilac', dayCycle: false, fps: true });
-  assert.deepEqual(loadSettings(storage), { grid: true, zoom: 5, selected: 'lilac', dayCycle: false, fps: true });
+  saveSettings(storage, { grid: true, zoom: 9, selected: 'lilac', dayCycle: false, fps: true, region: 'onsen' });
+  assert.deepEqual(loadSettings(storage), { grid: true, zoom: 5, selected: 'lilac', dayCycle: false, fps: true, region: 'onsen' });
   storage.setItem(SETTINGS_KEY, JSON.stringify({ zoom: 9, selected: 'nobody', grid: 'yes' }));
   assert.deepEqual(loadSettings(storage), { ...DEFAULT_SETTINGS, zoom: 5 });
 });

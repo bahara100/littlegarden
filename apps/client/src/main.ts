@@ -5,6 +5,8 @@ import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPar
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
 import { loadGarden, saveLayout, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type Affinity } from './persistence';
 import { SCARLET_SD } from './scarletApproved';
+import { REGIONS, region, type RegionId } from './regions';
+import { TRACKS, nextTrack, trackLabel, type Track } from './music';
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 function setText(id: string, value: string) { const node = el(id); if (node.textContent !== value) node.textContent = value; }
 // Phaser is the default renderer; ?renderer=canvas keeps the Canvas renderer.
@@ -144,6 +146,7 @@ try {
     el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
     el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
     el<HTMLInputElement>('fps-toggle').checked = settings.fps; showFps(settings.fps);
+    showRegion(settings.region);
     garden.zoomBy(settings.zoom / garden.zoom); garden.select(settings.selected);
     settingsReady = true;
     el('loading').hidden = true; refresh();
@@ -225,6 +228,66 @@ function countFrame(now: number) {
   requestAnimationFrame(countFrame);
 }
 requestAnimationFrame(countFrame);
+// Map label menus: the region picker and the song list. One open at a time; outside click or Esc closes.
+const MENUS = [['region-button', 'region-menu'], ['music-button', 'music-menu']] as const;
+function openMenu(menu: string | null) {
+  for (const [button, id] of MENUS) { const open = id === menu; el(id).hidden = !open; el(button).setAttribute('aria-expanded', String(open)); }
+}
+for (const [button, id] of MENUS) el(button).onclick = () => { openMenu(el(id).hidden ? id : null); if (!el(id).hidden) el(id).querySelector<HTMLButtonElement>('[aria-checked="true"], button')?.focus(); };
+document.addEventListener('pointerdown', e => { if (!(e.target instanceof Element && e.target.closest('.scene-menu'))) openMenu(null); });
+window.addEventListener('keydown', e => {
+  const open = MENUS.find(([, id]) => !el(id).hidden);
+  if (open && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); openMenu(null); el(open[0]).focus(); }
+}, true);
+/** Whether a Korean word ends in a final consonant (for 은/는, 으로/로). */
+const batchim = (word: string) => { const c = word.charCodeAt(word.length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 !== 0; };
+// Regions (regions.ts): the label names the current one; regions without their own art yet only change the ground colours.
+function showRegion(id: RegionId) {
+  const r = region(id);
+  garden?.setRegion(r.id); remember({ region: r.id });
+  setText('region-label', r.label); setText('region-number', r.number);
+  el('region-button').title = `${r.name} · 다른 지역 고르기`;
+  el('viewport').style.background = r.ground.background;
+  el('region-list').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.region === r.id)));
+}
+el('region-list').replaceChildren(...REGIONS.map(r => {
+  const b = document.createElement('button');
+  b.setAttribute('role', 'menuitemradio'); b.dataset.region = r.id; b.setAttribute('aria-checked', String(r.id === settings.region));
+  b.innerHTML = `<i style="background:${r.ground.tiles[0]}"></i><span><strong></strong><small></small></span>${r.ready ? '' : '<em>준비 중</em>'}`;
+  b.querySelector('strong')!.textContent = `${r.number} · ${r.name}`; b.querySelector('small')!.textContent = r.note;
+  b.onclick = () => {
+    showRegion(r.id); openMenu(null); el('region-button').focus();
+    notice(r.ready ? `${r.name}${batchim(r.name) ? '으로' : '로'} 왔어요.` : `${r.name}${batchim(r.name) ? '은' : '는'} 그림을 준비 중이에요. 지금은 바닥 색만 바뀌어요.`);
+  };
+  return b;
+}));
+// Songs (music.ts): the title scrolls right to left beside the label; the list picks one to play, then the next follows.
+const audio = new Audio();
+let track: Track | null = null;
+function showMusic() {
+  const playing = !!track && !audio.paused, text = trackLabel(track, playing, TRACKS), title = el('track-title');
+  if (title.textContent !== text) { title.textContent = text; title.style.animationDuration = `${Math.max(9, text.length * .45)}s`; }
+  el('music-list').replaceChildren(...(TRACKS.length ? TRACKS.map(t => {
+    const b = document.createElement('button');
+    b.setAttribute('role', 'menuitemradio'); b.setAttribute('aria-checked', String(t.id === track?.id));
+    b.textContent = `${t.id === track?.id && playing ? '♪' : '▷'} ${t.title}${t.artist ? ` — ${t.artist}` : ''}`;
+    b.onclick = () => { if (t.id === track?.id && playing) audio.pause(); else play(t); };
+    return b;
+  }) : [Object.assign(document.createElement('p'), { className: 'pop-empty', textContent: '아직 노래가 없어요. 곧 추가할게요.' })]));
+  el<HTMLButtonElement>('music-stop').disabled = !track;
+}
+function play(next: Track | null) {
+  track = next;
+  if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); showMusic(); return; }
+  if (!audio.src.endsWith(next.src)) audio.src = next.src;
+  audio.play().catch(() => notice('노래를 재생하지 못했어요.'));
+  showMusic();
+}
+audio.addEventListener('ended', () => play(nextTrack(TRACKS, track?.id ?? null)));
+audio.addEventListener('play', showMusic); audio.addEventListener('pause', showMusic);
+audio.addEventListener('error', () => { if (track) notice(`'${track.title}'을(를) 불러오지 못했어요.`); });
+el('music-stop').onclick = () => play(null);
+showMusic();
 const editKeys = (event: KeyboardEvent) => {
   if (!garden?.editor.active || ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName ?? '')) return;
   const key = event.key.toLowerCase(), command = event.ctrlKey || event.metaKey;
@@ -236,7 +299,7 @@ const editKeys = (event: KeyboardEvent) => {
   refresh();
 };
 document.addEventListener('keydown', editKeys);
-if (import.meta.hot) import.meta.hot.dispose(() => { clearInterval(refreshTimer); document.removeEventListener('keydown', editKeys); garden?.dispose(); });
+if (import.meta.hot) import.meta.hot.dispose(() => { clearInterval(refreshTimer); audio.pause(); document.removeEventListener('keydown', editKeys); garden?.dispose(); });
 
 
 

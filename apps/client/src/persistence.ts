@@ -1,6 +1,7 @@
 import { CATALOG, cloneLayout, snapToTiles, type Layout, type PlacedItem } from './layout';
 import { layoutError } from './editor';
 import type { AvatarId } from './simulation';
+import { DEFAULT_REGION, isRegionId, type RegionId } from './regions';
 
 export const SAVE_KEY = 'little-garden.layout.v1';
 export const MAX_SAVE_BYTES = 200_000;
@@ -67,8 +68,8 @@ export function saveLayout(storage: SaveStorage, layout: Layout, affinity?: Affi
 
 /** View settings remembered per browser (not part of the garden backup). */
 export const SETTINGS_KEY = 'little-garden.settings.v1';
-export interface Settings { grid: boolean; zoom: number; selected: AvatarId; dayCycle: boolean; fps: boolean }
-export const DEFAULT_SETTINGS: Settings = { grid: false, zoom: 1, selected: 'character', dayCycle: true, fps: false };
+export interface Settings { grid: boolean; zoom: number; selected: AvatarId; dayCycle: boolean; fps: boolean; region: RegionId }
+export const DEFAULT_SETTINGS: Settings = { grid: false, zoom: 1, selected: 'character', dayCycle: true, fps: false, region: DEFAULT_REGION };
 export function loadSettings(storage: SaveStorage): Settings {
   try {
     const v = JSON.parse(storage.getItem(SETTINGS_KEY) ?? '{}') as Partial<Settings>, out = { ...DEFAULT_SETTINGS };
@@ -77,6 +78,7 @@ export function loadSettings(storage: SaveStorage): Settings {
     if (v.selected === 'character' || v.selected === 'peach' || v.selected === 'lilac') out.selected = v.selected;
     if (typeof v.dayCycle === 'boolean') out.dayCycle = v.dayCycle;
     if (typeof v.fps === 'boolean') out.fps = v.fps;
+    if (isRegionId(v.region)) out.region = v.region;
     return out;
   } catch { return { ...DEFAULT_SETTINGS }; }
 }
