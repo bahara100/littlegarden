@@ -345,7 +345,7 @@ function showSeason(id: SeasonId) {
 el('season-list').replaceChildren(...SEASONS.map(s => {
   const b = document.createElement('button');
   b.setAttribute('role', 'menuitemradio'); b.dataset.season = s.id; b.setAttribute('aria-checked', String(s.id === settings.season));
-  b.innerHTML = `<i style="background:${seasonGround(REGIONS[0].ground, s.id).tiles[0]}"></i><span><strong></strong><small></small></span>`;
+  b.innerHTML = '<span><strong></strong><small></small></span>';  // the pixel icon in the name is the season's mark
   b.querySelector('strong')!.replaceChildren(seasonArt(s.id), ` ${s.name}`); b.querySelector('small')!.textContent = s.note;
   b.onclick = () => { showSeason(s.id); openMenu(null); el('season-button').focus(); notice(`${s.name}${batchim(s.name) ? '이' : '가'} 왔어요. ${s.note}.`); };
   return b;
