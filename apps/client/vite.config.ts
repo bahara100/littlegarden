@@ -42,4 +42,4 @@ function gameFilesOnly(): Plugin {
   };
 }
 
-export default defineConfig({ base: './', plugins: [gameFilesOnly()], build: { rollupOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)) } } } });
+export default defineConfig({ base: './', plugins: [gameFilesOnly()], build: { chunkSizeWarningLimit: 1500 /* the Phaser chunk is ~1.4 MB and loads after the page */, rollupOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)) } } } });

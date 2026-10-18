@@ -1,5 +1,7 @@
 name: Verify
 on: [push, pull_request, workflow_dispatch]
+# Checks the game only. The preserved multiplayer code (apps/server, tests/*.test.ts) is checked by hand when
+# needed: npm run check:legacy, npm run build -w apps/server, npm run test:legacy.
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -13,6 +15,3 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
-      - run: npm run check:legacy
-      - run: npm run build -w apps/server
-      - run: npm run test:legacy

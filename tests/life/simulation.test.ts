@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LifeSimulation, findPath, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
+import { LifeSimulation, REACTION, findPath, reactionLabel, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
 function advance(sim: LifeSimulation, seconds: number) { for (let t = 0; t < seconds; t += .05) sim.update(.05); }
 function until(sim: LifeSimulation, fn: () => boolean, seconds = 40) { for (let t = 0; t < seconds && !fn(); t += .05) sim.update(.05); assert.ok(fn(), 'expected state not reached'); }
 function seeded() { let n = 12345; return () => { n = n * 16807 % 2147483647; return n / 2147483647; }; }
@@ -80,4 +80,29 @@ test('passing friends do not deadlock and repeated resume does not leak reservat
   advance(sim, 3); assert.ok(sim.avatars.get('character')!.x > 1.5); assert.ok(sim.avatars.get('lilac')!.x < .5);
   for (let i = 0; i < 10; i++) { sim.resume('peach'); sim.use('peach', 'bench'); sim.resume('peach'); }
   assert.ok([...sim.reservations.values()].every(id => id !== 'peach'));
+});
+test('free friends who meet stop, face each other and greet; orders are never interrupted', () => {
+  const sim = new LifeSimulation(() => 0), a = sim.avatars.get('peach')!, b = sim.avatars.get('lilac')!, c = sim.avatars.get('character')!;
+  for (const x of sim.avatars.values()) { x.until = Infinity; x.phase = 'idle'; }
+  Object.assign(a, { x: 0.5, z: 6.5 }); Object.assign(b, { x: 1.5, z: 6.5 }); Object.assign(c, { x: 5.5, z: -3.5 });
+  sim.update(.05);
+  assert.equal(a.phase, 'greeting'); assert.equal(b.phase, 'greeting'); assert.equal(a.partner, 'lilac');
+  assert.ok(Math.abs(Math.sin(a.yaw) - 1) < 1e-9, 'Momo turns toward Lulu (+x)'); assert.ok(Math.abs(Math.sin(b.yaw) + 1) < 1e-9);
+  assert.equal(reactionLabel(a, sim.time), '♡');
+  for (let t = 0; t < REACTION.duration + .2; t += .05) sim.update(.05);
+  assert.equal(a.phase, 'idle'); assert.equal(a.partner, null);
+  // A friend walking on an order passes by without stopping.
+  const d = new LifeSimulation(() => 0), p = d.avatars.get('peach')!, q = d.avatars.get('lilac')!;
+  for (const x of d.avatars.values()) { x.until = Infinity; x.phase = 'idle'; }
+  Object.assign(p, { x: -1.5, z: 6.5 }); Object.assign(q, { x: 0.5, z: 5.5 }); Object.assign(d.avatars.get('character')!, { x: 5.5, z: -3.5 });
+  assert.equal(d.moveTo('peach', { x: 3.5, z: 6.5 }), null);
+  for (let t = 0; t < 2; t += .05) { d.update(.05); assert.notEqual(p.phase, 'greeting'); }
+});
+test('a friend often picks the free bench seat beside a sitting friend', () => {
+  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  assert.equal(sim.use('peach', 'bench'), null);
+  lulu.lastEquipment = 'bench';  // her usual next pick would be the swing
+  lulu.until = 0; sim.update(.05);
+  assert.equal(lulu.seatId?.startsWith('bench'), true, 'Lulu joins Momo on the bench');
+  assert.notEqual(lulu.seatId, momo.seatId);
 });

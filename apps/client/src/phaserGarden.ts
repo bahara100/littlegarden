@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
-import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
+import { LifeSimulation, reactionLabel, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
@@ -392,7 +392,7 @@ class GardenScene extends Phaser.Scene {
       view.sprite.setTexture(friendTexture(a.id, moving ? 'walk' : 'idle', source), moving ? this.friendCycles[a.id].frame : undefined)
         .setFlipX(flipX).setOrigin(.5, FRIEND_BODY.originY).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     }
-    view.label.setText(a.phase === 'waving' ? '♡' : seated ? seat?.kind === 'swing' ? '♪' : '···' : '')
+    view.label.setText(reactionLabel(a, this.g.life.time) || (seated ? seat?.kind === 'swing' ? '♪' : '···' : ''))
       .setPosition(x, base - view.sprite.displayHeight * view.sprite.originY - 3).setDepth(z + .02);
     if (a.id === this.g.selectedAvatar) this.ring.setPosition(x, p.y + swing.ground).setDepth(z - .005);
   }

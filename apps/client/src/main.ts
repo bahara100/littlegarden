@@ -1,6 +1,6 @@
 import './style.css';
 import { PixelGarden, type Selection } from './pixelGarden';
-import { PhaserGarden } from './phaserGarden';
+import type { PhaserGarden } from './phaserGarden';
 import { FRIENDS, activityLabel, type AvatarId } from './simulation';
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
 import { loadLayout, saveLayout, encodeSave, decodeSave, MAX_SAVE_BYTES } from './persistence';
@@ -105,12 +105,16 @@ el('close-help').onclick = () => el<HTMLDialogElement>('help-dialog').close();
 el('retry').onclick = () => location.reload();
 try {
   const callbacks = { select: showSelection, notice, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; }, error: () => { el('render-error').hidden = false; } };
-  garden = usePhaser ? new PhaserGarden(el('game'), callbacks) : new PixelGarden(el('game'), callbacks);
-  try {
-    const saved = loadLayout(window.localStorage);
-    if (saved) { garden.restoreLayout(saved); setText('save-status', '저장된 놀이터를 복원했어요.'); }
-  } catch { setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
-  el('loading').hidden = true; refresh();
+  // Phaser (about 1.2 MB) is its own chunk, loaded after the page and its controls are up; ?renderer=canvas never loads it.
+  const created = usePhaser ? import('./phaserGarden').then(m => new m.PhaserGarden(el('game'), callbacks)) : Promise.resolve(new PixelGarden(el('game'), callbacks));
+  created.then(created => {
+    garden = created;
+    try {
+      const saved = loadLayout(window.localStorage);
+      if (saved) { garden.restoreLayout(saved); setText('save-status', '저장된 놀이터를 복원했어요.'); }
+    } catch { setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
+    el('loading').hidden = true; refresh();
+  }, () => { el('render-error').hidden = false; });
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
   el('zoom-in').onclick = () => garden?.zoomBy(1.15); el('zoom-out').onclick = () => garden?.zoomBy(1 / 1.15); el('reset-view').onclick = () => garden?.reset();
   el<HTMLInputElement>('grid-toggle').onchange = e => garden?.setGrid((e.target as HTMLInputElement).checked);

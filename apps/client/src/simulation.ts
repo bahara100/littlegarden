@@ -3,7 +3,7 @@ export type { Point, Seat } from './layout';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
-export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving';
+export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting';
 export const FRIENDS = [
   { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.5, z: 2.5 } },
   { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.5, z: 2.5 } },
@@ -83,6 +83,8 @@ export function findPath(start: Point, destination: Point, nav: NavigationWorld 
 export interface Avatar extends Point {
   id: AvatarId; name: string; phase: Phase; yaw: number; path: Point[]; seatId: string | null;
   progress: number; until: number; deadline: number; directed: boolean; lastEquipment: EquipmentId | null;
+  /** While greeting: the friend being greeted and when it started. */
+  partner: AvatarId | null; since: number;
 }
 export class LifeSimulation {
   time = 0;
@@ -92,7 +94,7 @@ export class LifeSimulation {
   readonly avatars = new Map<AvatarId, Avatar>();
   readonly reservations = new Map<string, AvatarId>();
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, partner: null, since: 0 }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -144,10 +146,25 @@ export class LifeSimulation {
   }
   private choose(a: Avatar) {
     a.directed = false;
+    // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
+    if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
+      const beside = this.seats.find(s => s.kind === 'bench' && !this.reservations.has(s.id) &&
+        this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id) && this.reservations.get(o.id) !== a.id));
+      if (beside && !this.use(a.id, beside.equipment, false)) return;
+    }
     const preferred: EquipmentId = a.lastEquipment === 'bench' ? 'swing' : a.lastEquipment === 'swing' ? 'bench' : a.id === 'lilac' ? 'swing' : 'bench';
     if (a.lastEquipment === null || this.random() < .7) {
       const options = [...new Set(this.seats.filter(s => s.kind === preferred).map(s => s.equipment))];
       for (const id of options) if (!this.use(a.id, id, false)) return;
+    }
+    // Walk along: head for a tile beside where a strolling friend is going.
+    const strolling = [...this.avatars.values()].filter(o => o.id !== a.id && o.phase === 'walking' && !o.seatId && o.path.length);
+    if (strolling.length && this.random() < REACTION.walkAlong) {
+      const goal = strolling[Math.floor(this.random() * strolling.length)].path.at(-1)!;
+      for (const [dx, dz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+        const path = findPath(a, { x: goal.x + dx, z: goal.z + dz }, this.world);
+        if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return; }
+      }
     }
     for (let i = 0; i < 20; i++) {
       const target = world(1 + 2 * Math.floor(this.random() * (N - 1) / 2), 1 + 2 * Math.floor(this.random() * (N - 1) / 2));
@@ -156,11 +173,30 @@ export class LifeSimulation {
     }
     a.until = this.time + 2;
   }
+  /** Friends meeting: two free friends (not on a seat, not following an order) who come close stop, turn to each
+   * other and greet. Each pair rolls once per meeting and then waits a while before greeting again. */
+  private react() {
+    const free = [...this.avatars.values()].filter(a => (a.phase === 'idle' || a.phase === 'walking') && !a.directed && !a.seatId);
+    for (let i = 0; i < free.length; i++) for (let j = i + 1; j < free.length; j++) {
+      const a = free[i], b = free[j], key = [a.id, b.id].sort().join('+'), d = Math.hypot(a.x - b.x, a.z - b.z);
+      if (d > REACTION.leave) { this.met.delete(key); continue; }
+      if (d > REACTION.meet || this.met.has(key) || this.time < (this.greetedUntil.get(key) ?? 0)) continue;
+      this.met.add(key);
+      if (this.random() >= REACTION.greet) continue;
+      this.greetedUntil.set(key, this.time + REACTION.cooldown);
+      for (const [p, q] of [[a, b], [b, a]] as const) {
+        p.phase = 'greeting'; p.path = []; p.partner = q.id; p.since = this.time; p.until = this.time + REACTION.duration;
+        p.yaw = Math.atan2(q.x - p.x, q.z - p.z);
+      }
+    }
+  }
+  private readonly met = new Set<string>();
+  private readonly greetedUntil = new Map<string, number>();
   update(seconds: number) {
     const dt = Math.min(.1, Math.max(0, seconds)); this.time += dt;
     for (const a of this.avatars.values()) {
-      if (a.phase === 'idle' || a.phase === 'waving') {
-        if (this.time >= a.until) { if (a.phase === 'waving') this.settle(a, 1.5); else this.choose(a); }
+      if (a.phase === 'idle' || a.phase === 'waving' || a.phase === 'greeting') {
+        if (this.time >= a.until) { if (a.phase === 'idle') this.choose(a); else { a.partner = null; this.settle(a, 1.5); } }
       } else if (a.phase === 'walking') {
         if (this.time > a.deadline) { this.settle(a, 1); continue; }
         let remaining = dt * (this.walkSpeeds[a.id] ?? 1.45);
@@ -185,6 +221,7 @@ export class LifeSimulation {
         else if (a.phase === 'leaving' && a.progress === 0) this.settle(a, 2.5);
       } else if (this.time >= a.until) this.beginExit(a);
     }
+    this.react();
     // Gentle separation, not hard collision: friends can pass instead of deadlocking.
     const friends = [...this.avatars.values()];
     for (let i = 0; i < friends.length; i++) for (let j = i + 1; j < friends.length; j++) {
@@ -203,7 +240,21 @@ export class LifeSimulation {
   }
 }
 export function activityLabel(a: Avatar) {
-  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중' };
+  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중' };
   return labels[a.phase];
 }
-
+/** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
+export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, duration: 3.2, sitTogether: .5, walkAlong: .3 } as const;
+/**
+ * The symbol over a friend's head while waving or greeting ('' otherwise; seats add their own). A greeting starts with
+ * a heart, then the pair take turns chatting (···) and humming (♪). When drawn greeting/waving art exists, the
+ * renderers can play it for these phases instead.
+ */
+export function reactionLabel(a: Avatar, time: number) {
+  if (a.phase === 'waving') return '♡';
+  if (a.phase !== 'greeting') return '';
+  const t = time - a.since;
+  if (t < 1) return '♡';
+  const turn = Math.floor((t - 1) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
+  return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
+}

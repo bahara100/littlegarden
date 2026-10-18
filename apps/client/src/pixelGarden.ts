@@ -1,6 +1,6 @@
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
-import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
+import { LifeSimulation, reactionLabel, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
@@ -203,9 +203,10 @@ export class PixelGarden {
       rect(-5, -26, 4, 3, peach ? '#f9d68f' : '#e6d8a3'); c.restore();
     }
     this.hits.push({ id: a.id, x: p.x - size * .28, y: base - size * .8, w: size * .56, h: size * .8 });
-    if (seated || a.phase === 'waving') {
+    const label = reactionLabel(a, this.life.time) || (seated ? seat?.kind === 'swing' ? '♪' : '···' : '');
+    if (label) {
       c.font = '8px sans-serif'; c.textAlign = 'center'; c.fillStyle = '#65556f';
-      c.fillText(a.phase === 'waving' ? '♡' : seat?.kind === 'swing' ? '♪' : '···', p.x, y - 3);
+      c.fillText(label, p.x, y - 3);
     }
   }
   private animate = () => {
