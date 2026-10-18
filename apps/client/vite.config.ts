@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import { fileURLToPath } from 'node:url';
-import { readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { join, relative, sep } from 'node:path';
 
 /**
@@ -8,6 +9,8 @@ import { join, relative, sep } from 'node:path';
  * uses: Vite's own output plus every public file under a `sprites/...` or `music/...` path that the built code or pages mention
  * (e.g. 'sprites/scarlet/ingame-approved-v1', or `sprites/garden/${file}.png` for the whole sprites/garden/ folder).
  * New art and songs (music.ts) are deployed as soon as the game references them; nothing has to be listed by hand.
+ * The kept PNGs are then recompressed losslessly with oxipng when it is installed (same pixels, smaller files); the
+ * art in public/ and docs/ is never touched, so approved sheets stay byte-identical to their records.
  */
 function gameFilesOnly(): Plugin {
   let outDir = '';
@@ -38,8 +41,25 @@ function gameFilesOnly(): Plugin {
       };
       prune(outDir);
       this.info?.(`kept ${files.length - removed} files, left out ${removed} review/history files`);
+      const pngs = files.filter(f => used(f) && f.endsWith('.png')).map(f => join(outDir, f));
+      const oxipng = findOxipng();
+      if (!oxipng) { this.info?.('oxipng not found: PNGs left as they are (install with `winget install Shssoichiro.Oxipng`)'); return; }
+      const before = pngs.reduce((n, f) => n + statSync(f).size, 0);
+      const run = spawnSync(oxipng, ['-o', '4', '--strip', 'safe', '-q', ...pngs], { stdio: 'inherit' });
+      if (run.status !== 0) throw new Error(`oxipng failed (exit ${run.status})`);
+      const after = pngs.reduce((n, f) => n + statSync(f).size, 0);
+      this.info?.(`oxipng: ${pngs.length} PNGs ${(before / 1e6).toFixed(2)} MB → ${(after / 1e6).toFixed(2)} MB`);
     },
   };
+}
+
+/** oxipng from OXIPNG, PATH, or winget's links folder (a shell opened before installing has the old PATH). */
+function findOxipng(): string | null {
+  if (process.env.OXIPNG) return process.env.OXIPNG;
+  const exe = process.platform === 'win32' ? 'oxipng.exe' : 'oxipng';
+  for (const dir of (process.env.PATH ?? '').split(process.platform === 'win32' ? ';' : ':')) if (dir && existsSync(join(dir, exe))) return join(dir, exe);
+  const links = join(process.env.LOCALAPPDATA ?? '', 'Microsoft', 'WinGet', 'Links', 'oxipng.exe');
+  return process.platform === 'win32' && existsSync(links) ? links : null;
 }
 
 export default defineConfig({ base: './', plugins: [gameFilesOnly()], build: { chunkSizeWarningLimit: 1500 /* the Phaser chunk is ~1.4 MB and loads after the page */, rollupOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)) } } } });

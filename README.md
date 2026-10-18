@@ -124,13 +124,18 @@ push마다 `verify.yml`(Verify)이 타입 검사·규칙 테스트·빌드·화�
 현재 상태와 주의:
 
 - 저장소는 Public입니다. 코드와 그림이 모두 공개됩니다.
-- 빌드(`npm run build`)는 게임용 파일만 남깁니다. `apps/client/public`의 검수 페이지와 예전 그림 이력은 개발 서버에서만 보이고, 빌드된 코드·페이지가 가리키는 `sprites/...` 경로의 파일만 배포됩니다(`apps/client/vite.config.ts`의 gameFilesOnly). 새 그림은 게임 코드가 가리키면 자동으로 함께 배포됩니다. 결과는 약 8MB입니다.
+- 빌드(`npm run build`)는 게임용 파일만 남깁니다. `apps/client/public`의 검수 페이지와 예전 그림 이력은 개발 서버에서만 보이고, 빌드된 코드·페이지가 가리키는 `sprites/...` 경로의 파일만 배포됩니다(`apps/client/vite.config.ts`의 gameFilesOnly). 새 그림은 게임 코드가 가리키면 자동으로 함께 배포됩니다. 남은 PNG는 oxipng로 화질 손실 없이 다시 압축합니다(픽셀은 그대로, 6.07MB → 5.31MB). `public/`·`docs/`의 원본 그림은 건드리지 않아서 승인본과 바이트가 같은 기록은 그대로 유지됩니다. oxipng가 없으면(`winget install Shssoichiro.Oxipng`) 압축만 건너뜁니다. 결과는 약 7.3MB입니다.
 - 홍련은 원작 캐릭터의 팬 도트입니다. 공개 배포 전에 원작의 팬 창작 가이드라인을 확인하세요.
+
+## 도구
+
+- Python 3.13(`py` 명령, `winget install Python.Python.3.13`)과 Pillow·numpy·imageio를 씁니다: `py -m pip install pillow numpy imageio`. `tools/` 스크립트는 `py <스크립트>`로 실행합니다. 예전 3D 도우미 `tools/art/color-hunyuan-head.py`와 `tools/art/pydeps/`(3.10용)는 3D 작업을 지운 뒤 쓰지 않습니다.
+- ffmpeg(노래 변환), oxipng(배포 PNG 압축), gh(검사·배포 확인), Playwright(화면 테스트).
 
 ## 노래 넣기
 
 1. ffmpeg를 준비합니다(`winget install Gyan.FFmpeg`).
-2. `python tools/audio/prepare-track.py <원본 파일> <영문 id> "<제목>" ["<가수>"]`를 실행합니다. 앞뒤 무음을 자르고 음량을 고르게(-16 LUFS) 맞춘 128kbps MP3를 `apps/client/public/music/<id>.mp3`로 만들고, 길이·크기와 함께 `music.ts`에 붙일 한 줄을 보여 줍니다. 원본 파일은 바꾸지 않습니다.
+2. `py tools/audio/prepare-track.py <원본 파일> <영문 id> "<제목>" ["<가수>"]`를 실행합니다. 앞뒤 무음을 자르고 음량을 고르게(-16 LUFS) 맞춘 128kbps MP3를 `apps/client/public/music/<id>.mp3`로 만들고, 길이·크기와 함께 `music.ts`에 붙일 한 줄을 보여 줍니다. 원본 파일은 바꾸지 않습니다.
 3. 그 줄을 `apps/client/src/music.ts`의 `TRACKS`에 넣습니다. 빌드는 코드에 적힌 `music/...` 파일만 배포합니다.
 
 ## 아트 제작
