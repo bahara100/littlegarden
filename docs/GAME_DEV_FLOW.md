@@ -117,7 +117,7 @@
 | 보통 하는 일 | 이 프로젝트 |
 | --- | --- |
 | 빌드 | ✅ Vite, `npm run build` |
-| 자동 검사·배포 | ✅ push마다 Verify(게임 검사·테스트·빌드만), main push 시 Pages 배포 (https://bahara100.github.io/nikke-playground/). 옛 멀티플레이 검사는 필요할 때 손으로 |
+| 자동 검사·배포 | ✅ push마다 Verify(게임 검사·테스트·빌드·화면 테스트), main의 Verify가 통과해야 Pages 배포 (https://bahara100.github.io/nikke-playground/). 검사 컴퓨터 ubuntu-24.04 고정. 옛 멀티플레이 검사는 필요할 때 손으로 |
 | 게임용 파일만 배포 | ✅ 2026-10-18 빌드가 게임 코드·페이지가 가리키는 `sprites/...` 파일만 남김(vite.config.ts gameFilesOnly). 검수 페이지·이력 그림은 개발 서버에서만 (dist 약 130MB → 8MB) |
 | 공개 전 권리 확인 | ❌ **홍련은 원작(니케) 팬 도트.** 공개 배포 전에 원작 팬 창작 가이드라인 확인 필요 |
 
