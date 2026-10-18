@@ -35,3 +35,16 @@ test('twins always stop to greet each other; other friends only when the roll al
   place(othersSim, 'character', 'peach');
   assert.equal(othersSim.avatars.get('character')!.phase, 'idle');
 });
+test("the twins' chosen lines: a greeting line only for the other twin", () => {
+  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  for (const f of sim.avatars.values()) Object.assign(f, { x: 9.5, z: 9.5, until: 1e9 });
+  Object.assign(momo, { x: .5, z: 4.5 }); Object.assign(lulu, { x: 1.5, z: 4.5 });
+  sim.update(.05);
+  assert.equal(momo.speech, '루루, 언니 따라와~'); assert.equal(lulu.speech, '언니, 같이 가!');
+  const other = new LifeSimulation(() => 0), scarlet = other.avatars.get('character')!, momo2 = other.avatars.get('peach')!;
+  for (const f of other.avatars.values()) Object.assign(f, { x: 9.5, z: 9.5, until: 1e9 });
+  Object.assign(scarlet, { x: .5, z: 4.5 }); Object.assign(momo2, { x: 1.5, z: 4.5 });
+  other.update(.05);
+  assert.equal(momo2.phase, 'greeting'); assert.equal(momo2.speech, '', 'Momo greets Scarlet without the twin line');
+  assert.equal(other.pet('peach', '2026-10-18')?.gained, true); assert.equal(momo2.speech, '헤헤, 오늘도 산책 가자!');
+});

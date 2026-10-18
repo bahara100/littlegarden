@@ -127,8 +127,9 @@ export class LifeSimulation {
   /** A moment came for a friend: an unlocked line and/or emotion for it may show. Returns whether anything did. */
   moment(a: Avatar, when: Moment): boolean {
     const points = this.affinity[a.id];
-    const line = pickForMoment(this.unlocks, 'line', a.id, points, when, this.random);
-    const emote = pickForMoment(this.unlocks, 'emote', a.id, points, when, this.random);
+    const partner = when === 'greet' ? a.partner : null;
+    const line = pickForMoment(this.unlocks, 'line', a.id, points, when, this.random, partner);
+    const emote = pickForMoment(this.unlocks, 'emote', a.id, points, when, this.random, partner);
     if (line) { a.speech = line.text; a.speechUntil = this.time + SPEECH.base + [...line.text].length * SPEECH.perChar; this.spoken.push({ id: a.id, text: line.text }); }
     if (emote) { a.emote = emote.emote; a.emoteUntil = this.time + (emote.seconds ?? 2); }
     return !!(line || emote);

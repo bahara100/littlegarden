@@ -38,6 +38,8 @@ interface UnlockBase {
   friend?: AvatarId;
   /** Chance (0..1) each time the moment comes; defaults: idle .1, actions .15, everything else 1. */
   chance?: number;
+  /** For 'greet': only when greeting this friend (e.g. a twin calling the other). */
+  with?: AvatarId;
 }
 /** Something said in a speech bubble over the head (keep it short: up to 20 characters). */
 export interface LineUnlock extends UnlockBase { kind: 'line'; when: Moment; text: string }
@@ -62,8 +64,8 @@ const defaultChance = (u: Unlock) => u.chance ?? (u.kind === 'action' ? .15 : u.
  * Picks one unlocked line or emotion for a moment: candidates that pass their chance roll, one of them at random.
  * Lines and emotions are picked separately, so a moment can show both.
  */
-export function pickForMoment<K extends 'line' | 'emote'>(list: readonly Unlock[], kind: K, friend: AvatarId, points: number, when: Moment, random: () => number): Extract<Unlock, { kind: K }> | null {
-  const ready = list.filter((u): u is Extract<Unlock, { kind: K }> => u.kind === kind && (u as LineUnlock | EmoteUnlock).when === when && forFriend(u, friend, points) && random() < defaultChance(u));
+export function pickForMoment<K extends 'line' | 'emote'>(list: readonly Unlock[], kind: K, friend: AvatarId, points: number, when: Moment, random: () => number, partner?: AvatarId | null): Extract<Unlock, { kind: K }> | null {
+  const ready = list.filter((u): u is Extract<Unlock, { kind: K }> => u.kind === kind && (u as LineUnlock | EmoteUnlock).when === when && forFriend(u, friend, points) && (!u.with || u.with === partner) && random() < defaultChance(u));
   return ready.length ? ready[Math.floor(random() * ready.length)] : null;
 }
 /** Unlocked actions that pass their chance roll this time, in a random order. */
@@ -78,6 +80,7 @@ export function unlockErrors(list: readonly Unlock[], actions: readonly string[]
     const where = `#${i + 1} (${u.kind})`;
     if (!Number.isInteger(u.at) || u.at < 0 || u.at > AFFINITY_MAX) errors.push(`${where}: at must be 0..${AFFINITY_MAX}`);
     if (u.friend && !friends.includes(u.friend)) errors.push(`${where}: unknown friend ${u.friend}`);
+    if (u.with && (!friends.includes(u.with) || u.with === u.friend || u.kind === 'action' || u.when !== 'greet')) errors.push(`${where}: with needs a greet line/emotion and another known friend`);
     if (u.chance !== undefined && !(u.chance > 0 && u.chance <= 1)) errors.push(`${where}: chance must be in (0, 1]`);
     if (u.kind !== 'action' && !(u.when in MOMENTS)) errors.push(`${where}: unknown moment ${u.when}`);
     if (u.kind === 'line' && (!u.text.trim() || [...u.text].length > LINE_MAX)) errors.push(`${where}: line must be 1..${LINE_MAX} characters`);

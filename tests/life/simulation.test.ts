@@ -84,6 +84,7 @@ test('passing friends do not deadlock and repeated resume does not leak reservat
 });
 test('free friends who meet stop, face each other and greet; orders are never interrupted', () => {
   const sim = new LifeSimulation(() => 0), a = sim.avatars.get('peach')!, b = sim.avatars.get('lilac')!, c = sim.avatars.get('character')!;
+  sim.unlocks = [];  // the twins' greeting lines would cover the ! → 👋 → chat bubbles checked here
   for (const x of sim.avatars.values()) { x.until = Infinity; x.phase = 'idle'; }
   Object.assign(a, { x: 0.5, z: 6.5 }); Object.assign(b, { x: 1.5, z: 6.5 }); Object.assign(c, { x: 5.5, z: -3.5 });
   sim.update(.05);

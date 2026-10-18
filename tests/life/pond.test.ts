@@ -22,6 +22,7 @@ test('a pond is a 4x5 decoration that fills whole tiles and cannot be walked on'
 
 test('tapping a pond sends the friend to the shore, where they stand facing the water', () => {
   const sim = new LifeSimulation(() => .5); sim.applyLayout(withPond());
+  sim.unlocks = [];  // no lines over the fish here (Lulu has a line for watching)
   const lulu = sim.avatars.get('lilac')!;
   for (const a of sim.avatars.values()) a.until = 1e9;
   assert.equal(sim.moveTo('lilac', { x: 4.2, z: 5 }), null);
