@@ -1,0 +1,8520 @@
+{
+  "title": "웃음꽃 피는 나들이",
+  "bpm": 112,
+  "key": "G major",
+  "meter": "4/4",
+  "bars": 48,
+  "form": "Intro 4 / A-clarinet 8 / A-piano 8 / B 8 / A-piano 8 / A-clarinet 8 / coda 4",
+  "brief": "뛰노는 아이들, 웃으며 나들이를 즐기는 화목한 가족",
+  "instruments": [
+    {
+      "name": "Piano - skipping and smiling",
+      "program": 0,
+      "drums": false,
+      "notes": 171
+    },
+    {
+      "name": "Clarinet - playful answers",
+      "program": 71,
+      "drums": false,
+      "notes": 124
+    },
+    {
+      "name": "Nylon guitar - sunny picnic",
+      "program": 24,
+      "drums": false,
+      "notes": 381
+    },
+    {
+      "name": "Acoustic bass - light bounce",
+      "program": 32,
+      "drums": false,
+      "notes": 95
+    },
+    {
+      "name": "Soft shaker and cross-stick",
+      "program": 0,
+      "drums": true,
+      "notes": 440
+    }
+  ],
+  "notes": [
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 0,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 2,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 0.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 1.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 1.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 1.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 2.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 3.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 3.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 3.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 0.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 0.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 4,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 6,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 4.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 5.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 5.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 5.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 6.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 7.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 7.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 7.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 8,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 10,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 8.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 9.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 9.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 9.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 10.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 11.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 11.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 11.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 8.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 8.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 12,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 14,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 12.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 13.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 13.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 13.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 14.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 15.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 15.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 15.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 16,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 18,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 16.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 17.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 17.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 17.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 18.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 19.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 19.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 19.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 16.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 16.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 17.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 17.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 18.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 18.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 19.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 19.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 17,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 19,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 16,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 16.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 16.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 20,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 22,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 20.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 21.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 21.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 21.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 22.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 23.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 23.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 23.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 20.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 20.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 21.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 21.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 22.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 22.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 23.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 23.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 21,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 23,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 20,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 24,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 26,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 24.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 25.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 25.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 25.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 26.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 27.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 27.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 27.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 24.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 24.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 25.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 25.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 26.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 26.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 27.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 27.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 25,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 27,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 24,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 24.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 24.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 28,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 30,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 28.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 29.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 29.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 29.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 30.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 31.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 31.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 31.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 28.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 28.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 29.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 29.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 30.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 30.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 31.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 31.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 29,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 31,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 28,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 32,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 34,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 32.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 33.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 33.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 33.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 34.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 35.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 35.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 35.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 32.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 32.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 33.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 33.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 34.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 34.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 35.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 35.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 33,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 35,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 32,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 32.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 32.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 36,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 38,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 36.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 37.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 37.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 37.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 38.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 39.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 39.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 39.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 36.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 36.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 37.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 37.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 38.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 38.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 39.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 39.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 37,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 39,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 36,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 40,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 42,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 40.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 41.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 41.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 41.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 42.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 43.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 43.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 43.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 40.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 40.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 41.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 41.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 42.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 42.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 43.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 43.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 41,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 43,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 40,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 40.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 40.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 44,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 46,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 44.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 45.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 45.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 45.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 46.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 47.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 47.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 47.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 44.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 44.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 45.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 45.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 46.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 46.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 47.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 47.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 45,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 47,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 44,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 48,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 50,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 48.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 49.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 49.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 49.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 50.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 51.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 51.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 51.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 48.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 48.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 49.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 49.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 50.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 50.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 51.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 51.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 49,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 51,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 48,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 48.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 48.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 52,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 54,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 52.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 53.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 53.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 53.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 54.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 55.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 55.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 55.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 52.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 52.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 53.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 53.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 54.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 54.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 55.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 55.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 53,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 55,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 52,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 56,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 58,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 56.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 57.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 57.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 57.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 58.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 59.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 59.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 59.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 56.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 56.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 57.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 57.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 58.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 58.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 59.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 59.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 57,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 59,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 56,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 56.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 56.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 60,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 62,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 60.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 61.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 61.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 61.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 62.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 63.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 63.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 63.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 60.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 60.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 61.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 61.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 62.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 62.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 63.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 63.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 61,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 63,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 60,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 64,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 66,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 64.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 65.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 65.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 65.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 66.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 67.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 67.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 67.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 64.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 64.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 65.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 65.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 66.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 66.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 67.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 67.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 65,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 67,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 64,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 64.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 64.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 68,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 70,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 68.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 69.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 69.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 69.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 70.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 71.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 71.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 71.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 68.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 68.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 69.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 69.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 70.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 70.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 71.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 71.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 69,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 71,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 68,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 72,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 74,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 72.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 73.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 73.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 73.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 74.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 75.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 75.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 75.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 72.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 72.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 73.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 73.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 74.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 74.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 75.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 75.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 73,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 75,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 72,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 72.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 72.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 76,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 78,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 76.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 77.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 77.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 77.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 78.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 79.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 79.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 79.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 76.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 76.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 77.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 77.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 78.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 78.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 79.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 79.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 77,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 79,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 76,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 80,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 82,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 80.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 81.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 81.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 81.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 82.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 83.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 83.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 83.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 80.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 80.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 81.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 81.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 82.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 82.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 83.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 83.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 81,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 83,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 80,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 80.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 80.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 84,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 86,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 84.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 85.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 85.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 67,
+      "beat": 85.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 86.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 87.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 87.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 67,
+      "beat": 87.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 84.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 84.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 85.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 85.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 86.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 86.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 87.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 87.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 85,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 87,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 84,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 88,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 90,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 88.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 89.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 89.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 89.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 90.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 91.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 91.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 91.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 88.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 88.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 89.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 89.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 90.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 90.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 91.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 91.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 89,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 91,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 88,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 88.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 64,
+      "beat": 88.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 92,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 94,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 92.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 93.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 93.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 93.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 94.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 95.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 95.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 95.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 92.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 92.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 93.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 93.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 94.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 94.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 95.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 95.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 93,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 95,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 92,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 96,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 98,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 96.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 97.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 97.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 97.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 98.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 99.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 99.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 99.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 96.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 96.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 97.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 97.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 98.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 98.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 99.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 99.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 97,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 99,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 96,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 96.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 96.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 100,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 102,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 100.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 101.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 101.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 67,
+      "beat": 101.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 102.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 103.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 103.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 67,
+      "beat": 103.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 100.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 100.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 101.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 101.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 102.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 102.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 103.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 103.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 101,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 103,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 100,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 104,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 106,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 104.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 105.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 105.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 105.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 106.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 107.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 107.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 107.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 104.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 104.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 105.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 105.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 106.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 106.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 107.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 107.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 105,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 107,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 104,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 104.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 64,
+      "beat": 104.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 108,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 110,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 108.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 109.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 109.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 109.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 110.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 111.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 111.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 111.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 108.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 108.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 109.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 109.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 110.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 110.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 111.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 111.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 109,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 111,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 108,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 112,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 114,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 112.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 113.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 113.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 113.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 114.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 115.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 115.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 115.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 112.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 112.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 113.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 113.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 114.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 114.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 115.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 115.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 113,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 115,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 112,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 112.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 112.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 116,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 118,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 116.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 117.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 117.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 117.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 118.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 119.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 119.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 119.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 116.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 116.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 117.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 117.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 118.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 118.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 119.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 119.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 117,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 119,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 116,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 120,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 122,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 120.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 121.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 121.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 121.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 122.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 123.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 123.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 123.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 120.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 120.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 121.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 121.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 122.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 122.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 123.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 123.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 121,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 123,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 120,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 120.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 120.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 124,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 126,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 124.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 125.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 125.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 125.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 126.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 127.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 127.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 127.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 124.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 124.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 125.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 125.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 126.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 126.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 127.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 127.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 125,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 127,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 124,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 128,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 130,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 128.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 129.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 129.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 129.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 130.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 131.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 131.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 131.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 128.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 128.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 129.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 129.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 130.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 130.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 131.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 131.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 129,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 131,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 128,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 128.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 128.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 132,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 134,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 132.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 133.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 133.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 133.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 134.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 135.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 135.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 135.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 132.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 132.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 133.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 133.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 134.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 134.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 135.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 135.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 133,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 135,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 132,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 136,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 138,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 136.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 137.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 137.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 137.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 138.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 139.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 139.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 139.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 136.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 136.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 137.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 137.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 138.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 138.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 139.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 139.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 137,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 139,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 136,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 136.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 136.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 140,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 142,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 140.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 141.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 141.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 141.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 142.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 143.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 143.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 143.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 140.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 140.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 141.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 141.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 142.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 142.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 143.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 143.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 141,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 143,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 140,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 144,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 146,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 144.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 145.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 145.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 145.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 146.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 147.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 147.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 147.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 144.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 144.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 145.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 145.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 146.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 146.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 147.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 147.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 145,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 147,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 144,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 144.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 144.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 148,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 42,
+      "beat": 150,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 148.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 149.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 149.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 149.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 150.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 151.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 151.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 151.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 148.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 148.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 149.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 149.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 150.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 150.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 151.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 151.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 149,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 151,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 148,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 152,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 154,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 152.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 153.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 153.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 153.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 154.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 155.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 155.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 155.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 152.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 152.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 153.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 153.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 154.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 154.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 155.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 155.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 153,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 155,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 152,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 152.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 152.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 156,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 158,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 156.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 157.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 157.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 157.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 158.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 159.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 159.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 159.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 156.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 156.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 157.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 157.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 158.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 158.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 159.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 159.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 157,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 159,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 156,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 160,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 47,
+      "beat": 162,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 160.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 161.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 161.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 161.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 162.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 163.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 163.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 163.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 160.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 160.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 161.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 161.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 162.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 162.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 163.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 163.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 161,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 163,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 160,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 160.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 160.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 164,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 40,
+      "beat": 166,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 164.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 165.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 165.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 165.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 166.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 167.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 167.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 69,
+      "beat": 167.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 164.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 164.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 165.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 165.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 166.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 166.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 167.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 167.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 165,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 167,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 164,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 168,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 170,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 168.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 169.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 169.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 169.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 170.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 171.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 171.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 171.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 168.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 168.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 169.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 169.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 170.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 170.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 171.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 171.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 169,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 171,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 168,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 168.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 168.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 172,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 174,
+      "length": 1.15,
+      "velocity": 51
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 172.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 173.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 173.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 173.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 174.0,
+      "length": 0.95,
+      "velocity": 40
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 175.0,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 175.035,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 175.07,
+      "length": 0.72,
+      "velocity": 44
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 172.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 172.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 173.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 173.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 174.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 174.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 175.0,
+      "length": 0.08,
+      "velocity": 18
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 70,
+      "beat": 175.5,
+      "length": 0.08,
+      "velocity": 24
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 173,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 37,
+      "beat": 175,
+      "length": 0.08,
+      "velocity": 23
+    },
+    {
+      "instrument": "Soft shaker and cross-stick",
+      "pitch": 36,
+      "beat": 172,
+      "length": 0.1,
+      "velocity": 22
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 36,
+      "beat": 176,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 178,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 176.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 177.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 177.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 177.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 178.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 179.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 179.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 179.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 176.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 60,
+      "beat": 176.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 38,
+      "beat": 180,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 45,
+      "beat": 182,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 180.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 181.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 181.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 181.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 57,
+      "beat": 182.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 60,
+      "beat": 183.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 183.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 66,
+      "beat": 183.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 184,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 50,
+      "beat": 186,
+      "length": 1.15,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 184.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 185.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 185.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 185.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 186.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 187.0,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 187.035,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 64,
+      "beat": 187.07,
+      "length": 0.72,
+      "velocity": 36
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 184.0,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 184.03,
+      "length": 1.3,
+      "velocity": 30
+    },
+    {
+      "instrument": "Acoustic bass - light bounce",
+      "pitch": 43,
+      "beat": 188,
+      "length": 3.7,
+      "velocity": 44
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 188.0,
+      "length": 0.95,
+      "velocity": 32
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 55,
+      "beat": 188.0,
+      "length": 3.4,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 59,
+      "beat": 188.045,
+      "length": 3.4,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 62,
+      "beat": 188.09,
+      "length": 3.4,
+      "velocity": 36
+    },
+    {
+      "instrument": "Nylon guitar - sunny picnic",
+      "pitch": 67,
+      "beat": 188.135,
+      "length": 3.4,
+      "velocity": 36
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 0,
+      "length": 0.42,
+      "velocity": 58
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 0.5,
+      "length": 0.42,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 1.0,
+      "length": 0.95,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 2.0,
+      "length": 0.95,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 4,
+      "length": 0.95,
+      "velocity": 58
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 5,
+      "length": 0.42,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 5.5,
+      "length": 0.42,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 64,
+      "beat": 8,
+      "length": 0.42,
+      "velocity": 58
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 8.5,
+      "length": 0.42,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 9.0,
+      "length": 0.95,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 10.0,
+      "length": 0.95,
+      "velocity": 54
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 12,
+      "length": 0.95,
+      "velocity": 58
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 13,
+      "length": 0.95,
+      "velocity": 54
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 16,
+      "length": 0.42,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 16.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 17.0,
+      "length": 0.63,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 17.75,
+      "length": 0.21,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 18.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 18.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 19.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 20,
+      "length": 0.95,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 21,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 21.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 22.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 23.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 24,
+      "length": 0.42,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 24.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 25.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 26.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 26.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 27.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 28,
+      "length": 0.95,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 29,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 66,
+      "beat": 29.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 30.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 32,
+      "length": 0.63,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 32.75,
+      "length": 0.21,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 33.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 33.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 34.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 35.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 36,
+      "length": 0.42,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 36.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 37.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 38.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 38.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 39.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 40,
+      "length": 0.42,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 40.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 41.0,
+      "length": 0.63,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 41.75,
+      "length": 0.21,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 42.0,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 42.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 66,
+      "beat": 43.0,
+      "length": 0.95,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 44,
+      "length": 0.95,
+      "velocity": 66
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 45,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 45.5,
+      "length": 0.42,
+      "velocity": 62
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 46.0,
+      "length": 1.4249999999999998,
+      "velocity": 62
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 48,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 48.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 49.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 78,
+      "beat": 50.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 50.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 51.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 52,
+      "length": 0.95,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 53,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 78,
+      "beat": 53.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 54.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 55.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 56,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 56.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 57.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 58.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 58.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 59.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 60,
+      "length": 1.4249999999999998,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 61.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 62.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 64,
+      "length": 0.63,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 64.75,
+      "length": 0.21,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 65.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 78,
+      "beat": 65.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 66.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 67.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 68,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 68.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 69.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 70.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 70.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 71.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 72,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 72.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 73.0,
+      "length": 0.63,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 73.75,
+      "length": 0.21,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 74.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 74.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 75.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 76,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 76.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 77.0,
+      "length": 1.9,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 80,
+      "length": 1.4249999999999998,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 81.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 81,
+      "beat": 82.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 83.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 84,
+      "length": 0.95,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 85,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 85.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 86.0,
+      "length": 1.4249999999999998,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 88,
+      "length": 0.95,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 89,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 89.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 90.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 91.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 92,
+      "length": 1.9,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 94.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 95.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 96,
+      "length": 0.95,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 97,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 97.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 98.0,
+      "length": 1.4249999999999998,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 100,
+      "length": 0.95,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 101,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 101.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 102.0,
+      "length": 1.4249999999999998,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 104,
+      "length": 0.42,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 104.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 105.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 106.0,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 106.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 107.0,
+      "length": 0.95,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 66,
+      "beat": 108,
+      "length": 0.95,
+      "velocity": 63
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 109,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 109.5,
+      "length": 0.42,
+      "velocity": 59
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 112,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 112.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 113.0,
+      "length": 0.63,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 113.75,
+      "length": 0.21,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 114.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 114.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 115.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 116,
+      "length": 0.95,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 117,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 78,
+      "beat": 117.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 118.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 119.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 120,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 120.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 121.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 122.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 122.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 123.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 124,
+      "length": 0.95,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 125,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 125.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 126.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 128,
+      "length": 0.63,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 128.75,
+      "length": 0.21,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 129.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 78,
+      "beat": 129.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 130.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 131.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 132,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 132.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 133.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 134.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 134.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 135.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 136,
+      "length": 0.42,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 136.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 137.0,
+      "length": 0.63,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 137.75,
+      "length": 0.21,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 138.0,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 138.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 139.0,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 140,
+      "length": 0.95,
+      "velocity": 69
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 141,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 141.5,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 142.0,
+      "length": 1.4249999999999998,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 144,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 144.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 145.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 146.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 146.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 147.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 148,
+      "length": 0.95,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 149,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 149.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 150.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 151.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 152,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 152.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 153.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 154.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 154.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 155.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 156,
+      "length": 1.4249999999999998,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 157.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 158.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 160,
+      "length": 0.63,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 160.75,
+      "length": 0.21,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 79,
+      "beat": 161.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 78,
+      "beat": 161.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 76,
+      "beat": 162.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 163.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 164,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 164.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 165.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 166.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 166.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 167.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 168,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 168.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 169.0,
+      "length": 0.63,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 72,
+      "beat": 169.75,
+      "length": 0.21,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 170.0,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 170.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 66,
+      "beat": 171.0,
+      "length": 0.95,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 172,
+      "length": 0.42,
+      "velocity": 65
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 172.5,
+      "length": 0.42,
+      "velocity": 61
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 67,
+      "beat": 173.0,
+      "length": 1.9,
+      "velocity": 61
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 31.0,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 31.5,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 69,
+      "beat": 63.0,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 66,
+      "beat": 63.5,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 95.0,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 95.5,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 74,
+      "beat": 127.0,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Clarinet - playful answers",
+      "pitch": 71,
+      "beat": 127.5,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 159.0,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 159.5,
+      "length": 0.35,
+      "velocity": 43
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 176,
+      "length": 0.95,
+      "velocity": 57
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 177,
+      "length": 0.42,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 79,
+      "beat": 177.5,
+      "length": 0.42,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 76,
+      "beat": 178.0,
+      "length": 0.95,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 180,
+      "length": 0.95,
+      "velocity": 57
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 72,
+      "beat": 181,
+      "length": 0.42,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 69,
+      "beat": 181.5,
+      "length": 0.42,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 66,
+      "beat": 182.0,
+      "length": 0.95,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 184,
+      "length": 0.42,
+      "velocity": 57
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 184.5,
+      "length": 0.42,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 74,
+      "beat": 185.0,
+      "length": 0.95,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 71,
+      "beat": 186.0,
+      "length": 0.95,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 187.0,
+      "length": 0.95,
+      "velocity": 53
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 67,
+      "beat": 188,
+      "length": 3.3249999999999997,
+      "velocity": 57
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 55,
+      "beat": 188,
+      "length": 3.6,
+      "velocity": 29
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 59,
+      "beat": 188,
+      "length": 3.6,
+      "velocity": 29
+    },
+    {
+      "instrument": "Piano - skipping and smiling",
+      "pitch": 62,
+      "beat": 188,
+      "length": 3.6,
+      "velocity": 29
+    }
+  ]
+}

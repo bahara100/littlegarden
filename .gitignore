@@ -10,3 +10,5 @@ Thumbs.db
 .DS_Store
 test-results/
 playwright-report/
+# Song masters (WAV) are rebuilt from the scores by tools/audio/compose-*.py; the game uses the MP3s in public/music/.
+docs/audio/**/*.wav
