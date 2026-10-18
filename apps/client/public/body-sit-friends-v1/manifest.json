@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "status": "awaiting-user-review",
+  "frameSize": [
+    96,
+    96
+  ],
+  "frameCountPerDirection": 1,
+  "directions": [
+    "SE",
+    "SW"
+  ],
+  "mirror": "x -> 95 - x",
+  "layerSplitRow": 54,
+  "bodyColors": 18,
+  "headMatchesIdle": true,
+  "mirrorExact": true,
+  "runtimeConnected": false,
+  "source": "Momo/Lulu actual game sitting cells 0 and 4",
+  "method": "Built-in image_gen pose draft; Pixelorama palette mapping, existing head and native layers",
+  "assets": [
+    {
+      "file": "sit-se.png",
+      "sha256": "8072fb8780a937bedfb48bd7e8a7be67f8af15fbc0017c808775dabc930b7ef3"
+    },
+    {
+      "file": "sit-sw.png",
+      "sha256": "9a1cf70a3f7c462c6ae5b9724aca388cadb799fbf5abaee4da5a7d9d7def860b"
+    },
+    {
+      "file": "sit-head-se.png",
+      "sha256": "5b0460362af65cbe2b77c28561949bd3adcd74bd50b1a0985f628d63cb03edcb"
+    },
+    {
+      "file": "sit-head-sw.png",
+      "sha256": "4e26a7d28d66df609ded7b91b5ef45cdcb0f354ae25e502d33f383a2c55f7fb3"
+    },
+    {
+      "file": "sit-body-se.png",
+      "sha256": "476ade5305675a8bab37c68650c9727f0e302faec3af61ab1a83f7e88cd863f5"
+    },
+    {
+      "file": "sit-body-sw.png",
+      "sha256": "d2775ff890dcacde3d44944ba1b279b9dc6803fe493cf86a7f66a31ed35c3202"
+    },
+    {
+      "file": "sit-se-preview-6x.png",
+      "sha256": "eae8c92626abf16c67a52aa4ea3819bd7093dcd21722da1f3791df68ac5cd694"
+    },
+    {
+      "file": "sit-sw-preview-6x.png",
+      "sha256": "9ae15ebc9762afc655d8b667254e04c7b5bd1f27f2cb906e9ed891019a74e0db"
+    },
+    {
+      "file": "prompt.txt",
+      "sha256": "9885607872a4ae45bb937ae5452a274b3329e890b3312fc90b71a989b929aaf1"
+    },
+    {
+      "file": "garden-body-sit-friends-se-v1.pxo",
+      "sha256": "b192ad27d2f3e76149772854dba278857456a5550c7db736a9f56a1c36552c45"
+    },
+    {
+      "file": "reference-momo-sit.png",
+      "sha256": "1d2a69885534544f1081bf321723b0d1f7a74b12cf6cd8d5ecc81ed8557e5562"
+    },
+    {
+      "file": "reference-lulu-sit.png",
+      "sha256": "6f236a8bb65fdef9e288d165c3b49e7a4bd1e64647ccefde15330b3a3be95a23"
+    },
+    {
+      "file": "palette.json",
+      "sha256": "82ff4d9b0c1e71de4647a7ffb28e08588df5504deec5e69ed0a6818aa83e3e69"
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "frameSize": 96,
+  "frameCount": 4,
+  "fps": 6,
+  "runtimeConnected": true,
+  "directions": {
+    "se": [
+      "se",
+      false
+    ],
+    "sw": [
+      "se",
+      true
+    ],
+    "ne": [
+      "ne",
+      false
+    ],
+    "nw": [
+      "ne",
+      true
+    ]
+  },
+  "baseSources": {
+    "se": {
+      "folder": "garden-body-walk-se-v20",
+      "sha256": "d8372372c0cdefca55e41fba204a0c8e9ab4808a2e6265a46877abd7e0de12fe"
+    },
+    "ne": {
+      "folder": "garden-body-walk-ne-v3",
+      "sha256": "6d57864ff97d6deb6894df0c0fa71734442bdf888618a5a360318115be4184fe"
+    }
+  },
+  "characters": {
+    "momo": {
+      "assets": {
+        "walk-se.png": "a8e60affbbdd53bb04a1a5dc47a8f56ac85931f52dc7c0553a2c89c017e4d65c",
+        "idle-se.png": "43975b192dd88816544c937d6665eeaa5c274a2d24578b08f1f7ec66809411a8",
+        "walk-sw.png": "fba948ff03b00cf6bc900fc4512db43e626cc17a6d0a3fa0d0f6ec53a0a1067c",
+        "idle-sw.png": "0480877544cceeb43ec07e0bd034bb1aaca9b06f15e9ce188f3c3b98f7b44d7d",
+        "walk-ne.png": "fc560cbff897d216383ce2b286b621bf93424ed8cae79998de53af1862154089",
+        "idle-ne.png": "b11454ba3787a7ba447b80552303a0ec0ba45f673f5afcd59ca1513c072ac55e",
+        "walk-nw.png": "3f7b6bc6c786d12c287a887ba9ec1d2cc0867758473dcdd0469cdbd4acd115a4",
+        "idle-nw.png": "82b58e33e0e424079eb094a66946d838755133b2a7fd36c25d7d5a9f3c901a3e"
+      },
+      "sourceBodySilhouettesPreserved": true,
+      "frames": {
+        "se": [
+          {
+            "bottom": 88,
+            "colours": 31
+          },
+          {
+            "bottom": 88,
+            "colours": 31
+          },
+          {
+            "bottom": 89,
+            "colours": 31
+          },
+          {
+            "bottom": 88,
+            "colours": 31
+          }
+        ],
+        "ne": [
+          {
+            "bottom": 90,
+            "colours": 31
+          },
+          {
+            "bottom": 87,
+            "colours": 31
+          },
+          {
+            "bottom": 90,
+            "colours": 30
+          },
+          {
+            "bottom": 89,
+            "colours": 31
+          }
+        ]
+      }
+    },
+    "lulu": {
+      "assets": {
+        "walk-se.png": "4d1833fb76599e08fdb48cd4aeba51fe6babe3c90d73f285a4716e9af9aaffac",
+        "idle-se.png": "ae61d306525ad761df4340bd885b9159dbcbeed353aac414f6a1f03739b13d6d",
+        "walk-sw.png": "e361752e4d8e15e01559063fad16510def891a8c47da963d2ffa869db354e467",
+        "idle-sw.png": "784833fe5c59dab2fb8d028c6b57f7e8e27a4e8a9e99f275e44755e4ceb93541",
+        "walk-ne.png": "c5cd3f05c4a4091b4bbcecb46968a15be64386efa644a1f5ccb963236095fee8",
+        "idle-ne.png": "7b8e3f4db22701d05172ecb1b57e78a2ae80b62511a55965756650ce1e1faefd",
+        "walk-nw.png": "46e7f01055ef73c54cc0f86a4dd8210436efe7bb9c79a2687c1a80404e47821a",
+        "idle-nw.png": "360b901138382903a2ecb790f3480ba313f2ebf34a6d2c6868e025b50cc570ab"
+      },
+      "sourceBodySilhouettesPreserved": true,
+      "frames": {
+        "se": [
+          {
+            "bottom": 88,
+            "colours": 30
+          },
+          {
+            "bottom": 88,
+            "colours": 30
+          },
+          {
+            "bottom": 89,
+            "colours": 30
+          },
+          {
+            "bottom": 88,
+            "colours": 30
+          }
+        ],
+        "ne": [
+          {
+            "bottom": 90,
+            "colours": 30
+          },
+          {
+            "bottom": 87,
+            "colours": 30
+          },
+          {
+            "bottom": 90,
+            "colours": 30
+          },
+          {
+            "bottom": 89,
+            "colours": 29
+          }
+        ]
+      }
+    }
+  },
+  "reuse": {
+    "approvedBaseWalkPoses": 8,
+    "characters": 2,
+    "displayedWalkPosesIncludingMirrors": 32,
+    "newRearHeadTemplates": 2,
+    "newCommonRearIdlePoses": 1,
+    "note": "Head templates, semantic recolouring, sleeves and costume overlays are authoring work. Whole-frame runtime; no joint rig."
+  }
+}

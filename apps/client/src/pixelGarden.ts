@@ -3,7 +3,8 @@ import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, clone
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
-import { friendSide, scarletDirection } from './scarletDirections';
+import { scarletDirection } from './scarletDirections';
+import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
 export type Selection = AvatarId | EquipmentId;
@@ -13,7 +14,7 @@ type Hit = { id: string; x: number; y: number; w: number; h: number; image?: HTM
 
 /** Canvas-only presentation. Navigation, editor validation and saves stay renderer independent. */
 export class PixelGarden {
-  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED });
+  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED });
   readonly editor = new LayoutEditor();
   scarletModel: 'loading' | 'ready' | 'fallback' = 'loading';
   selectedAvatar: AvatarId = 'character';
@@ -22,8 +23,10 @@ export class PixelGarden {
   private ctx: CanvasRenderingContext2D;
   private resizeObserver: ResizeObserver;
   private walkCycle = new ScarletWalkCycle();
+  private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
+  private friendArt = new Map<FriendId, Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>>();
   private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>();
-  private friendsAtlas?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
+  private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private props: Sprite[] = [];
   private hits: Hit[] = [];
   private zoom = 1;
@@ -52,17 +55,26 @@ export class PixelGarden {
   }
   private async loadArt() {
     try {
-      const [friends, friendsSw, image, approved] = await Promise.all([
-        loadPixelAtlas('sprites/garden/garden-friends-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
+      const [friends, friendsSw, image, approved, dressed] = await Promise.all([
+        loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
           const [idle, walk] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk)]);
           return [source, { idle, walk }] as const;
         })),
+        Promise.all(FRIEND_IDS.map(async id => {
+          const sources = await Promise.all((['se', 'ne'] as const).map(async source => {
+            const art = friendArt(id, source);
+            const [idle, walk] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk)]);
+            return [source, { idle, walk }] as const;
+          }));
+          return [id, new Map(sources)] as const;
+        })),
       ]);
       if (this.disposed) return;
       approved.forEach(([source, art]) => this.approvedArt.set(source, art));
-      this.friendsAtlas = { se: friends, sw: friendsSw };
+      dressed.forEach(([id, sources]) => this.friendArt.set(id, sources));
+      this.friendsSit = { se: friends, sw: friendsSw };
       // Trim each independent cell, retaining alpha for both drawing and selection.
       const w = image.naturalWidth / 4, h = image.naturalHeight / 2;
       for (let n = 0; n < 8; n++) {
@@ -149,10 +161,15 @@ export class PixelGarden {
     const c = this.ctx, p = this.screen(a), u = this.unit, seat = this.life.seatOf(a);
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
+    const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
+    const facing = turn === 0 || turn === 3 ? 'sw' : 'se';
+    const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
+    const drawnSit = a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
-    const base = p.y - seated * u * SEAT_LIFT.standing[seat?.kind ?? 'bench'] + sway;
+    const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : a.id !== 'character' && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
+    const base = p.y - u * lift + sway;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
-    const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : 2.8)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : .97));
+    const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (a.id === 'character' && this.approvedArt.size) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[scarletDirection(a.yaw)];
       const art = this.approvedArt.get(source)!;
@@ -160,9 +177,16 @@ export class PixelGarden {
       if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * 96, 0, 96, 96, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
-    } else if (this.friendsAtlas && a.id !== 'character') {
-      const frame = (a.id === 'peach' ? 0 : 4) + (moving && !still ? 1 + Math.floor(this.life.time * 7) % 3 : 0);
-      c.drawImage(this.friendsAtlas[friendSide(a.yaw)], frame % 4 * 96, Math.floor(frame / 4) * 96, 96, 96, x, y, size, size);
+    } else if (drawnSit && a.id !== 'character') {
+      const frame = a.id === 'peach' ? 0 : 4;
+      c.drawImage(this.friendsSit![facing], 0, frame / 4 * 96, 96, 96, x, y, size, size);
+    } else if (a.id !== 'character' && this.friendArt.has(a.id)) {
+      const { source, flipX } = FRIEND_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
+      const art = this.friendArt.get(a.id)!.get(source)!;
+      c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
+      if (moving && !still) c.drawImage(art.walk, this.friendCycles[a.id].frame * 96, 0, 96, 96, 0, 0, size, size);
+      else c.drawImage(art.idle, 0, 0, size, size);
+      c.restore();
     } else {
       // Original placeholder friends, drawn on the same logical pixel grid.
       c.save(); c.translate(p.x, Math.round(base));
@@ -189,9 +213,14 @@ export class PixelGarden {
     const now = performance.now(), dt = Math.min(.1, (now - this.last) / 1000); this.last = now;
     if (!document.hidden) {
       const before = this.life.avatars.get('character')!, previous = { x: before.x, z: before.z };
+      const previousFriends = FRIEND_IDS.map(id => { const a = this.life.avatars.get(id)!; return { id, x: a.x, z: a.z }; });
       if (!this.editor.active) this.life.update(dt);
       const scarlet = this.life.avatars.get('character')!;
       this.walkCycle.advance(Math.hypot(scarlet.x - previous.x, scarlet.z - previous.z), !this.editor.active && scarlet.phase === 'walking');
+      for (const before of previousFriends) {
+        const a = this.life.avatars.get(before.id)!;
+        this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');
+      }
       const c = this.ctx; c.fillStyle = '#eae9de'; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);

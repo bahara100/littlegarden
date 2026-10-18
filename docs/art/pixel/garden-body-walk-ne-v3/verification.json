@@ -1,0 +1,28 @@
+{
+  "frameCount": 4,
+  "fps": 6,
+  "frameSize": [
+    96,
+    96
+  ],
+  "allWholeFramesConnected": true,
+  "contactFramesDifferent": true,
+  "passingFramesDifferent": true,
+  "exactNwMirrors": true,
+  "previewMatchesActualSheet": true,
+  "nativeProjectIncluded": true,
+  "approvedSeV20Sha256": "d8372372c0cdefca55e41fba204a0c8e9ab4808a2e6265a46877abd7e0de12fe",
+  "approvedSeV20Unchanged": true,
+  "note": "Technical checks only; gait and back-view quality still require user review.",
+  "requestedSourceSelectionVerified": true,
+  "selection": [
+    "image1-frame1",
+    "image2-frame2",
+    "image1-frame3",
+    "image1-frame4"
+  ],
+  "sourceImageSha256": {
+    "source-selection-1.png": "6a85732979e7b46ccc23ffa05d8cd2508ef9dae46d456a8b183bac89f3eb2624",
+    "source-selection-2.png": "3b46da2d7f48af502f4e729c8dd8b71a5445a87afa4b0e0c38b53b715fc210d7"
+  }
+}

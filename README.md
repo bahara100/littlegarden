@@ -22,7 +22,7 @@ Windows PowerShell에서는 실행 정책을 바꾸지 않고 `npm.cmd`를 쓰�
 - 2:1 마름모 투영의 도트 놀이터, 줌과 화면 이동, 배치 그리드 표시 전환. 캐릭터와 기구 아래 그림자는 그리지 않습니다.
 - 홍련(팬 도트)과 오리지널 친구 모모·루루.
   - 홍련: 승인된 SD 대기·걷기 4방향(SE·NE 원본, SW·NW는 좌우 반전), 방향당 4컷·6 FPS. 걸은 거리만큼만 컷이 넘어가 발이 미끄러지지 않습니다. 앉기 그림은 아직 없어 기구 이용 중에는 대기 그림을 씁니다.
-  - 모모·루루: 대기·걷기·앉은 그림. 앞모습만 있어 화면 오른쪽으로 갈 때(SE·NE)는 원본, 왼쪽으로 갈 때(SW·NW)는 좌우 반전 시트(`tools/art/make-garden-friends-mirror-v1.py`)를 씁니다.
+  - 모모·루루: 공통 몸체 SE V20·뒤 걷기 팔 수정 NE V4를 적용한 의상 V3. 뒤 팔을 반대 스윙/중간 통과로 고쳤고 머리·치마 밑단·다리와 앞 걷기/중심을 맞춘 대기는 유지합니다. 방향당96×96·4컷·6 FPS, SW/NW는 컷별 반전입니다. [제작 기록](docs/art/pixel/garden-friends-base-walk-v3/README.md), 검수 페이지 `/friends-base-walk-v1/index.html`.
 - 친구 선택 후 **친구 가까이 보기**로 확대해 따라보기. ⌖ 버튼으로 전체 시점 복귀, 화면을 드래그하면 따라보기 해제. 꾸미기에 들어가면 전체 시점으로 돌아갑니다.
 - 장애물과 맵 경계를 피하는 A* 경로 탐색. 바닥 칸의 가운데 줄을 따라 걷고 가운데에서 꺾으며, 클릭한 칸의 가운데에 멈춥니다(가운데가 장애물에 너무 가까우면 클릭한 지점). 캐릭터끼리는 부드럽게 간격을 조정하며 지나갑니다.
 - 자율 산책과 빈 기구 선택, 접근 중 좌석 예약, 벤치 2석·그네 1석 이용, 하차 후 자율 생활 복귀.
@@ -111,7 +111,7 @@ main 브랜치에 push하면 `.github/workflows/pages.yml`이 검사·테스트�
 - 캐릭터 도트 제작 방식: [CHARACTER_PRODUCTION_WORKFLOW.md](docs/art/pixel/CHARACTER_PRODUCTION_WORKFLOW.md). 사용자 결정 기록은 [AGENTS.md](AGENTS.md).
 - 흐름: AI 전신 초안(코덱스) → 96×96 축소·공유 팔레트 → Pixelorama 레이어로 수정 → `tools/art/`의 스크립트로 walk.png·미리보기·GIF 생성 → 검수 페이지에서 반복 재생 → 사용자 승인 후 게임 연결.
 - 홍련 승인 걷기: [SCARLET_INGAME_WALK_APPROVED.md](docs/art/pixel/SCARLET_INGAME_WALK_APPROVED.md), 게임용 파일 `apps/client/public/sprites/scarlet/ingame-approved-v1/`. 게임의 **홍련 외형·동작 살펴보기**가 그 검수 페이지(`review.html`)를 엽니다.
-- 공통 몸체(새 캐릭터용 마네킹) 걷기: SE V18 승인, SW는 반전, NE는 코덱스 초안 대기([요청서](docs/art/pixel/GARDEN_BODY_WALK_NE_BRIEF.md)). 검수 페이지 `apps/client/public/body-walk-se-v18/index.html`. 게임에는 아직 연결하지 않았습니다.
+- 공통 몸체 걷기: SE V20 / NE V3의 다리 승인 후, 뒤 팔 고정 보정 NE V4·NW 반전을 추가했습니다. 모모·루루 의상 V3를 실제 게임에 연결했습니다. [제작 기록](docs/art/pixel/garden-friends-base-walk-v3/README.md), 베이스 검수 `/body-walk-ne-v4/index.html`, 전체 비교 `/friends-base-walk-v1/index.html`. 새 팔 순환은 사용자 검수 대상입니다.
 - 그네 레이어 분리: `tools/art/split-swing-v1.py` → `sprites/garden/playground-swing-v1.png`.
 
 ## 구조

@@ -3,7 +3,8 @@ import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { depth, project, unproject } from './isometric';
-import { friendSide, scarletDirection } from './scarletDirections';
+import { scarletDirection } from './scarletDirections';
+import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
@@ -67,7 +68,7 @@ function diamond(c: CanvasRenderingContext2D, p: Point, w: number, d: number, co
 
 /** Phaser presentation with the same public surface as PixelGarden; simulation, editor and saves are shared. */
 export class PhaserGarden {
-  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED });
+  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED });
   readonly editor = new LayoutEditor();
   scarletModel: 'loading' | 'ready' | 'fallback' = 'loading';
   selectedAvatar: AvatarId = 'character';
@@ -121,6 +122,7 @@ type AvatarView = { sprite: Phaser.GameObjects.Sprite; label: Phaser.GameObjects
 class GardenScene extends Phaser.Scene {
   private ready = false;
   private walkCycle = new ScarletWalkCycle();
+  private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private propWidths: number[] = [];
   private props = new Map<string, Phaser.GameObjects.Image>();
   /** Per swing cell: width of the trimmed art in its 128 texture and the seat's depth below the rope tops there. */
@@ -150,6 +152,11 @@ class GardenScene extends Phaser.Scene {
       this.load.image(`idle-${source}`, `${base}${art.idle}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
     }
+    for (const id of FRIEND_IDS) for (const source of ['se', 'ne'] as const) {
+      const art = friendArt(id, source);
+      this.load.image(friendTexture(id, 'idle', source), `${base}${art.idle}`);
+      this.load.spritesheet(friendTexture(id, 'walk', source), `${base}${art.walk}`, { frameWidth: 96, frameHeight: 96 });
+    }
   }
   /** Bench and swing art only has front views: turns 0 and 3 face down-left (SW), turns 1 and 2 down-right (SE). */
   private seatFacing(seat: Seat): 'sw' | 'se' {
@@ -170,8 +177,8 @@ class GardenScene extends Phaser.Scene {
     this.ghost = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setAlpha(.65).setVisible(false);
     for (const a of this.g.life.avatars.values()) {
       const scarlet = a.id === 'character', size = U * (scarlet ? SCARLET_SD.worldSize : 2.8);
-      const sprite = this.add.sprite(0, 0, scarlet ? 'idle-se' : 'friends', scarlet ? undefined : a.id === 'peach' ? 0 : 4)
-        .setOrigin(.5, scarlet ? SCARLET_SD.originY : .97).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
+      const sprite = this.add.sprite(0, 0, a.id === 'character' ? 'idle-se' : friendTexture(a.id, 'idle', 'se'))
+        .setOrigin(.5, scarlet ? SCARLET_SD.originY : FRIEND_BODY.originY).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
       sprite.setData('id', a.id);
       const label = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '8px', color: '#65556f', resolution: 6 }).setOrigin(.5, 1);
       this.avatars.set(a.id, { sprite, label });
@@ -236,13 +243,12 @@ class GardenScene extends Phaser.Scene {
     shape('ring', Math.round(1.4 * U) + 2, Math.round(.64 * U) + 2, (c, w, h) => { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(w / 2, h / 2, w / 2 - 1, h / 2 - 1, 0, 0, Math.PI * 2); c.stroke(); });
   }
   private async makeFriends() {
-    // Down-right sheets and their left-right mirrors (tools/art/make-garden-friends-mirror-v1.py), same 4x2 cell order.
-    const sheets = [['friends', 'garden-friends-v1'], ['friends-sw', 'garden-friends-sw-v1'], ['friends-sit', 'garden-friends-sit-v1'], ['friends-sit-sw', 'garden-friends-sit-sw-v1']];
+    // Keep the existing seated artwork while shared-body walking is evaluated.
+    const sheets = [['friends-sit', 'garden-friends-sit-v1'], ['friends-sit-sw', 'garden-friends-sit-sw-v1']];
     const atlases = await Promise.all(sheets.map(([, file]) => loadPixelAtlas(`sprites/garden/${file}.png`)));
     sheets.forEach(([key], n) => {
       const tex = this.textures.addCanvas(key, atlases[n])!;
-      // Walk sheets fill all 8 cells; seated sheets only cells 0 (Momo) and 4 (Lulu).
-      for (const i of key.startsWith('friends-sit') ? [0, 4] : [0, 1, 2, 3, 4, 5, 6, 7]) tex.add(i, 0, i % 4 * 96, Math.floor(i / 4) * 96, 96, 96);
+      for (const i of [0, 4]) tex.add(i, 0, i % 4 * 96, Math.floor(i / 4) * 96, 96, 96);
     });
   }
 
@@ -380,9 +386,11 @@ class GardenScene extends Phaser.Scene {
     } else if (friendSit && !standingOnSeat) {
       // The seated frame is made from the down-right idle pose; a down-left seat uses its mirrored sheet.
       view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
+      view.sprite.setOrigin(.5, .97).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     } else {
-      const sheet = friendSide(a.yaw) === 'sw' ? 'friends-sw' : 'friends';
-      view.sprite.setTexture(sheet, (a.id === 'peach' ? 0 : 4) + (moving ? 1 + Math.floor(this.g.life.time * 7) % 3 : 0)).setFlipX(false);
+      const { source, flipX } = FRIEND_DIRECTIONS[facing ?? scarletDirection(a.yaw)];
+      view.sprite.setTexture(friendTexture(a.id, moving ? 'walk' : 'idle', source), moving ? this.friendCycles[a.id].frame : undefined)
+        .setFlipX(flipX).setOrigin(.5, FRIEND_BODY.originY).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     }
     view.label.setText(a.phase === 'waving' ? '♡' : seated ? seat?.kind === 'swing' ? '♪' : '···' : '')
       .setPosition(x, base - view.sprite.displayHeight * view.sprite.originY - 3).setDepth(z + .02);
@@ -399,9 +407,14 @@ class GardenScene extends Phaser.Scene {
     if (!this.ready || document.hidden) return;
     const dt = Math.min(.1, ms / 1000), still = this.reduced.matches, editing = this.g.editor.active;
     const character = this.g.life.avatars.get('character')!, before = { x: character.x, z: character.z };
+    const previousFriends = FRIEND_IDS.map(id => { const a = this.g.life.avatars.get(id)!; return { id, x: a.x, z: a.z }; });
     if (!editing) this.g.life.update(dt);
     this.moveSwings(dt, still);
     this.walkCycle.advance(Math.hypot(character.x - before.x, character.z - before.z), !editing && character.phase === 'walking');
+    for (const before of previousFriends) {
+      const a = this.g.life.avatars.get(before.id)!;
+      this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !editing && a.phase === 'walking');
+    }
     const items = this.items;
     this.drawFloor(items); this.drawOverlay(); this.syncProps(items);
     for (const a of this.g.life.avatars.values()) this.placeAvatar(a, still);

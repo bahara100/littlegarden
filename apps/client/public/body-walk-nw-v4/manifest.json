@@ -1,0 +1,59 @@
+{
+ "version": 4,
+ "direction": "NW",
+ "stage": "arm-cycle-correction-awaiting-user-review",
+ "from": "garden-body-walk-ne-v3",
+ "method": "Existing opposite-arm/relaxed-arm pixels; preserve head and lower body",
+ "armPhases": [
+  "left-forward-right-back",
+  "passing-return",
+  "right-forward-left-back",
+  "passing-reverse"
+ ],
+ "headRowsPreserved": [
+  0,
+  44
+ ],
+ "lowerBodyRowsPreserved": [
+  68,
+  95
+ ],
+ "runtimeConnected": false,
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V4 exact cell mirror"
+  },
+  {
+   "number": 2,
+   "top": 1,
+   "bottom": 87,
+   "colors": 32,
+   "source": "V4 exact cell mirror"
+  },
+  {
+   "number": 3,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "V4 exact cell mirror"
+  },
+  {
+   "number": 4,
+   "top": 1,
+   "bottom": 89,
+   "colors": 32,
+   "source": "V4 exact cell mirror"
+  }
+ ]
+}

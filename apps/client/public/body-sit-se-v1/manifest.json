@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "status": "stored-alternative-at-user-request",
+  "frameSize": [
+    96,
+    96
+  ],
+  "frameCountPerDirection": 1,
+  "directions": [
+    "SE",
+    "SW"
+  ],
+  "mirror": "x -> 95 - x",
+  "layerSplitRow": 54,
+  "bodyColors": 17,
+  "headMatchesIdle": true,
+  "mirrorExact": true,
+  "runtimeConnected": false,
+  "source": "independent seated-pose alternative",
+  "method": "Built-in image_gen pose draft; Pixelorama palette mapping, existing head and native layers",
+  "assets": [
+    {
+      "file": "sit-se.png",
+      "sha256": "7aca31a210fca752b4741fb9fa2f631b1ac1d91cd682de31dde20d662d6dd8fc"
+    },
+    {
+      "file": "sit-sw.png",
+      "sha256": "3627accbeb637a2d94fe87774c1364f78b3db7c0a7a335aad2db032c84aa2b64"
+    },
+    {
+      "file": "sit-head-se.png",
+      "sha256": "5b0460362af65cbe2b77c28561949bd3adcd74bd50b1a0985f628d63cb03edcb"
+    },
+    {
+      "file": "sit-head-sw.png",
+      "sha256": "4e26a7d28d66df609ded7b91b5ef45cdcb0f354ae25e502d33f383a2c55f7fb3"
+    },
+    {
+      "file": "sit-body-se.png",
+      "sha256": "39108b758867092e88f87d7cc4d147b51a8fe4929ef4f4d1541c82ed0d0bbf7a"
+    },
+    {
+      "file": "sit-body-sw.png",
+      "sha256": "acdc7c75300b9a018a3f8e9168f9497665c15a482b00f337c2a0b1fb81fc3f45"
+    },
+    {
+      "file": "sit-se-preview-6x.png",
+      "sha256": "db48710001bc95d542db9e13793f06c5563c978ccfbac877dfd161e9c6e3f193"
+    },
+    {
+      "file": "sit-sw-preview-6x.png",
+      "sha256": "6192860ddb4ae45d706abacbe7095685ac6d16c9806640af73c5cc45fedf1c58"
+    },
+    {
+      "file": "prompt.txt",
+      "sha256": "d036dd163dabf31092f70eff7d060fcc28343708a7fc242386f2a0d0568040f2"
+    },
+    {
+      "file": "garden-body-sit-se-v1.pxo",
+      "sha256": "c840994e57f13bedd8cdfd4c3d11583e36d16ab7681806d8ca34ff33ad725dfe"
+    },
+    {
+      "file": "garden-body-sit-sw-v1.pxo",
+      "sha256": "84cf8139ac12e31f4bf9bc71fab54ae594da159c64b3d95b8ee2f903afc6dff5"
+    },
+    {
+      "file": "palette.json",
+      "sha256": "82ff4d9b0c1e71de4647a7ffb28e08588df5504deec5e69ed0a6818aa83e3e69"
+    }
+  ]
+}

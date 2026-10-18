@@ -48,7 +48,8 @@ function refresh() {
     setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : '그네'} 이용 · ${free}자리`);
   }
   if (friend) {
-    el('model-review').hidden = friend.id !== 'character';
+    el('model-review').hidden = false;
+    setText('model-review', friend.id === 'character' ? '홍련 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
     setText('selection-subtitle', friend.id === 'character' ? 'SCARLET / PIXEL · V2' : 'PIXEL / ORIGINAL GARDEN FRIEND');
     setText('selection-description', '자유롭게 산책하고 빈 기구를 찾아 쉬어요. 바닥이나 기구를 눌러 이 친구에게 부탁할 수도 있어요.');
@@ -56,6 +57,8 @@ function refresh() {
       setText('selection-subtitle', garden.scarletModel === 'ready' ? 'SCARLET / SD · FOUR DIRECTION WALK' : 'SCARLET / LOADING');
       setText('selection-description', '새 SD 홍련이 네 방향으로 걸어요. 빈 바닥을 눌러 이동시키고, 친구 가까이 보기로 살펴보세요.');
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}${SCARLET_SD.review}`;
+    } else {
+      el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
     }
     details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중']]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');

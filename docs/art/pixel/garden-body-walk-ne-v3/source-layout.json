@@ -1,0 +1,83 @@
+{
+  "targetHeadWidth": 46,
+  "selection": [
+    "image1-frame1",
+    "image2-frame2",
+    "image1-frame3",
+    "image1-frame4"
+  ],
+  "frames": [
+    {
+      "number": 1,
+      "path": "source-selection-1.png",
+      "sourceImageNumber": 1,
+      "sourceFrameNumber": 1,
+      "rect": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "headCenterX": 330.0,
+      "sourceTop": 53,
+      "headWidth": 279,
+      "scale": 0.16487455197132617,
+      "targetHeadTop": 2,
+      "targetHeadCenterX": 48
+    },
+    {
+      "number": 2,
+      "path": "source-selection-2.png",
+      "sourceImageNumber": 2,
+      "sourceFrameNumber": 2,
+      "rect": [
+        627,
+        0,
+        627,
+        627
+      ],
+      "headCenterX": 300.0,
+      "sourceTop": 57,
+      "headWidth": 279,
+      "scale": 0.16487455197132617,
+      "targetHeadTop": 1,
+      "targetHeadCenterX": 48
+    },
+    {
+      "number": 3,
+      "path": "source-selection-1.png",
+      "sourceImageNumber": 1,
+      "sourceFrameNumber": 3,
+      "rect": [
+        0,
+        627,
+        627,
+        627
+      ],
+      "headCenterX": 329.5,
+      "sourceTop": 40,
+      "headWidth": 278,
+      "scale": 0.16546762589928057,
+      "targetHeadTop": 2,
+      "targetHeadCenterX": 48
+    },
+    {
+      "number": 4,
+      "path": "source-selection-1.png",
+      "sourceImageNumber": 1,
+      "sourceFrameNumber": 4,
+      "rect": [
+        627,
+        627,
+        627,
+        627
+      ],
+      "headCenterX": 326.0,
+      "sourceTop": 33,
+      "headWidth": 275,
+      "scale": 0.16727272727272727,
+      "targetHeadTop": 1,
+      "targetHeadCenterX": 48
+    }
+  ]
+}

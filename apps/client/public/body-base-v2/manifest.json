@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "pose": "idle-se-relaxed-arms",
+  "status": "user-accepted",
+  "frameSize": [
+    96,
+    96
+  ],
+  "bodyColors": 19,
+  "headAndLowerLegsPreserved": true,
+  "layerSplitRow": 54,
+  "method": "Built-in image_gen arm draft; Pixelorama palette mapping and native head/body layers",
+  "outfitsNeedNewSleevesAndHands": true,
+  "runtimeConnected": false,
+  "assets": [
+    {
+      "file": "base-idle-se.png",
+      "sha256": "e26fe1c74c6222332115c1369e0e7d98a63ebd544e27787a5ab0f30c8cf4f14d"
+    },
+    {
+      "file": "base-head.png",
+      "sha256": "5b0460362af65cbe2b77c28561949bd3adcd74bd50b1a0985f628d63cb03edcb"
+    },
+    {
+      "file": "base-body.png",
+      "sha256": "1f9b4e8aeb093cbc7836836ad8081db62e951c8331a38e0ce127e569ffd1fec0"
+    },
+    {
+      "file": "base-preview-6x.png",
+      "sha256": "1a94cfd1b6f1015176f48aa16cc7154b6576298dd9106f4c9f7803312a6109bf"
+    },
+    {
+      "file": "previous-idle-se.png",
+      "sha256": "e0b063f110ae91b6ce6278b9f5e102b0ed2f8bef11ce9659716b12f19316f531"
+    },
+    {
+      "file": "momo-head.png",
+      "sha256": "0a93e3184f46469e97c5ae9b79ccc52b776499327a806898543c96010d426c57"
+    },
+    {
+      "file": "lulu-head.png",
+      "sha256": "57fc49ae662d9f904fdef5b324942b29dd1e44c808628d29079b4db8e77ffa01"
+    },
+    {
+      "file": "garden-body-idle-relaxed-v2.pxo",
+      "sha256": "dd5816d9b64cd28d35f05fdf3c389af3f9b201f5e5deef20c70dd464cc979a69"
+    },
+    {
+      "file": "prompt.txt",
+      "sha256": "ef3103e14d058b449f2cbcee963d92832f3f15b2cf508cf5a15dfc825b1e2658"
+    },
+    {
+      "file": "palette.json",
+      "sha256": "82ff4d9b0c1e71de4647a7ffb28e08588df5504deec5e69ed0a6818aa83e3e69"
+    }
+  ]
+}

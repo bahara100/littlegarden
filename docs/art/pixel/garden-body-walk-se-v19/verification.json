@@ -1,0 +1,13 @@
+{
+  "frame1ChangedPixels": 288,
+  "changedBoundsInclusive": [
+    34,
+    71,
+    67,
+    88
+  ],
+  "frames234ByteIdentical": true,
+  "upperBodyAndHipUnchanged": true,
+  "publicSheetIdentical": true,
+  "note": "Technical preservation checks only; pose and loop quality await user review."
+}

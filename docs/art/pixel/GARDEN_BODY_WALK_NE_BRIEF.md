@@ -1,5 +1,7 @@
 # 공통 몸체 NE(뒤오른쪽) 걷기 · 코덱스 작업 요청서
 
+2026-10-18 작업 결과: `garden-body-walk-ne-v2/`와 반전 `garden-body-walk-nw-v2/`에 네 컷 후보와 실제 재생 시트/편집 원본을 출력했다. `body-walk-ne-v2/index.html`에서 사용자 검수 전이다. 세부 생성/배율/출처는 결과 폴더 README를 따른다.
+
 사용자 결정: NE 뒷모습 걷기의 AI 초안은 코덱스가 만든다. NE V1(SW 앞모습에서 V넥·앞주름만 지운 것)은 사용자가 “넌 그게 뒷모습이니”라며 거부했다. 기준으로 쓰지 않는다.
 
 ## 만들 것
@@ -7,7 +9,7 @@
 - 결과 폴더 `docs/art/pixel/garden-body-walk-ne-v2/`, 확인 페이지 `apps/client/public/body-walk-ne-v2/index.html`. 기존 SE/SW/NE 페이지와 서로 링크.
 
 ## 맞춰야 할 기준
-- 현재 SE 걷기: `docs/art/pixel/garden-body-walk-se-v18/`(사용자 승인). 몸 비율, 머리 크기·위치, 96×96 칸, 바닥 행 89 근처, 6 FPS, 공유 32색 팔레트(`palette.json`)를 그대로 따른다. 컷마다 다른 캐릭터처럼 보이면 안 된다.
+- 현재 SE 걷기: `docs/art/pixel/garden-body-walk-se-v20/`(2026-10-18 사용자 승인, V18을 대체). 몸 비율, 머리 크기·위치, 96×96 칸, 바닥 행 89 근처, 6 FPS, 공유 32색 팔레트(`palette.json`)를 그대로 따른다. 컷마다 다른 캐릭터처럼 보이면 안 된다.
 - 다리 위치 참고: 승인된 홍련 NE 걷기 `docs/art/pixel/scarlet-ingame-walk-ne-v9/walk.png`의 네 컷(뒷모습에서 앞발·뒷발 배치와 겹침).
 
 ## 뒷모습이 되려면 (V1에서 틀린 점)

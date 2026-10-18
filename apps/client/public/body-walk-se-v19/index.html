@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공통 몸체 SE · V19 1번 수정 후보</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f0f7;color:#44364d;font:16px/1.65 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:24px}h1{font-size:26px}h2{font-size:20px;margin-top:28px}a{color:#795489}.muted{color:#796784}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{text-align:center;background:white;border:1px solid #ded3e5;border-radius:14px;overflow:hidden}.card p{margin:10px}.checker{background:repeating-conic-gradient(#e6dfed 0 25%,#faf5fc 0 50%) 0/20px 20px}canvas{display:block;width:100%;image-rendering:pixelated}button,select{font:inherit;padding:8px 12px;border:1px solid #cdbbd7;border-radius:8px;background:white;color:inherit}button{cursor:pointer}button[aria-pressed=true]{border:2px solid #795489}.tools{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.grid button{padding:0;overflow:hidden}.grid span{display:block;padding:8px}.badge{display:inline-block;padding:3px 10px;border-radius:20px;background:#e6d8ee}img{display:block;width:100%;image-rendering:pixelated}button:focus-visible,select:focus-visible{outline:3px solid #a380b9;outline-offset:3px}@media(max-width:600px){main{padding:16px}.pair{gap:8px}.grid{grid-template-columns:1fr 1fr}h1{font-size:22px}}
+</style>
+<main><a href="../body-walk-se-v18/index.html">← 승인 기준 V18</a> · <a href="../body-base-v1/index.html">공통 몸체</a>
+<h1>공통 몸체 SE · V19 1번 수정 후보</h1>
+<span class="badge">사용자 검수 전 · 1번만 수정 · 4컷 · 6 FPS</span>
+<p>왼다리는 앞으로 내딛고 오른다리는 뒤로 뻗도록 기존 다리 픽셀을 조정했습니다. 1번 상체·골반 연결과 2·3·4번은 그대로입니다.</p>
+<h2>같은 시점에서 걷기 비교</h2><div class="pair">
+<section class="card"><p>V18 · 승인 기준</p><canvas class="checker" id="before" width="96" height="96" aria-label="V18 걷기"></canvas></section>
+<section class="card"><p>V19 · 수정 후보</p><canvas class="checker" id="after" width="96" height="96" aria-label="V19 걷기"></canvas></section></div>
+<div class="tools"><button id="play">일시 정지</button><button id="next">한 컷 앞으로</button><select id="fps" aria-label="재생 속도"><option value="3">천천히 · 3 FPS</option><option value="6" selected>기본 · 6 FPS</option></select><span id="phase" role="status">불러오는 중</span></div>
+<p class="muted">두 재생 화면은 같은 프레임을 표시합니다. 4→1→2의 전환과 앞발의 접지, 뒷다리의 뻗는 느낌을 비교하세요.</p>
+<h2>1번 정지 비교 · 왼쪽 V18 / 오른쪽 V19</h2><div class="card checker"><img src="frame1-before-after-6x.png" alt="1번 원본과 수정 후보를 동일한 배율로 비교"></div>
+<h2>수정 후보 네 컷</h2><section class="grid" id="frames" aria-label="V19 주요 네 컷"></section>
+<p><a href="walk.png">실제 재생 시트</a> · <a href="walk-preview-2x2.png">네 컷 미리보기</a> · <a href="walk-preview.gif">걷기 GIF</a></p>
+<p class="muted">V18과 기존 SW는 보존했습니다. 실제 놀이터에는 적용하지 않은 비교 후보입니다.</p></main>
+<script>
+const images=[new Image(),new Image()],canvases=[document.querySelector('#before'),document.querySelector('#after')];
+const labels=['왼발 앞 접지','오른발 통과','오른발 앞 접지','왼발 통과'];let ready=false,paused=false,n=0,elapsed=0,last=0,fps=6;
+function draw(canvas,img,frame){const c=canvas.getContext('2d');c.clearRect(0,0,96,96);c.imageSmoothingEnabled=false;c.drawImage(img,frame*96,0,96,96,0,0,96,96)}
+function render(){if(!ready)return;canvases.forEach((c,i)=>draw(c,images[i],n));document.querySelector('#phase').textContent=`${n+1} / 4 · ${labels[n]}`;document.querySelector('#play').textContent=paused?'다시 재생':'일시 정지';document.querySelectorAll('#frames button').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===n)))}
+Promise.all(['../body-walk-se-v18/walk.png','walk.png'].map((path,i)=>new Promise((resolve,reject)=>{images[i].onload=()=>images[i].width===384&&images[i].height===96?resolve():reject(Error('시트 크기 오류'));images[i].onerror=reject;images[i].src=path}))).then(()=>{ready=true;labels.forEach((label,i)=>{const b=document.createElement('button'),c=document.createElement('canvas'),s=document.createElement('span');c.width=c.height=96;c.className='checker';s.textContent=`${i+1} · ${label}`;b.append(c,s);b.onclick=()=>{paused=true;n=i;elapsed=0;render()};document.querySelector('#frames').append(b);draw(c,images[1],i)});render()}).catch(()=>{document.querySelector('#phase').textContent='이미지를 불러오지 못했어요. 새로고침해 주세요.'});
+document.querySelector('#play').onclick=()=>{paused=!paused;elapsed=0;render()};document.querySelector('#next').onclick=()=>{paused=true;n=(n+1)%4;elapsed=0;render()};document.querySelector('#fps').onchange=e=>{fps=Number(e.target.value);elapsed=0};
+function tick(now){const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(ready&&!paused&&!document.hidden){elapsed+=dt;if(elapsed>=1/fps){elapsed-=1/fps;n=(n+1)%4;render()}}requestAnimationFrame(tick)}requestAnimationFrame(tick);
+</script></html>

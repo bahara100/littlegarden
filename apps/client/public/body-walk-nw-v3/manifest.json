@@ -1,0 +1,63 @@
+{
+ "version": 3,
+ "direction": "NW",
+ "stage": "whole-frame-rear-walk-awaiting-user-review",
+ "styleReference": "garden-body-walk-se-v20",
+ "poseReference": "user image 1 frames 1,3,4; user image 2 frame 2",
+ "selection": [
+  "image1-frame1",
+  "image2-frame2",
+  "image1-frame3",
+  "image1-frame4"
+ ],
+ "authoringProject": "garden-body-walk-ne-v3.pxo",
+ "method": "User-selected existing source cells only; no generation or redraw; whole-frame Pixelorama scaling and shared palette",
+ "headWidthTarget": 46,
+ "noPartRig": true,
+ "phases": [
+  "right-forward-left-back",
+  "left-passing-right-support",
+  "left-forward-right-back",
+  "right-passing-left-support"
+ ],
+ "from": "garden-body-walk-ne-v3",
+ "mirror": "x -> 95 - x per frame",
+ "frameCount": 4,
+ "fps": 6,
+ "frameSize": [
+  96,
+  96
+ ],
+ "headToFeetConnected": true,
+ "frames": [
+  {
+   "number": 1,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "NE V3 frame 1, exact horizontal mirror"
+  },
+  {
+   "number": 2,
+   "top": 1,
+   "bottom": 87,
+   "colors": 32,
+   "source": "NE V3 frame 2, exact horizontal mirror"
+  },
+  {
+   "number": 3,
+   "top": 2,
+   "bottom": 90,
+   "colors": 32,
+   "source": "NE V3 frame 3, exact horizontal mirror"
+  },
+  {
+   "number": 4,
+   "top": 1,
+   "bottom": 89,
+   "colors": 32,
+   "source": "NE V3 frame 4, exact horizontal mirror"
+  }
+ ],
+ "runtimeConnected": false
+}

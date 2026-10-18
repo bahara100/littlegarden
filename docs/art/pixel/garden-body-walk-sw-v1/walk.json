@@ -1,8 +1,8 @@
 {
  "version": 1,
  "direction": "SW",
- "stage": "mirror-of-se-v18",
- "from": "garden-body-walk-se-v18",
+ "stage": "mirror-of-approved-se-v20",
+ "from": "garden-body-walk-se-v20",
  "mirror": "x -> 95 - x per frame",
  "frameCount": 4,
  "fps": 6,
@@ -15,30 +15,30 @@
   {
    "number": 1,
    "top": 3,
-   "bottom": 87,
+   "bottom": 88,
    "colors": 32,
-   "source": "SE V18 frame 1, mirrored left-right"
+   "source": "SE V20 frame 1, mirrored left-right"
   },
   {
    "number": 2,
    "top": 2,
    "bottom": 88,
    "colors": 32,
-   "source": "SE V18 frame 2, mirrored left-right"
+   "source": "SE V20 frame 2, mirrored left-right"
   },
   {
    "number": 3,
    "top": 3,
    "bottom": 89,
    "colors": 32,
-   "source": "SE V18 frame 3, mirrored left-right"
+   "source": "SE V20 frame 3, mirrored left-right"
   },
   {
    "number": 4,
    "top": 3,
    "bottom": 88,
    "colors": 32,
-   "source": "SE V18 frame 4, mirrored left-right"
+   "source": "SE V20 frame 4, mirrored left-right"
   }
  ],
  "runtimeConnected": false
