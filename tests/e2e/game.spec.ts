@@ -69,9 +69,11 @@ test('a pat raises affinity once a day', async ({ page }) => {
   await expect(page.locator('#scene-hint')).toContainText('친밀도 1');
   await expect(page.locator('#selection-details')).toContainText('♥ 1 · 처음 만난 사이');
   await expect(page.locator('#selection-details')).toContainText('했어요 ♡');
-  await page.waitForTimeout(1200);  // past the pat cooldown
-  await page.click('#pet');
-  await expect(page.locator('#scene-hint')).toContainText('이미 올랐어요');
+  // Pats closer than the cooldown (game time, which runs slower on a slow machine) are ignored: try until one counts.
+  await expect(async () => {
+    await page.click('#pet');
+    await expect(page.locator('#scene-hint')).toContainText('이미 올랐어요', { timeout: 700 });
+  }).toPass({ timeout: 20_000 });
   await expect(page.locator('#selection-details')).toContainText('♥ 1 ·');
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   await page.click('#friend-lilac');
