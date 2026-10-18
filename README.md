@@ -127,6 +127,12 @@ main 브랜치에 push하면 `.github/workflows/pages.yml`이 검사·테스트�
 - 빌드(`npm run build`)는 게임용 파일만 남깁니다. `apps/client/public`의 검수 페이지와 예전 그림 이력은 개발 서버에서만 보이고, 빌드된 코드·페이지가 가리키는 `sprites/...` 경로의 파일만 배포됩니다(`apps/client/vite.config.ts`의 gameFilesOnly). 새 그림은 게임 코드가 가리키면 자동으로 함께 배포됩니다. 결과는 약 8MB입니다.
 - 홍련은 원작 캐릭터의 팬 도트입니다. 공개 배포 전에 원작의 팬 창작 가이드라인을 확인하세요.
 
+## 노래 넣기
+
+1. ffmpeg를 준비합니다(`winget install Gyan.FFmpeg`).
+2. `python tools/audio/prepare-track.py <원본 파일> <영문 id> "<제목>" ["<가수>"]`를 실행합니다. 앞뒤 무음을 자르고 음량을 고르게(-16 LUFS) 맞춘 128kbps MP3를 `apps/client/public/music/<id>.mp3`로 만들고, 길이·크기와 함께 `music.ts`에 붙일 한 줄을 보여 줍니다. 원본 파일은 바꾸지 않습니다.
+3. 그 줄을 `apps/client/src/music.ts`의 `TRACKS`에 넣습니다. 빌드는 코드에 적힌 `music/...` 파일만 배포합니다.
+
 ## 아트 제작
 
 - 캐릭터 도트 제작 방식: [CHARACTER_PRODUCTION_WORKFLOW.md](docs/art/pixel/CHARACTER_PRODUCTION_WORKFLOW.md). 사용자 결정 기록은 [AGENTS.md](AGENTS.md).
