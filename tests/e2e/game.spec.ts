@@ -17,6 +17,14 @@ async function open(page: Page, path = '/') {
 async function seed(page: Page, value: string) {
   await page.addInitScript(([key, text]) => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem(key, text); sessionStorage.setItem('seeded', '1'); } }, [SAVE_KEY, value]);
 }
+/** Zoom is by wheel and pinch only (no buttons); the current percent is on #viewport[data-zoom]. */
+const zoomPercent = async (page: Page) => Number(await page.locator('#viewport').getAttribute('data-zoom'));
+async function wheelZoomIn(page: Page) {
+  const box = (await page.locator('#game').boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, -300);
+  await expect.poll(() => zoomPercent(page)).toBeGreaterThan(100);
+}
 const placedCount = async (page: Page) => Number((await page.locator('#draft-count').textContent())!.match(/(\d+)개 배치/)![1]);
 
 test('the playground opens with no errors or missing files', async ({ page }) => {
@@ -24,9 +32,24 @@ test('the playground opens with no errors or missing files', async ({ page }) =>
   await expect(page).toHaveTitle(/작은 쉼표/);
   for (const id of ['#region-button', '#season-button', '#music-button', '#track-title', '#day-clock']) await expect(page.locator(id)).toBeVisible();
   await expect(page.locator('#region-label')).toHaveText('LITTLE GARDEN');
+  // No zoom buttons and no standing help text: the hint box only shows while a message is up.
+  await expect(page.locator('.view-controls')).toHaveCount(0);
+  await expect(page.locator('#scene-hint')).toBeHidden({ timeout: 6000 });
   await expect(page.locator('.scene-tag')).toBeVisible();
   await page.waitForTimeout(1500);  // let the friends start moving
   expect(problems).toEqual([]);
+});
+
+test('the top bars on the map stay on one row when the window is narrow', async ({ page }) => {
+  for (const width of [1280, 900, 700]) {
+    await page.setViewportSize({ width, height: 900 });
+    await open(page);
+    const scene = (await page.locator('.scene-bar').boundingBox())!, music = (await page.locator('.music-bar').boundingBox())!;
+    const map = (await page.locator('#viewport').boundingBox())!;
+    expect(music.y, `${width}px`).toBe(scene.y);
+    expect(music.x, `${width}px`).toBeGreaterThanOrEqual(scene.x + scene.width);
+    expect(music.x + music.width, `${width}px`).toBeLessThanOrEqual(map.x + map.width);
+  }
 });
 
 test('the Canvas renderer opens too', async ({ page }) => {
@@ -45,7 +68,7 @@ for (const renderer of ['phaser', 'canvas']) {
     await expect(bubble).toHaveText('♡');
     await expect(bubble).toHaveAttribute('data-kind', 'emote');
     const width = (await bubble.boundingBox())!.width;
-    await page.click('#zoom-in');
+    await wheelZoomIn(page);
     await expect(bubble).toBeVisible();
     expect((await bubble.boundingBox())!.width).toBeCloseTo(width, 0);
     await page.click('#edit-mode');
@@ -118,18 +141,17 @@ test('decorating can be undone and redone', async ({ page }) => {
 
 test('decorating and a friend close-up keep the zoom the player chose', async ({ page }) => {
   await open(page);
-  const zoom = page.locator('#zoom-value');
-  await page.click('#zoom-in'); await page.click('#zoom-in');
-  await expect(zoom).toHaveText('132%');
+  await wheelZoomIn(page);
+  const chosen = await zoomPercent(page);
   await page.click('#edit-mode');
-  await expect(zoom).toHaveText('132%');
+  expect(await zoomPercent(page)).toBe(chosen);
   await page.click('#edit-mode');
   await page.click('#focus-friend');
-  await expect(zoom).toHaveText('300%');
+  expect(await zoomPercent(page)).toBe(300);
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
-  await expect(zoom).toHaveText('132%');
+  await expect.poll(() => zoomPercent(page)).toBe(chosen);
   await page.click('#focus-friend'); await page.click('#edit-mode');
-  await expect(zoom).toHaveText('132%');
+  expect(await zoomPercent(page)).toBe(chosen);
 });
 
 test('a volume change before the playground is ready is remembered', async ({ page }) => {
@@ -192,6 +214,8 @@ test.describe('on a phone', () => {
     const width = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
     expect(width[0]).toBeLessThanOrEqual(width[1]);
     const viewport = (await page.locator('#viewport').boundingBox())!;
+    const top = async (id: string) => (await page.locator(id).boundingBox())!.y;
+    expect(await top('.music-bar')).toBe(await top('.scene-bar'));  // one row, nothing drops below
     for (const id of ['#region-button', '#season-button', '#music-button']) {
       const box = (await page.locator(id).boundingBox())!;
       expect(box.x).toBeGreaterThanOrEqual(viewport.x);
@@ -212,7 +236,7 @@ test.describe('on a phone', () => {
       for (let i = 1; i <= 16; i++) { await fingers('touchMove', from + (to - from) * i / 16); await page.waitForTimeout(16); }
       await fingers('touchEnd', 0);
     };
-    const percent = async () => Number((await page.locator('#zoom-value').textContent())!.replace('%', ''));
+    const percent = () => zoomPercent(page);
     expect(await percent()).toBe(100);
     await pinch(40, 200);
     await expect.poll(percent).toBeGreaterThan(250);

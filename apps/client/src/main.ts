@@ -28,7 +28,6 @@ function rememberMusic(change: Partial<typeof settings>) { Object.assign(setting
 let currentRegion: RegionId = settings.region, regionLayouts: GardenSave['regions'] = {};
 /** The stored save could not be read: automatic saves leave it alone until the player applies, loads or resets on purpose. */
 let saveUnreadable = false;
-const defaultHint = '친구 선택 → 바닥을 눌러 이동 · 기구를 눌러 이용';
 function notice(message: string) { setText('scene-hint', message); toastUntil = performance.now() + 3500; }
 function details(rows: [string, string][]) {
   const key = JSON.stringify(rows); if (key === panelKey) return; panelKey = key;
@@ -94,7 +93,8 @@ function refresh() {
     setText('use-equipment', `${active.name}에게 이용 부탁하기`);
     setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
   }
-  if (performance.now() > toastUntil) setText('scene-hint', defaultHint);
+  // The hint box only shows a short message after something happens; it hides when empty.
+  if (performance.now() > toastUntil) setText('scene-hint', '');
 }
 const UNLOCK_KIND = { line: '대사', emote: '감정', action: '행동' } as const;
 /** Unlocked lines, emotions and actions for a friend, and how many points the next one needs. */
@@ -155,13 +155,13 @@ function refreshEditor() {
     const buttons = editor.draft.stored.map((i, n) => { const button = document.createElement('button'); button.textContent = `${CATALOG[i.kind].icon} ${CATALOG[i.kind].name} ${n + 1} · 다시 놓기`; button.onclick = () => { garden?.restoreItem(i.id); refresh(); }; return button; });
     el('stored-items').replaceChildren(...buttons); el('stored-empty').hidden = buttons.length > 0;
   }
-  if (performance.now() > toastUntil) setText('scene-hint', pending ? '바닥 클릭으로 위치 고정 · 다른 곳 클릭으로 위치 변경 · R 회전 · ESC 취소' : '기구를 눌러 선택하거나 목록에서 새 장식을 골라보세요');
+  if (performance.now() > toastUntil) setText('scene-hint', '');
 }
 el('help').onclick = () => el<HTMLDialogElement>('help-dialog').showModal();
 el('close-help').onclick = () => el<HTMLDialogElement>('help-dialog').close();
 el('retry').onclick = () => location.reload();
 try {
-  const callbacks = { select: showSelection, notice, pet, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; if (!garden?.focus) remember({ zoom: percent / 100 }); /* a friend close-up is not the player's zoom */ }, error: () => { el('render-error').hidden = false; } };
+  const callbacks = { select: showSelection, notice, pet, zoom: (percent: number) => { el('viewport').dataset.zoom = String(percent); if (!garden?.focus) remember({ zoom: percent / 100 }); /* a friend close-up is not the player's zoom */ }, error: () => { el('render-error').hidden = false; } };
   // Phaser (about 1.2 MB) is its own chunk, loaded after the page and its controls are up; ?renderer=canvas never loads it.
   const created = usePhaser ? import('./phaserGarden').then(m => new m.PhaserGarden(el('game'), callbacks)) : Promise.resolve(new PixelGarden(el('game'), callbacks));
   created.then(created => {
@@ -185,7 +185,6 @@ try {
     el('loading').hidden = true; refresh();
   }, () => { el('render-error').hidden = false; });
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
-  el('zoom-in').onclick = () => garden?.zoomBy(1.15); el('zoom-out').onclick = () => garden?.zoomBy(1 / 1.15); el('reset-view').onclick = () => garden?.reset();
   el<HTMLInputElement>('grid-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; garden?.setGrid(on); remember({ grid: on }); };
   el<HTMLInputElement>('day-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; if (garden) garden.life.dayCycle = on; remember({ dayCycle: on }); refresh(); };
   el<HTMLInputElement>('fps-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; showFps(on); remember({ fps: on }); };
@@ -193,7 +192,7 @@ try {
   el('edit-undo').onclick = () => { if (garden?.editor.undo()) notice('한 단계 되돌렸어요.'); refresh(); };
   el('edit-redo').onclick = () => { if (garden?.editor.redo()) notice('다시 했어요.'); refresh(); };
   el('wave').onclick = () => garden?.wave();
-  el('focus-friend').onclick = () => { garden?.focusFriend(); notice('친구를 가까이 살펴봐요. ⌖ 버튼을 누르면 전체 놀이터로 돌아가요.'); };
+  el('focus-friend').onclick = () => { garden?.focusFriend(); notice('친구를 가까이 살펴봐요. 화면을 끌면 따라보기가 풀려요.'); };
   el('resume').onclick = () => garden?.resume();
   el('leave-seat').onclick = () => garden?.leaveSeat();
   el('request-bench').onclick = () => garden?.commandKind('bench');

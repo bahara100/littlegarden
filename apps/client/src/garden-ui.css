@@ -61,6 +61,16 @@ h1 > span { color: #b99b67; }
 .viewport-bottom { min-height: 50px; padding: 12px 19px; background: #fffef8; color: #596c50; }
 .viewport-bottom small, .input-hint, .input-hint b { color: #718166; }
 .scene-bar, .music-bar { top: 16px; gap: 7px; }
+/* The region/season bar and the song bar share one row at every width: the song title shrinks instead of the
+   bar dropping to a second row. */
+.map-top { position: absolute; z-index: 3; top: 16px; left: 16px; right: 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; pointer-events: none; }
+.map-top > .scene-bar, .map-top > .music-bar { position: relative; top: auto; left: auto; right: auto; pointer-events: auto; }
+.map-top > .scene-bar { flex: 0 0 auto; }
+.map-top > .music-bar { flex: 0 1 auto; min-width: 0; }
+.map-top .now-playing { flex: 0 1 204px; width: auto; min-width: 0; }
+.map-top:has(.scene-pop:not([hidden])) { z-index: 5; }
+/* The hint box appears only while a short message is showing. */
+.scene-hint:empty { display: none; }
 .scene-bar {
   left: 16px; align-items: center; gap: 5px; padding: 4px;
   border: 1px solid #cbd5bce6; border-radius: 15px;
@@ -244,9 +254,7 @@ dialog p { color: #67795b; }
 }
 @media (max-width: 1100px) and (min-width: 781px) {
   .workspace { grid-template-columns: minmax(0, 1fr) 290px; gap: 14px; }
-  .music-bar { top: 74px; }
-  .now-playing { width: 145px; }
-  #fps { top: 130px; }
+  #fps { top: 70px; }
   .scene-hint { bottom: 64px; max-width: calc(100% - 32px); }
 }
 @media (max-width: 780px) {
@@ -262,11 +270,9 @@ dialog p { color: #67795b; }
   .day > span { font-size: 23px; }
   .workspace { grid-template-columns: minmax(0, 1fr); }
   .viewport { min-height: 440px; }
-  .scene-bar { left: 12px; top: 12px; right: 12px; }
-  .music-bar { left: 12px; right: 12px; top: 70px; }
-  .now-playing { flex: 1; width: auto; }
-  #fps { top: 126px; right: 12px; }
-  #season-menu { left: auto; right: 0; min-width: 255px; }
+  .map-top { top: 12px; left: 12px; right: 12px; gap: 6px; }
+  #fps { top: 66px; right: 12px; }
+  #season-menu { min-width: 255px; }  /* opens to the right, below its button (the bar no longer spans the width) */
   #region-menu { min-width: 255px; }
   #music-menu { width: min(285px, calc(100vw - 58px)); }
   .scene-hint { left: 12px; bottom: 65px; max-width: calc(100% - 24px); font-size: 9px; }
@@ -287,6 +293,9 @@ dialog p { color: #67795b; }
   footer { padding: 20px 16px; }
 }
 @media (max-width: 520px) {
+  /* Phones: the region shows its number, the season its icon (names stay in the menus and tooltips). */
+  #region-label, #season-label, .music-mark { display: none; }
+  #region-button, #season-button { gap: 4px; padding: 8px 9px; }
   .brand-sub { display: none; }
   .header-right { gap: 8px; }
   .header-right .text-button { display: inline-flex; align-items: center; justify-content: center; font-size: 0; width: 28px; height: 34px; padding: 0; border: 1px solid #dce2cf; border-radius: 9px; background: #fffdf7; }
