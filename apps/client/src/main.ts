@@ -23,6 +23,8 @@ let settingsReady = false;
 function remember(change: Partial<typeof settings>) { if (settingsReady) { Object.assign(settings, change); saveSettings(window.localStorage, settings); } }
 // Each region keeps its own layout (persistence.ts). The garden shows the current region's; the others wait here.
 let currentRegion: RegionId = settings.region, regionLayouts: GardenSave['regions'] = {};
+/** The stored save could not be read: automatic saves leave it alone until the player applies, loads or resets on purpose. */
+let saveUnreadable = false;
 const defaultHint = '친구 선택 → 바닥을 눌러 이동 · 기구를 눌러 이용';
 function notice(message: string) { setText('scene-hint', message); toastUntil = performance.now() + 3500; }
 function details(rows: [string, string][]) {
@@ -107,7 +109,7 @@ function pet(id: AvatarId) {
   const result = garden.life.pet(id, todayKey()); if (!result) return;
   const a = garden.life.avatars.get(id)!, who = `${a.name}${batchim(a.name) ? '이' : '가'}`;
   if (result.gained) persist(true);
-  notice(result.levelUp ? `${who} 기분 좋아해요 ♡ 이제 '${result.levelUp.name}'예요! 친밀도 ${garden.life.affinity[id]}`
+  notice(result.levelUp ? `${who} 기분 좋아해요 ♡ 이제 '${result.levelUp.name}'${batchim(result.levelUp.name) ? '이에요' : '예요'}! 친밀도 ${garden.life.affinity[id]}`
     : result.gained ? `${who} 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}` : `${who} 기분 좋아해요 ♡ 오늘 친밀도는 이미 올랐어요. 내일 또 쓰다듬어 주세요.`);
   refresh();
 }
@@ -154,7 +156,7 @@ try {
       }
       // A region never saved yet keeps the fresh start (friends head for their first seats).
       const start = regionLayouts[currentRegion]; if (start) garden.restoreLayout(start);
-    } catch { setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
+    } catch { saveUnreadable = true; setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
     // Remembered view settings.
     el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
     el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
@@ -200,10 +202,13 @@ function snapshot(): GardenSave | null {
   const life = garden.life;
   return { regions: { ...regionLayouts, [currentRegion]: garden.editor.committed }, affinity: { ...life.affinity }, petted: { ...life.petted }, clock: life.clock() };
 }
-/** Saves to this browser; `quiet` (the regular clock save, a pat) leaves the status line alone unless it fails. */
+/**
+ * Saves to this browser. `quiet` saves (the regular clock save, a pat, a region change) leave the status line alone
+ * unless they fail, and never overwrite a save that could not be read; only a deliberate apply, load or reset does.
+ */
 function persist(quiet = false) {
-  const save = snapshot(); if (!save) return;
-  try { saveGarden(window.localStorage, save); if (!quiet) setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
+  const save = snapshot(); if (!save || (quiet && saveUnreadable)) return;
+  try { saveGarden(window.localStorage, save); saveUnreadable = false; if (!quiet) setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
   catch { setText('save-status', '브라우저에 저장하지 못했어요. 현재 배치는 유지돼요. 새로고침 전에 파일로 백업해주세요.'); }
 }
 // The time of day is saved now and then, and when the page is hidden or closed.

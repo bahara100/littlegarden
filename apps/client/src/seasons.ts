@@ -29,8 +29,14 @@ export function mix(from: string, to: string, amount: number): string {
   const a = rgb(from), b = rgb(to);
   return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * amount).toString(16).padStart(2, '0')).join('');
 }
-/** A region's ground as it looks in a season. */
+const looks = new WeakMap<GroundTheme, Map<SeasonId, GroundTheme>>();
+/** A region's ground as it looks in a season (worked out once per region and season; renderers ask every frame). */
 export function seasonGround(ground: GroundTheme, id: SeasonId): GroundTheme {
+  let byRegion = looks.get(ground); if (!byRegion) looks.set(ground, byRegion = new Map());
+  let look = byRegion.get(id); if (!look) byRegion.set(id, look = mixGround(ground, id));
+  return look;
+}
+function mixGround(ground: GroundTheme, id: SeasonId): GroundTheme {
   const s = season(id), m = (c: string, k = 1) => mix(c, s.tone, s.amount * k);
   return {
     background: m(ground.background, .25),
