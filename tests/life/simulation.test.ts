@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LifeSimulation, REACTION, findPath, reactionLabel, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
+import { GREET, LifeSimulation, REACTION, findPath, reactionLabel, tileCentre, walkable, SEATS, type AvatarId } from '../../apps/client/src/simulation.js';
 function advance(sim: LifeSimulation, seconds: number) { for (let t = 0; t < seconds; t += .05) sim.update(.05); }
 function until(sim: LifeSimulation, fn: () => boolean, seconds = 40) { for (let t = 0; t < seconds && !fn(); t += .05) sim.update(.05); assert.ok(fn(), 'expected state not reached'); }
 function seeded() { let n = 12345; return () => { n = n * 16807 % 2147483647; return n / 2147483647; }; }
@@ -88,8 +88,12 @@ test('free friends who meet stop, face each other and greet; orders are never in
   sim.update(.05);
   assert.equal(a.phase, 'greeting'); assert.equal(b.phase, 'greeting'); assert.equal(a.partner, 'lilac');
   assert.ok(Math.abs(Math.sin(a.yaw) - 1) < 1e-9, 'Momo turns toward Lulu (+x)'); assert.ok(Math.abs(Math.sin(b.yaw) + 1) < 1e-9);
-  assert.equal(reactionLabel(a, sim.time), '♡');
-  for (let t = 0; t < REACTION.duration + .2; t += .05) sim.update(.05);
+  assert.equal(reactionLabel(a, sim.time), '!');                       // they notice each other,
+  for (let t = 0; t < GREET.notice + .1; t += .05) sim.update(.05);
+  assert.equal(reactionLabel(a, sim.time), '👋');                      // wave hello,
+  for (let t = 0; t < GREET.hello - GREET.notice + .1; t += .05) sim.update(.05);
+  assert.ok(['···', '♪', ''].includes(reactionLabel(a, sim.time)));   // then take turns chatting
+  for (let t = GREET.hello + .2; t < REACTION.duration + .2; t += .05) sim.update(.05);  // the rest of the meeting
   assert.equal(a.phase, 'idle'); assert.equal(a.partner, null);
   // A friend walking on an order passes by without stopping.
   const d = new LifeSimulation(() => 0), p = d.avatars.get('peach')!, q = d.avatars.get('lilac')!;

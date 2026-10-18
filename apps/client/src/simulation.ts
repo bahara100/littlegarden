@@ -321,7 +321,7 @@ export function activityLabel(a: Avatar) {
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
-export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, duration: 3.2, sitTogether: .5, walkAlong: .3 } as const;
+export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, duration: 3.6, sitTogether: .5, walkAlong: .3 } as const;
 /**
  * The symbol over a friend's head while waving or greeting ('' otherwise; seats add their own). A greeting starts with
  * a heart, then the pair take turns chatting (···) and humming (♪). When drawn greeting/waving art exists, the
@@ -330,14 +330,19 @@ export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, durati
 export function reactionLabel(a: Avatar, time: number) {
   if (time < a.speechUntil) return a.speech;
   if (time < a.emoteUntil) return a.emote;
-  if (a.phase === 'waving' || time < a.cheerUntil) return '♡';
+  if (a.phase === 'waving') return '👋';
+  if (time < a.cheerUntil) return '♡';
   if (a.phase === 'happy') return time - a.since < PET.duration / 2 ? '♡' : '♪';
   if (a.phase !== 'greeting') return '';
+  // Meeting: notice (!), wave hello (👋), then take turns chatting (··· / ♪).
   const t = time - a.since;
-  if (t < 1) return '♡';
-  const turn = Math.floor((t - 1) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
+  if (t < GREET.notice) return '!';
+  if (t < GREET.hello) return '👋';
+  const turn = Math.floor((t - GREET.hello) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
   return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
 }
+/** A meeting's opening, in seconds from its start: "!" until `notice`, then a wave until `hello`, then chat. */
+export const GREET = { notice: .6, hello: 1.4 } as const;
 /** How long an unlocked line stays in its speech bubble: a base plus a little per character. */
 export const SPEECH = { base: 2.4, perChar: .12 } as const;
 /** Whether the current bubble contains a line of dialogue rather than an emotion icon. */

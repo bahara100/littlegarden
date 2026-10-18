@@ -15,7 +15,7 @@ test('bubbles keep speech priority and expire back to existing emotions', () => 
 test('ordinary greetings and seat reactions also use bubbles without new unlock content', () => {
   const sim = new LifeSimulation(() => .5), a = sim.avatars.get('lilac')!;
   a.phase = 'waving';
-  assert.deepEqual(bubbleContent(a, 0), { value: '♡', kind: 'emote' });
+  assert.deepEqual(bubbleContent(a, 0), { value: '👋', kind: 'emote' });
   a.phase = 'seated';
   assert.equal(bubbleContent(a, 0, 'bench').value, '···');
   assert.equal(bubbleContent(a, 0, 'swing').value, '♪');
@@ -28,5 +28,5 @@ test('emotion icons grow with the map in whole steps (1x, 2x, 3x)', async () => 
   assert.equal(emoteScale(EMOTE_TILE * 1.6), 2);
   assert.equal(emoteScale(EMOTE_TILE * 3), 3);
   assert.equal(emoteScale(EMOTE_TILE * 9), 3);      // capped so a close-up does not swallow the friend
-  assert.deepEqual(EMOTE_ICONS, { '♡': 'heart', '♪': 'note' });
+  assert.deepEqual(EMOTE_ICONS, { '♡': 'heart', '♪': 'note', '👋': 'wave', '!': 'exclaim', '···': 'dots' });
 });

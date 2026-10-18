@@ -66,8 +66,8 @@ for (const renderer of ['phaser', 'canvas']) {
     await page.click('#wave');
     const bubble = page.locator('.character-bubble[data-friend=character]');
     await expect(bubble).toBeVisible();
-    await expect(bubble).toHaveAttribute('data-emote', 'heart');  // ♡ is a pixel icon
-    await expect(bubble.locator('img.emote-icon')).toHaveAttribute('alt', '♡');
+    await expect(bubble).toHaveAttribute('data-emote', 'wave');  // a wave shows the pixel hand
+    await expect(bubble.locator('img.emote-icon')).toHaveAttribute('alt', '👋');
     expect(await bubble.locator('img.emote-icon').evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBe(16);
     await expect(bubble).toHaveAttribute('data-kind', 'emote');
     // At the starting zoom the icon is its 16 px art at 1x; zooming in grows it in whole steps with the friends.
