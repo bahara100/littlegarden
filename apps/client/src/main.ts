@@ -4,7 +4,7 @@ import type { PhaserGarden } from './phaserGarden';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
-import { affinityLevel, todayKey } from './affinity';
+import { affinityLevel, nextUnlock, todayKey, unlockedFor } from './affinity';
 import { SCARLET_SD } from './scarletApproved';
 import { REGIONS, region, type RegionId } from './regions';
 import { SEASONS, season, seasonGround, type SeasonId } from './seasons';
@@ -33,6 +33,8 @@ function details(rows: [string, string][]) {
 }
 function refresh() {
   if (!garden) return;
+  // Unlocked lines also show as a notice, so a long one can be read in full.
+  for (const { id, text } of garden.life.drainSpoken()) notice(`${garden.life.avatars.get(id)!.name}: "${text}"`);
   const editing = garden.editor.active;
   el<HTMLButtonElement>('import-save').disabled = editing;
   el<HTMLButtonElement>('reset-layout').disabled = editing;
@@ -74,7 +76,7 @@ function refresh() {
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
     }
     const points = life.affinity[friend.id], today = life.petted[friend.id] === todayKey();
-    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요']]);
+    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요'], ['해금', unlockSummary(life.unlocks, friend.id, points)]]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     const equipment = life.layout.find(i => i.id === selected)?.kind === 'bench' ? 'bench' : 'swing', slots = life.seats.filter(s => s.equipment === selected);
@@ -88,6 +90,14 @@ function refresh() {
     setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
   }
   if (performance.now() > toastUntil) setText('scene-hint', defaultHint);
+}
+const UNLOCK_KIND = { line: '대사', emote: '감정', action: '행동' } as const;
+/** Unlocked lines, emotions and actions for a friend, and how many points the next one needs. */
+function unlockSummary(list: Parameters<typeof unlockedFor>[0], id: AvatarId, points: number) {
+  const have = unlockedFor(list, id, points), next = nextUnlock(list, id, points);
+  const counts = (Object.keys(UNLOCK_KIND) as (keyof typeof UNLOCK_KIND)[]).map(k => [k, have.filter(u => u.kind === k).length] as const).filter(([, n]) => n);
+  const now = counts.length ? counts.map(([k, n]) => `${UNLOCK_KIND[k]} ${n}`).join(' · ') : '아직 없어요';
+  return next ? `${now} (다음: ♥ ${next.at} ${UNLOCK_KIND[next.kind]})` : now;
 }
 function showSelection(id: Selection) { selected = id; if (garden?.life.avatars.has(id as AvatarId)) remember({ selected: id as AvatarId }); refresh(); }
 const DAY_TEXT: Record<DayPart, [string, string]> = { morning: ['☀', '맑은 아침'], afternoon: ['☀', '포근한 오후'], evening: ['☼', '노을 지는 저녁'], night: ['☾', '고요한 밤'] };
@@ -109,8 +119,11 @@ function pet(id: AvatarId) {
   const result = garden.life.pet(id, todayKey()); if (!result) return;
   const a = garden.life.avatars.get(id)!, who = `${a.name}${batchim(a.name) ? '이' : '가'}`;
   if (result.gained) persist(true);
-  notice(result.levelUp ? `${who} 기분 좋아해요 ♡ 이제 '${result.levelUp.name}'${batchim(result.levelUp.name) ? '이에요' : '예요'}! 친밀도 ${garden.life.affinity[id]}`
-    : result.gained ? `${who} 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}` : `${who} 기분 좋아해요 ♡ 오늘 친밀도는 이미 올랐어요. 내일 또 쓰다듬어 주세요.`);
+  const message = result.levelUp ? `${who} 기분 좋아해요 ♡ 이제 '${result.levelUp.name}'${batchim(result.levelUp.name) ? '이에요' : '예요'}! 친밀도 ${garden.life.affinity[id]}`
+    : result.gained ? `${who} 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}` : `${who} 기분 좋아해요 ♡ 오늘 친밀도는 이미 올랐어요. 내일 또 쓰다듬어 주세요.`;
+  // A line unlocked for the pat goes first, in the same notice.
+  const said = garden.life.drainSpoken().filter(s => s.id === id).at(-1);
+  notice(said ? `${a.name}: "${said.text}" · ${message}` : message);
   refresh();
 }
 function refreshEditor() {

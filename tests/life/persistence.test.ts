@@ -4,7 +4,7 @@ import { DEFAULT_LAYOUT, cloneLayout, type Layout } from '../../apps/client/src/
 import { LayoutEditor } from '../../apps/client/src/editor.js';
 import { DEFAULT_SETTINGS, SAVE_VERSION, SETTINGS_KEY, decodeGarden, decodeSave, emptySave, encodeSave, gardenSave, loadGarden, loadSettings, saveGarden, saveSettings, SAVE_KEY, type SaveStorage } from '../../apps/client/src/persistence.js';
 import { LifeSimulation, DAY } from '../../apps/client/src/simulation.js';
-import { AFFINITY_LEVELS, affinityEffects, affinityLevel, todayKey } from '../../apps/client/src/affinity.js';
+import { AFFINITY_LEVELS, affinityLevel, todayKey } from '../../apps/client/src/affinity.js';
 
 function memory(): SaveStorage {
   const values = new Map<string, string>();
@@ -99,7 +99,7 @@ test('the day carries on from the saved clock, cycle shown or not', () => {
   assert.ok(sim.clock() < .1, 'it wraps past midnight');
 });
 const second = (sim: LifeSimulation) => { for (let i = 0; i < 10; i++) sim.update(.1); };
-test('a pat raises affinity once a day; levels are a frame for effects added later', () => {
+test('a pat raises affinity once a day; levels are named', () => {
   const sim = new LifeSimulation(() => .5);
   const first = sim.pet('lilac', '2026-10-18')!;
   assert.deepEqual(first, { gained: true, levelUp: null }); assert.equal(sim.affinity.lilac, 1);
@@ -112,7 +112,6 @@ test('a pat raises affinity once a day; levels are a frame for effects added lat
   assert.equal(next.gained, true); assert.equal(next.levelUp?.name, AFFINITY_LEVELS[1].name);
   sim.affinity.lilac = 99; second(sim); assert.equal(sim.pet('lilac', '2026-10-20')!.gained, false, 'never above the top');
   assert.equal(affinityLevel(0).level.name, '처음 만난 사이'); assert.equal(affinityLevel(15).level.name, '단짝'); assert.equal(affinityLevel(99).next, null);
-  assert.deepEqual(affinityEffects(99), []);
   assert.match(todayKey(new Date(2026, 0, 5)), /^2026-01-05$/);
 });
 test('view and song settings are validated and remembered', () => {

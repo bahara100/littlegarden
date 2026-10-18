@@ -1,6 +1,8 @@
 import { DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
 export type { Point, Seat } from './layout';
-import { AFFINITY_MAX, affinityLevel, type AffinityLevel } from './affinity';
+import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type AffinityLevel, type Moment, type Unlock } from './affinity';
+import { UNLOCKS } from './unlocks';
+import type { ActionId } from './friendActions';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
@@ -90,6 +92,8 @@ export interface Avatar extends Point {
   partner: AvatarId | null; since: number;
   /** Until when a petted friend who stays put (e.g. on a seat) shows a heart. */
   cheerUntil: number;
+  /** An unlocked line in a speech bubble and an unlocked emotion over the head, each shown until its time. */
+  speech: string; speechUntil: number; emote: string; emoteUntil: number;
 }
 export class LifeSimulation {
   time = 0;
@@ -112,8 +116,38 @@ export class LifeSimulation {
   setClock(fraction: number) { this.dayStart = ((fraction - this.time / DAY.length) % 1 + 1) % 1; }
   get night() { return dayPart(this.dayFraction()) === 'night'; }
   private lastPet: Partial<Record<AvatarId, number>> = {};
+  /** What friends unlock as affinity grows (unlocks.ts; tests pass their own list). */
+  unlocks: readonly Unlock[] = UNLOCKS;
+  /** Lines said since the screen last asked (drainSpoken), so it can also show them as a notice. */
+  private spoken: { id: AvatarId; text: string }[] = [];
+  drainSpoken() { return this.spoken.splice(0); }
+  /** A moment came for a friend: an unlocked line and/or emotion for it may show. Returns whether anything did. */
+  moment(a: Avatar, when: Moment): boolean {
+    const points = this.affinity[a.id];
+    const line = pickForMoment(this.unlocks, 'line', a.id, points, when, this.random);
+    const emote = pickForMoment(this.unlocks, 'emote', a.id, points, when, this.random);
+    if (line) { a.speech = line.text; a.speechUntil = this.time + SPEECH.base + [...line.text].length * SPEECH.perChar; this.spoken.push({ id: a.id, text: line.text }); }
+    if (emote) { a.emote = emote.emote; a.emoteUntil = this.time + (emote.seconds ?? 2); }
+    return !!(line || emote);
+  }
+  /** Carries out an unlocked action (friendActions.ts); false when it cannot happen right now. */
+  perform(a: Avatar, action: ActionId): boolean {
+    switch (action) {
+      case 'wave': this.settle(a); a.phase = 'waving'; a.until = this.time + 2.4; return true;
+      case 'cheer': this.settle(a); a.phase = 'happy'; a.since = this.time; a.until = this.time + PET.duration; return true;
+      case 'visitFriend': {
+        const others = [...this.avatars.values()].filter(o => o.id !== a.id && !o.seatId && ['idle', 'walking', 'waving', 'happy'].includes(o.phase))
+          .sort((p, q) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(q.x - a.x, q.z - a.z));
+        for (const o of others) for (const [dx, dz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+          const path = findPath(a, tileCentre({ x: o.x + dx, z: o.z + dz }), this.world);
+          if (path && path.length > 2) { this.free(a); a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return true; }
+        }
+        return false;
+      }
+    }
+  }
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0 }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0 }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -170,6 +204,7 @@ export class LifeSimulation {
     const gained = this.petted[id] !== today && this.affinity[id] < AFFINITY_MAX, before = affinityLevel(this.affinity[id]).index;
     if (gained) { this.affinity[id]++; this.petted[id] = today; }
     const after = affinityLevel(this.affinity[id]), result = { gained, levelUp: after.index > before ? after.level : null };
+    if (!(result.levelUp && this.moment(a, 'levelUp'))) this.moment(a, 'pet');
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) || a.phase === 'greeting') { a.cheerUntil = this.time + PET.duration; return result; }
     const directed = a.directed;
     this.settle(a); a.phase = 'happy'; a.since = this.time; a.until = this.time + PET.duration; a.directed = directed;
@@ -183,6 +218,9 @@ export class LifeSimulation {
   private choose(a: Avatar) {
     a.directed = false;
     const left = a.leftItem; a.leftItem = null;
+    // Unlocked lines and emotions for a quiet moment, then any unlocked action that wins its roll.
+    this.moment(a, 'idle');
+    for (const action of actionsToTry(this.unlocks, a.id, this.affinity[a.id], this.random)) if (this.perform(a, action)) return;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
     if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
       const beside = this.seats.find(s => s.kind === 'bench' && s.equipment !== left && !this.reservations.has(s.id) &&
@@ -225,6 +263,7 @@ export class LifeSimulation {
       for (const [p, q] of [[a, b], [b, a]] as const) {
         p.phase = 'greeting'; p.path = []; p.partner = q.id; p.since = this.time; p.until = this.time + REACTION.duration;
         p.yaw = Math.atan2(q.x - p.x, q.z - p.z);
+        this.moment(p, 'greet');
       }
     }
   }
@@ -255,7 +294,7 @@ export class LifeSimulation {
         const s = this.seatOf(a); if (!s) { this.settle(a); continue; }
         a.progress = Math.min(1, Math.max(0, a.progress + (a.phase === 'boarding' ? dt : -dt) / .7));
         a.x = s.approach.x + (s.x - s.approach.x) * a.progress; a.z = s.approach.z + (s.z - s.approach.z) * a.progress; a.yaw = s.yaw;
-        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1); }
+        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; this.moment(a, 'seat'); a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1); }
         else if (a.phase === 'leaving' && a.progress === 0) { a.leftItem = s.equipment; this.settle(a, 2.5); }
       } else if (this.time >= a.until) this.beginExit(a);
     }
@@ -289,6 +328,8 @@ export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, durati
  * renderers can play it for these phases instead.
  */
 export function reactionLabel(a: Avatar, time: number) {
+  if (time < a.speechUntil) return a.speech;
+  if (time < a.emoteUntil) return a.emote;
   if (a.phase === 'waving' || time < a.cheerUntil) return '♡';
   if (a.phase === 'happy') return time - a.since < PET.duration / 2 ? '♡' : '♪';
   if (a.phase !== 'greeting') return '';
@@ -297,6 +338,10 @@ export function reactionLabel(a: Avatar, time: number) {
   const turn = Math.floor((t - 1) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
   return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
 }
+/** How long an unlocked line stays in its speech bubble: a base plus a little per character. */
+export const SPEECH = { base: 2.4, perChar: .12 } as const;
+/** Whether a friend's label is a line in a speech bubble (drawn with a background) rather than a symbol. */
+export function speaking(a: Avatar, time: number) { return time < a.speechUntil; }
 /** Patting a friend: seconds of happiness and seconds before another pat counts. */
 export const PET = { duration: 1.8, cooldown: .8 } as const;
 /**

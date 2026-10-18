@@ -1,6 +1,6 @@
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, PICNIC, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
-import { LifeSimulation, reactionLabel, type AvatarId, type EquipmentId, type Avatar } from './simulation';
+import { LifeSimulation, reactionLabel, speaking, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { loadPixelAtlas } from './pixelAtlas';
 import { depth, project, unproject } from './isometric';
 import { scarletDirection } from './scarletDirections';
@@ -214,8 +214,9 @@ export class PixelGarden {
     this.hits.push({ id: a.id, x: p.x - size * .28, y: base - size * .8, w: size * .56, h: size * .8 });
     const label = reactionLabel(a, this.life.time) || (seated ? seat?.kind === 'swing' ? '♪' : '···' : '');
     if (label) {
-      c.font = '8px sans-serif'; c.textAlign = 'center'; c.fillStyle = '#65556f';
-      c.fillText(label, p.x, y - 3);
+      c.font = '8px sans-serif'; c.textAlign = 'center';
+      if (speaking(a, this.life.time)) { const w = c.measureText(label).width + 4; c.fillStyle = '#fffef8'; c.fillRect(Math.round(p.x - w / 2), y - 13, Math.ceil(w), 12); }
+      c.fillStyle = '#65556f'; c.fillText(label, p.x, y - 3);
     }
   }
   private animate = () => {
