@@ -1,0 +1,122 @@
+[
+  {
+    "id": "picnic-table",
+    "file": "picnic-table.png",
+    "sourceCrop": [
+      171,
+      111,
+      1366,
+      918
+    ],
+    "opaqueSize": [
+      124,
+      84
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "8f739a14ed948ac15aac2da872ee86159cb07ab3ae1808972764567484db756a"
+  },
+  {
+    "id": "seesaw",
+    "file": "seesaw.png",
+    "sourceCrop": [
+      161,
+      161,
+      1380,
+      881
+    ],
+    "opaqueSize": [
+      124,
+      73
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "91ee8c0035dce50399075db90949f49bd0044ad42e8948664055487f9fcc73ee"
+  },
+  {
+    "id": "drinking-fountain",
+    "file": "drinking-fountain.png",
+    "sourceCrop": [
+      566,
+      179,
+      980,
+      862
+    ],
+    "opaqueSize": [
+      75,
+      124
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "1126bad43c61d8f700876ee606e9ef9e46e03c7a446380e7c923c4445a7cc951"
+  },
+  {
+    "id": "fountain",
+    "file": "fountain.png",
+    "sourceCrop": [
+      320,
+      105,
+      1216,
+      906
+    ],
+    "opaqueSize": [
+      124,
+      111
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "3b973dacc6a43c7474fbcec91ff7e06c23fed4de9dda1c0701409a1e970cfaff"
+  },
+  {
+    "id": "wooden-bridge",
+    "file": "wooden-bridge.png",
+    "sourceCrop": [
+      234,
+      113,
+      1310,
+      896
+    ],
+    "opaqueSize": [
+      124,
+      90
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "9d6250308a892594247f1eb86ff08e90177ff5aa1646b61eef335927ff236786"
+  },
+  {
+    "id": "stream",
+    "file": "stream.png",
+    "sourceCrop": [
+      77,
+      49,
+      1457,
+      963
+    ],
+    "opaqueSize": [
+      124,
+      82
+    ],
+    "canvas": [
+      128,
+      128
+    ],
+    "maxColours": 64,
+    "sha256": "6d28e9f774577ac3b580709ec23750c800dc1e9b49582a739c3fa5fcef7659f9"
+  }
+]

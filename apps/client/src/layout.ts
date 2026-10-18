@@ -1,3 +1,5 @@
+import { seesawSeatDistance } from './seesaw';
+
 export type Point = { x: number; z: number };
 /** The garden is GARDEN×GARDEN floor tiles centred on 0 (edges at ±HALF); everything sizes itself from this. */
 export const GARDEN = 24, HALF = GARDEN / 2;
@@ -5,7 +7,7 @@ export const GARDEN = 24, HALF = GARDEN / 2;
 export const MAX_ITEMS = 300;
 /** Map zoom (1 = the whole garden fits): the closest view and a friend close-up keep the size they had on the 16-tile map. */
 export const ZOOM = { min: .65, max: 5 * GARDEN / 16, friend: 3 * GARDEN / 16 } as const;
-export type ItemKind = 'bench' | 'swing' | 'tree' | 'flower' | 'fence' | 'path' | 'pond';
+export type ItemKind = 'bench' | 'swing' | 'tree' | 'flower' | 'fence' | 'path' | 'pond' | 'picnicTable' | 'seesaw' | 'drinkingFountain' | 'fountain' | 'bridge' | 'stream';
 export interface PlacedItem extends Point { id: string; kind: ItemKind; turn: number; w?: number; d?: number }
 export interface Layout { items: PlacedItem[]; stored: PlacedItem[] }
 /**
@@ -22,17 +24,24 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
   tree: { name: '초록 나무', icon: '♣', w: 1.25, d: 1.25 }, flower: { name: '작은 화단', icon: '✿', w: 2, d: 1 },
   fence: { name: '나무 울타리', icon: '▥', w: 2, d: .2 }, path: { name: '길 타일', icon: '▧', w: 1, d: 1 },
   pond: { name: '호수', icon: '≈', w: 4, d: 5 },
+  picnicTable: { name: '피크닉 테이블', icon: '▦', w: 4, d: 3 },
+  seesaw: { name: '시소', icon: '⚖', w: 4, d: 1 },
+  drinkingFountain: { name: '음수대', icon: '♧', w: 1, d: 1 },
+  fountain: { name: '분수대', icon: '♨', w: 3, d: 3 },
+  bridge: { name: '작은 나무다리', icon: '⌒', w: 4, d: 2 },
+  stream: { name: '시냇물', icon: '≋', w: 4, d: 2 },
 };
 /** Kinds drawn into the floor itself (no standing art): path tiles under everything, and ponds. */
-export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond';
+export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond' || kind === 'stream';
 /**
  * How far below the item centre (in tiles of screen height) each prop's lowest art pixel is drawn. The swing's lowest
  * pixel is its near leg's foot, about a tile in front of the frame's middle, so its art drops further than the
  * others; otherwise the frame stands a tile behind its seat and footprint.
  */
-export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2, pond: .2 };
+export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2, pond: .2,
+  picnicTable: 1.2, seesaw: 1, drinkingFountain: .4, fountain: 1.2, bridge: 1.5, stream: 1.5 };
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
-export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33 }, standing: { bench: .75, swing: -.1 } } as const;
+export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33, seesaw: .08 }, standing: { bench: .75, swing: -.1, seesaw: .48 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
   const angle = item.turn * Math.PI / 2, c = Math.round(Math.cos(angle)), s = Math.round(Math.sin(angle));
   return { x: item.x + local.x * c + local.z * s, z: item.z - local.x * s + local.z * c };
@@ -57,14 +66,38 @@ export function snapToTiles<T extends PlacedItem>(item: T): T {
 /** The two fixed floor features, on whole tiles: a picnic rug and a garden sign. */
 export const PICNIC = { x: -3, z: 4, w: 2, d: 2 } as const;
 export const SIGN = { x: -.5, z: -HALF + 1.5, w: .4, d: .4 } as const;
-export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing'; approach: Point; height: number; yaw: number }
+export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing' | 'seesaw'; approach: Point; height: number; yaw: number; side?: -1 | 1 }
 export interface NavigationWorld { rectangles: { x: number; z: number; w: number; d: number }[]; trunks: (Point & { r: number })[]; seats: Seat[] }
+type Rectangle = NavigationWorld['rectangles'][number];
+/** Remove the bridge deck from a water obstacle; ordinary furniture is never cut away. */
+function subtractWater(r: Rectangle, deck: Rectangle): Rectangle[] {
+  const x0 = r.x - r.w / 2, x1 = r.x + r.w / 2, z0 = r.z - r.d / 2, z1 = r.z + r.d / 2;
+  const a = Math.max(x0, deck.x - deck.w / 2), b = Math.min(x1, deck.x + deck.w / 2);
+  const c = Math.max(z0, deck.z - deck.d / 2), d = Math.min(z1, deck.z + deck.d / 2);
+  if (a >= b || c >= d) return [r];
+  return [[x0, a, z0, z1], [b, x1, z0, z1], [a, b, z0, c], [a, b, d, z1]]
+    .filter(([l, h, t, u]) => h > l && u > t)
+    .map(([l, h, t, u]) => ({ x: (l + h) / 2, z: (t + u) / 2, w: h - l, d: u - t }));
+}
+/** Small deck rise in ground units; both renderers use the same walking height. */
+export function bridgeLift(p: Point, items: readonly PlacedItem[]): number {
+  let height = 0;
+  for (const item of items) if (item.kind === 'bridge') {
+    const f = footprint(item), dx = p.x - item.x, dz = p.z - item.z;
+    if (Math.abs(dx) >= f.w / 2 || Math.abs(dz) >= f.d / 2) continue;
+    const along = item.turn % 2 ? dz : dx;
+    height = Math.max(height, .32 * Math.cos(along / 4 * Math.PI));
+  }
+  return height;
+}
 export function worldFrom(items: PlacedItem[]): NavigationWorld {
   const rectangles: NavigationWorld['rectangles'] = [{ ...PICNIC }, { ...SIGN }];
+  const waters: Rectangle[] = [], decks = items.filter(i => i.kind === 'bridge').map(footprint);
   const trunks: NavigationWorld['trunks'] = [], seats: Seat[] = [];
   for (const item of items) {
     if (item.kind === 'tree') trunks.push({ x: item.x, z: item.z, r: .67 });
-    else if (item.kind !== 'path') {
+    else if (item.kind === 'pond' || item.kind === 'stream') waters.push(footprint(item));
+    else if (item.kind !== 'path' && item.kind !== 'bridge') {
       const size = item.kind === 'bench' ? { w: 3.15 * B, d: 1.15 * B } : item.kind === 'swing' ? { w: 3.25 * S, d: 2.1 * S } : { w: item.w ?? CATALOG[item.kind].w, d: item.d ?? CATALOG[item.kind].d };
       rectangles.push(oriented(item, size.w, size.d));
     }
@@ -74,6 +107,20 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
         approach: transform({ x: side * BENCH_SEAT.approachX, z: BENCH_SEAT.approachZ }, item), height: .975 * B, yaw: item.turn * Math.PI / 2,
       });
     } else if (item.kind === 'swing') seats.push({ id: `${item.id}-seat`, equipment: item.id, kind: 'swing', ...transform({ x: 0, z: 0 }, item), approach: transform({ x: .15 * S, z: 2.25 * S }, item), height: .965 * S, yaw: item.turn * Math.PI / 2 });
+    else if (item.kind === 'seesaw') for (const side of [-1, 1] as const) {
+      // The artwork uses a mirrored diagonal for odd turns, just like the other new park props.
+      const odd = item.turn % 2;
+      const distance = seesawSeatDistance(side);
+      const p = odd ? { x: item.x, z: item.z + distance } : { x: item.x + distance, z: item.z };
+      seats.push({ id: `${item.id}-${side}`, equipment: item.id, kind: 'seesaw', side, ...p,
+        approach: { x: p.x + (odd ? 1.4 : 0), z: p.z + (odd ? 0 : 1.4) },
+        height: .5, yaw: odd ? (side < 0 ? 0 : Math.PI) : (side < 0 ? Math.PI / 2 : -Math.PI / 2) });
+    }
+  }
+  for (const water of waters) {
+    let pieces = [water];
+    for (const deck of decks) pieces = pieces.flatMap(r => subtractWater(r, deck));
+    rectangles.push(...pieces);
   }
   // Friends walk tile centre to tile centre, so each seat's approach (where they step on and off) is the nearest
   // free tile centre to the art's approach point.
@@ -136,6 +183,9 @@ export function geometryError(items: PlacedItem[]): string | null {
     const a = footprint(items[i]), b = footprint(items[j]);
     // Floor tiles can sit beneath furniture; two floor tiles cannot overlap.
     if ((items[i].kind === 'path') !== (items[j].kind === 'path')) continue;
+    // A footbridge may sit over water; all other solid props keep their normal collision footprint.
+    if ((items[i].kind === 'bridge' && ['stream', 'pond'].includes(items[j].kind)) ||
+        (items[j].kind === 'bridge' && ['stream', 'pond'].includes(items[i].kind))) continue;
     if (Math.abs(a.x - b.x) < (a.w + b.w) / 2 - .001 && Math.abs(a.z - b.z) < (a.d + b.d) / 2 - .001) return '다른 기구나 장식과 겹쳐요.';
   }
   return null;

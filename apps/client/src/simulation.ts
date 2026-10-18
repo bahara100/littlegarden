@@ -4,6 +4,7 @@ import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type Affinity
 import { UNLOCKS } from './unlocks';
 import type { ActionId } from './friendActions';
 import { PROFILES, twins } from './friendProfiles';
+import { SEESAW } from './seesaw';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
@@ -85,6 +86,7 @@ export function findPath(start: Point, destination: Point, nav: NavigationWorld 
   return null;
 }
 export interface Avatar extends Point {
+  seesaw: 'waiting' | 'playing' | null;
   id: AvatarId; name: string; phase: Phase; yaw: number; path: Point[]; seatId: string | null;
   progress: number; until: number; deadline: number; directed: boolean; lastEquipment: EquipmentId | null;
   /** The equipment just stepped off: skipped until the friend has done something else, so she does not climb straight back on. */
@@ -105,6 +107,8 @@ export class LifeSimulation {
   get seats() { return this.world.seats; }
   readonly avatars = new Map<AvatarId, Avatar>();
   readonly reservations = new Map<string, AvatarId>();
+  private seesaws = new Map<string, { phase: number; tilt: number; amplitude: number }>();
+  seesawTilt(id: string) { return this.seesaws.get(id)?.tilt ?? 0; }
   /** How close each friend feels to you (affinity.ts): one point for the first pat of each day, kept with the save. */
   readonly affinity: Record<AvatarId, number> = { character: 0, peach: 0, lilac: 0 };
   /** The day (YYYY-MM-DD) each friend's affinity last went up. */
@@ -151,13 +155,13 @@ export class LifeSimulation {
     }
   }
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0, watchSpot: null, lookAt: null }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, seesaw: null, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0, watchSpot: null, lookAt: null }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
     const nav = worldFrom(items);
     if (!walkable(HUB, nav) || nav.seats.some(s => !findPath(HUB, s.approach, nav))) throw new Error('Inaccessible playground layout');
-    this.layout = items.map(i => ({ ...i })); this.world = nav; this.reservations.clear();
+    this.layout = items.map(i => ({ ...i })); this.world = nav; this.reservations.clear(); this.seesaws.clear();
     const occupied: Point[] = [];
     for (const a of this.avatars.values()) {
       const candidates: Point[] = [];
@@ -165,13 +169,13 @@ export class LifeSimulation {
       candidates.sort((p, q) => Math.hypot(p.x - HUB.x, p.z - HUB.z) - Math.hypot(q.x - HUB.x, q.z - HUB.z));
       const safe = candidates.find(p => occupied.every(o => Math.hypot(p.x - o.x, p.z - o.z) > .8) && findPath(HUB, p, this.world));
       Object.assign(a, safe ?? HUB); occupied.push({ x: a.x, z: a.z });
-      a.phase = 'idle'; a.path = []; a.seatId = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
+      a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
     }
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
   /** On the seat itself (getting on, sitting, getting off), not just walking to a reserved one: drawn with the seat. */
   riding(a: Avatar) { return !!a.seatId && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) && a.progress > 0; }
-  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.watchSpot = null; a.lookAt = null; }
+  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; }
   /** Ponds in the current layout. */
   get ponds() { return this.layout.filter(i => i.kind === 'pond'); }
   /** The pond a ground point is on, if any. */
@@ -258,6 +262,12 @@ export class LifeSimulation {
     // Unlocked lines and emotions for a quiet moment, then any unlocked action that wins its roll.
     this.moment(a, 'idle');
     for (const action of actionsToTry(this.unlocks, a.id, this.affinity[a.id], this.random)) if (this.perform(a, action)) return;
+    const waitingSeesaw = this.seats.find(s => s.kind === 'seesaw' && s.equipment !== left && !this.reservations.has(s.id) &&
+      this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id)));
+    if (waitingSeesaw && !this.use(a.id, waitingSeesaw.equipment, false)) return;
+    if (!this.night && this.seats.some(s => s.kind === 'seesaw') && this.random() < .25) {
+      for (const s of this.seats.filter(s => s.kind === 'seesaw' && s.equipment !== left)) if (!this.use(a.id, s.equipment, false)) return;
+    }
     // Now and then a free friend goes to look at a pond (only rolled when there is one, so pond-less gardens behave as before).
     if (this.ponds.length && this.random() < LAKE.visit && !this.watchPond(a.id, null, false)) return;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
@@ -325,6 +335,23 @@ export class LifeSimulation {
     }
   }
   private readonly met = new Set<string>();
+  /** Reservations and boarding do not count as riders. The pair shares a play timer and opposite end heights. */
+  private updateSeesaws(dt: number) {
+    for (const item of this.layout) if (item.kind === 'seesaw') {
+      const riders = [...this.avatars.values()].filter(a => a.phase === 'seated' && this.seatOf(a)?.equipment === item.id);
+      const motion = this.seesaws.get(item.id) ?? { phase: 0, tilt: 0, amplitude: 0 };
+      const paired = riders.length === 2;
+      if (paired && riders.some(a => a.seesaw !== 'playing')) {
+        for (const a of riders) { a.seesaw = 'playing'; a.until = this.time + 14; }
+      } else if (!paired) for (const a of riders) if (a.seesaw === 'playing') { a.seesaw = 'waiting'; a.until = this.time + 25; }
+      motion.amplitude = paired ? Math.min(1, motion.amplitude + dt) : Math.max(0, motion.amplitude - dt * 2);
+      if (motion.amplitude) motion.phase += dt * Math.PI * 2 / SEESAW.period;
+      const target = paired ? Math.sin(motion.phase) * motion.amplitude : 0;
+      motion.tilt += Math.max(-dt * 3, Math.min(dt * 3, target - motion.tilt));
+      if (!motion.amplitude && Math.abs(motion.tilt) < .001) { motion.tilt = 0; motion.phase = 0; }
+      this.seesaws.set(item.id, motion);
+    }
+  }
   /** When each pair of friends (ids sorted, joined by +) last greeted, in play seconds. */
   private readonly greetedAt = new Map<string, number>();
   /** Play seconds since these two friends last greeted, or null if they have not yet. */
@@ -359,10 +386,11 @@ export class LifeSimulation {
         const s = this.seatOf(a); if (!s) { this.settle(a); continue; }
         a.progress = Math.min(1, Math.max(0, a.progress + (a.phase === 'boarding' ? dt : -dt) / .7));
         a.x = s.approach.x + (s.x - s.approach.x) * a.progress; a.z = s.approach.z + (s.z - s.approach.z) * a.progress; a.yaw = s.yaw;
-        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; this.moment(a, 'seat'); a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1) * (PROFILES[a.id].rest ?? 1); }
+        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.seesaw = s.kind === 'seesaw' ? 'waiting' : null; a.lastEquipment = s.kind; this.moment(a, 'seat'); a.until = this.time + (s.kind === 'seesaw' ? 25 : (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1) * (PROFILES[a.id].rest ?? 1)); }
         else if (a.phase === 'leaving' && a.progress === 0) { a.leftItem = s.equipment; this.settle(a, 2.5); }
       } else if (this.time >= a.until) this.beginExit(a);
     }
+    this.updateSeesaws(dt);
     this.react();
     // Gentle separation, not hard collision: friends can pass instead of deadlocking.
     const friends = [...this.avatars.values()];
@@ -382,6 +410,7 @@ export class LifeSimulation {
   }
 }
 export function activityLabel(a: Avatar) {
+  if (a.phase === 'seated' && a.seesaw) return a.seesaw === 'playing' ? '시소 타는 중' : '시소에서 친구 기다리는 중';
   const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중', watching: '호수 구경하는 중' };
   if (a.phase === 'walking' && a.lookAt) return '호수 보러 가는 중';
   return labels[a.phase];

@@ -47,7 +47,7 @@ function refresh() {
   setText('edit-mode', editing ? '꾸미기 취소' : '✿ 놀이터 꾸미기');
   setText('mode-label', editing ? '꾸미기 모드' : '생활 모드');
   setText('mode-note', editing ? '친구들은 잠시 쉬는 중' : '친구들의 하루');
-  setText('equipment-count', String(garden.life.layout.filter(i => ['bench', 'swing'].includes(i.kind)).length));
+  setText('equipment-count', String(garden.life.layout.filter(i => ['bench', 'swing', 'seesaw'].includes(i.kind)).length));
   showDay(garden.life.dayFraction(), garden.life.dayCycle);
   if (editing) { refreshEditor(); return; }
   const life = garden.life, active = life.avatars.get(garden.selectedAvatar)!;
@@ -61,10 +61,10 @@ function refresh() {
   el('friend-actions').hidden = !friend; el('equipment-actions').hidden = !!friend;
   el<HTMLButtonElement>('wave').disabled = using;
   el<HTMLButtonElement>('leave-seat').disabled = !using;
-  for (const equipment of ['bench', 'swing'] as const) {
+  for (const equipment of ['bench', 'swing', 'seesaw'] as const) {
     const slots = life.seats.filter(s => s.kind === equipment), free = slots.filter(s => !life.reservations.has(s.id)).length;
     el<HTMLButtonElement>(`request-${equipment}`).disabled = using || !free;
-    setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : '그네'} 이용 · ${free}자리`);
+    setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : '그네'} 이용 · ${free}자리`);
   }
   if (friend) {
     el('model-review').hidden = false;
@@ -83,11 +83,16 @@ function refresh() {
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     el('selection-icon').removeAttribute('data-friend');
-    const equipment = life.layout.find(i => i.id === selected)?.kind === 'bench' ? 'bench' : 'swing', slots = life.seats.filter(s => s.equipment === selected);
+    const equipment = life.layout.find(i => i.id === selected)?.kind ?? 'bench', slots = life.seats.filter(s => s.equipment === selected);
     setText('selection-kind', 'FURNITURE'); setText('selection-icon', equipment === 'bench' ? '▤' : '⋂');
     setText('selection-title', equipment === 'bench' ? '햇살 나무 벤치' : '산들바람 그네');
     setText('selection-subtitle', equipment === 'bench' ? 'GARDEN BENCH / 02 SEATS' : 'GARDEN SWING / 01 SEAT');
     setText('selection-description', equipment === 'bench' ? '두 친구가 나란히 쉬는 벤치예요. 친구가 자리를 예약하고 찾아와 잠깐 쉬어갑니다.' : '바람을 타는 작은 그네예요. 한 친구씩 올라타고, 시간이 지나면 안전하게 내려옵니다.');
+    if (equipment === 'seesaw') {
+      setText('selection-icon', '⚖'); setText('selection-title', '함께 타는 시소');
+      setText('selection-subtitle', 'GARDEN SEESAW / 02 SEATS');
+      setText('selection-description', '양쪽에 한 명씩 앉으면 오르락내리락해요. 먼저 앉은 친구는 반대편 친구를 기다려요.');
+    }
     details(slots.map((s, i) => { const id = life.reservations.get(s.id), a = id && life.avatars.get(id); return [`자리 ${i + 1}`, a ? `${a.name} · ${a.phase === 'walking' ? '오는 중' : a.phase === 'leaving' ? '내려오는 중' : '이용 중'}` : '비어 있어요']; }));
     el<HTMLButtonElement>('use-equipment').disabled = using || slots.every(s => life.reservations.has(s.id) && life.reservations.get(s.id) !== active.id);
     setText('use-equipment', `${active.name}에게 이용 부탁하기`);
@@ -175,7 +180,6 @@ try {
       const start = regionLayouts[currentRegion]; if (start) garden.restoreLayout(start);
     } catch { saveUnreadable = true; setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
     // Remembered view settings.
-    el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
     el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
     el<HTMLInputElement>('fps-toggle').checked = settings.fps; showFps(settings.fps);
     showRegion(settings.region); showSeason(settings.season);
@@ -184,7 +188,6 @@ try {
     el('loading').hidden = true; refresh();
   }, () => { el('render-error').hidden = false; });
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
-  el<HTMLInputElement>('grid-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; garden?.setGrid(on); remember({ grid: on }); };
   el<HTMLInputElement>('day-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; if (garden) garden.life.dayCycle = on; remember({ dayCycle: on }); refresh(); };
   el<HTMLInputElement>('fps-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; showFps(on); remember({ fps: on }); };
   el('pet').onclick = () => { if (garden) pet(garden.selectedAvatar); };
@@ -196,6 +199,7 @@ try {
   el('leave-seat').onclick = () => garden?.leaveSeat();
   el('request-bench').onclick = () => garden?.commandKind('bench');
   el('request-swing').onclick = () => garden?.commandKind('swing');
+  el('request-seesaw').onclick = () => garden?.commandKind('seesaw');
   el('use-equipment').onclick = () => garden?.commandUse(selected);
   el('edit-mode').onclick = () => {
     if (!garden) return;

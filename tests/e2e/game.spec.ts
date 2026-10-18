@@ -110,12 +110,12 @@ test('regions and seasons are picked from the map label and remembered', async (
 test('view switches are remembered and the FPS readout counts frames', async ({ page }) => {
   await open(page);
   await page.click('.display-panel summary');  // the settings fold out
-  await page.locator('label:has(#grid-toggle)').click();
+  await expect(page.locator('#grid-toggle')).toHaveCount(0);
   await page.locator('label:has(#fps-toggle)').click();
   await expect(page.locator('#fps')).toBeVisible();
   await expect(page.locator('#fps')).toHaveText(/^[1-9]\d* FPS$/);
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
-  await expect(page.locator('#grid-toggle')).toBeChecked();
+  await expect(page.locator('#grid-toggle')).toHaveCount(0);
   await expect(page.locator('#fps-toggle')).toBeChecked();
 });
 

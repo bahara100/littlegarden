@@ -1,6 +1,10 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
+import { naturalGroundDetails } from './groundTexture';
+import { paintSwingFrame } from './swingFrames';
+import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -22,7 +26,7 @@ const DOUBLE_TAP_MS = 400;
 export const FIT = { w: 2 * GARDEN + 3, h: GARDEN * 1.5 } as const;
 /** Logical pixels per ground unit. The camera scales this to the viewport, nearest-neighbour. */
 const U = 18;
-const PROP_WIDTH: Record<ItemKind, number> = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 };
+const PROP_WIDTH = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 };
 /**
  * Swing layers from tools/art/split-swing-v1.py: rows are props cells 2 (seat faces down-right) and 3 (down-left),
  * columns [far frame, ropes + seat, top bar, near frame], 444 source pixels each. `pivots` are the rope tops on the bar
@@ -90,7 +94,6 @@ export class PhaserGarden {
   selection: Selection = 'character';
   zoom = 1;
   pan = { x: 0, y: 0 };
-  grid = false;
   /** Which region's ground colours are drawn (regions.ts). */
   region: RegionId = DEFAULT_REGION;
   season: SeasonId = DEFAULT_SEASON;
@@ -113,7 +116,7 @@ export class PhaserGarden {
   }
   select(id: Selection) { this.selection = id; if (this.life.avatars.has(id as AvatarId)) this.selectedAvatar = id as AvatarId; this.callbacks.select(id); }
   commandUse(id: EquipmentId) { const error = this.life.use(this.selectedAvatar, id); this.callbacks.notice(error ?? '친구가 기구로 가요.'); }
-  commandKind(kind: 'bench' | 'swing') {
+  commandKind(kind: 'bench' | 'swing' | 'seesaw') {
     for (const seat of this.life.seats.filter(s => s.kind === kind && !this.life.reservations.has(s.id))) if (!this.life.use(this.selectedAvatar, seat.equipment)) { this.callbacks.notice('친구가 빈자리로 가요.'); return; }
     this.callbacks.notice('빈자리가 없거나 먼저 기구에서 내려와야 해요.');
   }
@@ -123,7 +126,6 @@ export class PhaserGarden {
   zoomBy(factor: number) { this.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = ZOOM.friend; this.callbacks.zoom(Math.round(ZOOM.friend * 100)); }
-  setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
   setSeason(id: SeasonId) { this.season = id; }
   /** Decorating starts on the whole map (no friend close-up, centred) at the zoom the player chose. */
@@ -149,6 +151,7 @@ class GardenScene extends Phaser.Scene {
   private walkCycle = new ScarletWalkCycle();
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private propWidths: number[] = [];
+  private parkWidths = new Map<ParkPropKind, number>();
   private props = new Map<string, Phaser.GameObjects.Image>();
   /** Per swing cell: width of the trimmed art in its 128 texture and the seat's depth below the rope tops there. */
   private swingArt = new Map<SwingCell, { width: number; seatDrop: number }>();
@@ -175,11 +178,13 @@ class GardenScene extends Phaser.Scene {
     const base = import.meta.env.BASE_URL;
     this.load.on('loaderror', () => this.fail(new Error('Pixel art load failed')));
     this.load.image('props', `${base}sprites/garden/playground-props-v1.png`);
+    for (const kind of Object.keys(PARK_PROPS) as ParkPropKind[]) this.load.image(`park-${kind}`, `${base}${parkPropUrl(kind)}`);
     this.load.image('swing-parts', `${base}sprites/garden/playground-swing-v1.png`);
     for (const [source, art] of Object.entries(SCARLET_SD.sources)) {
       this.load.image(`idle-${source}`, `${base}${art.idle}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
     }
+    for (const id of FRIEND_IDS) this.load.image(`seesaw-sit-${id}`, `${base}sprites/garden/seesaw-sit-v1/${id}-ne.png`);
     for (const id of FRIEND_IDS) for (const source of ['se', 'ne'] as const) {
       const art = friendArt(id, source);
       this.load.image(friendTexture(id, 'idle', source), `${base}${art.idle}`);
@@ -187,8 +192,9 @@ class GardenScene extends Phaser.Scene {
     }
   }
   /** Bench and swing art only has front views: turns 0 and 3 face down-left (SW), turns 1 and 2 down-right (SE). */
-  private seatFacing(seat: Seat): 'sw' | 'se' {
+  private seatFacing(seat: Seat): 'sw' | 'se' | 'nw' | 'ne' {
     const turn = this.g.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0;
+    if (seat.kind === 'seesaw') return scarletDirection(seat.yaw);
     return turn === 0 || turn === 3 ? 'sw' : 'se';
   }
 
@@ -232,6 +238,22 @@ class GardenScene extends Phaser.Scene {
       const cell = cutCell(image, n % 4 * w, Math.floor(n / 4) * h, w, h), fit = fitCell(cell);
       this.textures.addCanvas(`prop${n}`, drawFit(cell, fit)); this.propWidths.push(fit.dw);
     }
+    for (const kind of Object.keys(PARK_PROPS) as ParkPropKind[]) {
+      const source = this.textures.get(`park-${kind}`).getSourceImage() as HTMLImageElement;
+      const cell = cutCell(source, 0, 0, source.naturalWidth, source.naturalHeight), fit = fitCell(cell);
+      this.textures.addCanvas(`park-fit-${kind}`, drawFit(cell, fit)); this.parkWidths.set(kind, fit.dw);
+      if (kind === 'seesaw') seesawFrames(cell).forEach((frame, i) => this.textures.addCanvas(`seesaw-${i}`, frame));
+    }
+  }
+  /** Raster water is drawn with the ground, before every upright prop and character. */
+  private paintStream(c: CanvasRenderingContext2D, item: PlacedItem) {
+    const p = iso(item), size = PARK_PROPS.stream.width * U * 128 / this.parkWidths.get('stream')!;
+    c.save(); c.imageSmoothingEnabled = false;
+    c.translate(Math.round(p.x + FLOOR.ox), Math.round(p.y + FLOOR.oy));
+    if (item.turn % 2) c.scale(-1, 1);
+    c.drawImage(this.textures.get('park-fit-stream').getSourceImage() as HTMLCanvasElement,
+      -size / 2, -size + U * PROP_ART_BASE.stream, size, size);
+    c.restore();
   }
   /**
    * Swing art in four layers, trimmed and scaled exactly like the whole cell, plus the ropes + seat drawn in
@@ -256,9 +278,11 @@ class GardenScene extends Phaser.Scene {
       const size = 128 + pad * 2, sheet = document.createElement('canvas'); sheet.width = size * (poses * 2 + 1); sheet.height = size;
       const c = sheet.getContext('2d')!; c.imageSmoothingEnabled = false;
       for (let k = -poses; k <= poses; k++) {
-        const t = max * k / poses, a = rig.forward * Math.sin(t), b = Math.sin(t) / 2 - (1 - Math.cos(t));
-        c.setTransform(1 - a * m, -b * m, a, 1 + b, (k + poses) * size - a * y0, -b * y0);
-        c.drawImage(hang, pad, pad);
+        c.save();
+        c.translate((k + poses) * size, 0);
+        c.beginPath(); c.rect(0, 0, size, size); c.clip();
+        paintSwingFrame(c, layers[1], fit, hang, pad, max * k / poses, rig.forward, m, y0);
+        c.restore();
       }
       const tex = this.textures.addCanvas(`swing${cell}-hang`, sheet)!;
       for (let i = 0; i <= poses * 2; i++) tex.add(i, 0, i * size, 0, size, size);
@@ -284,7 +308,7 @@ class GardenScene extends Phaser.Scene {
 
   /** Floor and paths, redrawn only when they change. */
   private drawFloor(items: PlacedItem[]) {
-    const lines = this.g.grid || this.g.editor.active;
+    const lines = this.g.editor.active;
     const key = JSON.stringify([this.g.region, this.g.season, lines, items.map(i => [i.kind, i.x, i.z, i.turn])]), g = this.g.groundTheme;
     if (key === this.floorKey) return; this.floorKey = key;
     const c = this.floor.getContext(); c.clearRect(0, 0, FLOOR.w, FLOOR.h);
@@ -292,16 +316,18 @@ class GardenScene extends Phaser.Scene {
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const) {
       c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.lineTo(b.x, b.y + 9); c.lineTo(a.x, a.y + 9); c.closePath(); c.fillStyle = color; c.fill(); c.strokeStyle = g.edgeLine; c.lineWidth = 1; c.stroke();
     }
-    for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
+    diamond(c, { x: 0, z: 0 }, GARDEN, GARDEN, g.tiles[0]);
+    if (lines) for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      diamond(c, { x, z }, 1, 1, g.tiles[hash], lines ? g.grid : undefined);
-      if (hash === 2) { const p = iso({ x, z }), px = Math.round(p.x + FLOOR.ox), py = Math.round(p.y + FLOOR.oy); c.fillStyle = g.speck; c.fillRect(px, py - 1, 1, 2); c.fillRect(px + 2, py, 2, 1); }
+      diamond(c, { x, z }, 1, 1, g.tiles[hash], g.grid);
     }
+    if (!lines) naturalGroundDetails(c, g, p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
     for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); diamond(c, item, f.w, f.d, g.path[0], g.path[1]);
+      const f = footprint(item); diamond(c, item, f.w, f.d, g.path[0], lines ? g.path[1] : g.path[0]);
       const p = iso(item); c.fillStyle = g.path[2]; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
     }
     for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => floorPolygon(c, pts, color, line));
+    for (const item of items.filter(i => i.kind === 'stream')) this.paintStream(c, item);
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
     diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) diamond(c, { x, z }, .2, .2, '#f7e7d1');
@@ -320,6 +346,7 @@ class GardenScene extends Phaser.Scene {
     else {
       // A pond being placed shows itself (faded) under the footprint highlight.
       if (pending?.kind === 'pond') { c.globalAlpha = .75; paintPond(pending, (pts, color, line) => floorPolygon(c, pts, color, line)); }
+      if (pending?.kind === 'stream') { c.globalAlpha = .75; this.paintStream(c, pending); }
       c.globalAlpha = .45;
       for (const item of [pending, selected]) if (item) { const f = footprint(item); diamond(c, item, f.w, f.d, item === pending && error ? '#d07880' : '#fff4bc', '#66547b'); }
       c.globalAlpha = 1;
@@ -327,6 +354,14 @@ class GardenScene extends Phaser.Scene {
     this.overlay.refresh();
   }
   private placeProp(image: Phaser.GameObjects.Image, item: PlacedItem) {
+    if (isParkProp(item.kind)) {
+      const size = PARK_PROPS[item.kind].width * U * 128 / this.parkWidths.get(item.kind)!, p = iso(item);
+      image.setTexture(`park-fit-${item.kind}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind])
+        .setDisplaySize(size, size).setFlipX(item.turn % 2 === 1).setDepth(this.rank(item.id));
+      if (item.kind === 'seesaw') image.setTexture(`seesaw-${SEESAW.poses + seesawFrame(this.g.life.seesawTilt(item.id), this.reduced.matches || this.g.editor.active)}`)
+        .setOrigin(.5, (128 + SEESAW.pad) / (128 + SEESAW.pad * 2)).setDisplaySize(size * (128 + SEESAW.pad * 2) / 128, size * (128 + SEESAW.pad * 2) / 128);
+      return;
+    }
     const index = propIndex(item), size = PROP_WIDTH[item.kind] * U * 128 / this.propWidths[index], p = iso(item);
     image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(this.rank(item.id));
   }
@@ -380,7 +415,7 @@ class GardenScene extends Phaser.Scene {
       if (!image) { image = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); image.setData('id', item.id); this.props.set(item.id, image); }
       if (item.kind === 'swing') this.placeSwing(image, item); else this.placeProp(image, item);
       // Outside the editor only seats are clickable, so trees and fences never swallow floor clicks.
-      image.input!.enabled = editing || item.kind === 'bench' || item.kind === 'swing';
+      image.input!.enabled = editing || item.kind === 'bench' || item.kind === 'swing' || item.kind === 'seesaw';
     }
     for (const [id, image] of this.props) if (!live.has(id)) { image.destroy(); this.props.delete(id); }
     for (const [id, view] of this.swingViews) if (!live.has(id)) { for (const o of Object.values(view)) o.destroy(); this.swingViews.delete(id); }
@@ -415,7 +450,8 @@ class GardenScene extends Phaser.Scene {
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
     const z = seat && seated ? this.rank(seat.equipment) + .35 : this.rank(`avatar:${a.id}`);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
-    const x = p.x + swing.x, base = p.y - lift * U + swing.y, moving = a.phase === 'walking' && !still;
+    const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.g.life.seesawTilt(seat.equipment), still)) * U * seated : 0;
+    const x = p.x + swing.x, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
     view.sprite.setPosition(x, base).setDepth(z);
     if (a.id === 'character') {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)];
@@ -423,8 +459,8 @@ class GardenScene extends Phaser.Scene {
       else view.sprite.setTexture(`idle-${source}`);
       view.sprite.setFlipX(flipX).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
-      // The seated frame is made from the down-right idle pose; a down-left seat uses its mirrored sheet.
-      view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
+      if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(`seesaw-sit-${a.id}`).setFlipX(facing === 'nw');
+      else view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
       view.sprite.setOrigin(.5, .97).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     } else {
       const { source, flipX } = FRIEND_DIRECTIONS[facing ?? scarletDirection(a.yaw)];

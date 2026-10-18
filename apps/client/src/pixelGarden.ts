@@ -1,5 +1,8 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
+import { naturalGroundDetails } from './groundTexture';
+import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -35,11 +38,13 @@ export class PixelGarden {
   private friendArt = new Map<FriendId, Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>>();
   private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>();
   private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
+  private friendsSitRear = new Map<FriendId, HTMLImageElement>();
   private props: Sprite[] = [];
+  private parkProps = new Map<ParkPropKind, Sprite>();
+  private seesawArt: HTMLCanvasElement[] = [];
   private hits: Hit[] = [];
   zoom = 1;
   private pan = { x: 0, y: 0 };
-  private grid = false;
   /** Which region's ground colours are drawn (regions.ts). */
   region: RegionId = DEFAULT_REGION;
   season: SeasonId = DEFAULT_SEASON;
@@ -69,7 +74,19 @@ export class PixelGarden {
   }
   private async loadArt() {
     try {
-      const [friends, friendsSw, image, approved, dressed] = await Promise.all([
+      const park = await Promise.all((Object.keys(PARK_PROPS) as ParkPropKind[]).map(async kind => {
+        const image = await this.loadImage(parkPropUrl(kind));
+        const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
+        canvas.getContext('2d')!.drawImage(image, 0, 0, 128, 128);
+        const data = canvas.getContext('2d')!.getImageData(0, 0, 128, 128).data;
+        let left = 128, right = 0;
+        for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) if (data[(y * 128 + x) * 4 + 3] >= 180) { left = Math.min(left, x); right = Math.max(right, x); }
+        return [kind, { image: canvas, width: right - left + 1, height: 124 }] as const;
+      }));
+      if (this.disposed) return;
+      park.forEach(([kind, art]) => this.parkProps.set(kind, art));
+      this.seesawArt = seesawFrames(this.parkProps.get('seesaw')!.image);
+      const [friends, friendsSw, image, approved, dressed, rearSit] = await Promise.all([
         loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
@@ -84,11 +101,13 @@ export class PixelGarden {
           }));
           return [id, new Map(sources)] as const;
         })),
+        Promise.all(FRIEND_IDS.map(async id => [id, await this.loadImage(`sprites/garden/seesaw-sit-v1/${id}-ne.png`)] as const)),
       ]);
       if (this.disposed) return;
       approved.forEach(([source, art]) => this.approvedArt.set(source, art));
       dressed.forEach(([id, sources]) => this.friendArt.set(id, sources));
       this.friendsSit = { se: friends, sw: friendsSw };
+      rearSit.forEach(([id, art]) => this.friendsSitRear.set(id, art));
       // Trim each independent cell, retaining alpha for both drawing and selection.
       const w = image.naturalWidth / 4, h = image.naturalHeight / 2;
       for (let n = 0; n < 8; n++) {
@@ -142,16 +161,18 @@ export class PixelGarden {
     const corners = [{ x: -HALF, z: -HALF }, { x: HALF, z: -HALF }, { x: HALF, z: HALF }, { x: -HALF, z: HALF }].map(p => this.screen(p));
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const)
       this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, g.edgeLine);
-    for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
+    this.tile({ x: 0, z: 0 }, GARDEN, GARDEN, g.tiles[0]);
+    if (this.editor.active) for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
       const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      this.tile({ x, z }, 1, 1, g.tiles[hash], this.grid || this.editor.active ? g.grid : undefined);
-      if (hash === 2) { const p = this.screen({ x, z }); c.fillStyle = g.speck; c.fillRect(p.x, p.y - 1, 1, 2); c.fillRect(p.x + 2, p.y, 2, 1); }
+      this.tile({ x, z }, 1, 1, g.tiles[hash], g.grid);
     }
+    if (!this.editor.active) naturalGroundDetails(c, g, p => this.screen(p));
     for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); this.tile(item, f.w, f.d, g.path[0], g.path[1]);
+      const f = footprint(item); this.tile(item, f.w, f.d, g.path[0], this.editor.active ? g.path[1] : g.path[0]);
       const p = this.screen(item); c.fillStyle = g.path[2]; c.fillRect(p.x - 2, p.y - 1, 3, 1);
     }
     for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => this.polygon3(pts, color, line));
+    for (const item of items.filter(i => i.kind === 'stream')) this.drawItem(item);
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
     this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
@@ -162,14 +183,19 @@ export class PixelGarden {
     const c = this.ctx, p = this.screen(item), unit = this.unit;
     const odd = item.turn % 2;
     const index = item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd;
-    const art = this.props[index]; if (!art) return;
-    const width = ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 })[item.kind] * unit;
+    const kind = item.kind, park = isParkProp(kind);
+    const art = park ? this.parkProps.get(kind) : this.props[index]; if (!art) return;
+    const width = (park ? PARK_PROPS[kind].width : ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 })[kind]) * unit;
     const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
     if (ghost) c.globalAlpha = .65;
     c.save();
-    if (item.turn >= 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
-    c.drawImage(art.image, x, y, size, size); c.restore(); c.globalAlpha = 1;
-    if (!ghost) this.hits.push({ id: item.id, x, y, w: size, h: size, image: art.image, frame: item.turn >= 2 ? -1 : undefined });
+    const flip = park ? item.turn % 2 === 1 : item.turn >= 2;
+    if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
+    const frame = item.kind === 'seesaw' && !ghost ? this.seesawArt[SEESAW.poses + seesawFrame(this.life.seesawTilt(item.id), this.reduced.matches || this.editor.active)] : undefined;
+    if (frame) { const pad = size * SEESAW.pad / 128; c.drawImage(frame, x - pad, y - pad, size + pad * 2, size + pad * 2); }
+    else c.drawImage(art.image, x, y, size, size);
+    c.restore(); c.globalAlpha = 1;
+    if (!ghost) this.hits.push({ id: item.id, x, y, w: size, h: size, image: art.image, frame: flip ? -1 : undefined });
     if (ghost || (this.editor.active && this.editor.selected === item.id)) {
       const f = footprint(item); c.globalAlpha = .45; this.tile(item, f.w, f.d, ghost && this.editor.error ? '#d07880' : '#fff4bc', '#66547b'); c.globalAlpha = 1;
     }
@@ -179,12 +205,13 @@ export class PixelGarden {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
-    const facing = turn === 0 || turn === 3 ? 'sw' : 'se';
+    const facing = seat?.kind === 'seesaw' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const drawnSit = a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
     const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : a.id !== 'character' && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
-    const base = p.y - u * lift + sway;
+    const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.life.seesawTilt(seat.equipment), still)) * u * seated : 0;
+    const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + sway + seesaw;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (a.id === 'character' && this.approvedArt.size) {
@@ -196,7 +223,10 @@ export class PixelGarden {
       c.restore();
     } else if (drawnSit && a.id !== 'character') {
       const frame = a.id === 'peach' ? 0 : 4;
-      c.drawImage(this.friendsSit![facing], 0, frame / 4 * 96, 96, 96, x, y, size, size);
+      if (facing === 'ne' || facing === 'nw') {
+        c.save(); c.translate(x + (facing === 'nw' ? size : 0), y); c.scale(facing === 'nw' ? -1 : 1, 1);
+        c.drawImage(this.friendsSitRear.get(a.id)!, 0, 0, size, size); c.restore();
+      } else c.drawImage(this.friendsSit![facing], 0, frame / 4 * 96, 96, 96, x, y, size, size);
     } else if (a.id !== 'character' && this.friendArt.has(a.id)) {
       const { source, flipX } = FRIEND_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
       const art = this.friendArt.get(a.id)!.get(source)!;
@@ -262,7 +292,7 @@ export class PixelGarden {
   private pick(x: number, y: number) {
     for (const hit of [...this.hits].reverse()) {
       if (x < hit.x || x >= hit.x + hit.w || y < hit.y || y >= hit.y + hit.h) continue;
-      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing'].includes(i.kind))) continue;
+      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing', 'seesaw'].includes(i.kind))) continue;
       if (hit.image) {
         let px = Math.floor((x - hit.x) / hit.w * 128); if (hit.frame === -1) px = 127 - px;
         const py = Math.floor((y - hit.y) / hit.h * 128);
@@ -331,7 +361,7 @@ export class PixelGarden {
   private contextMenu = (e: Event) => e.preventDefault();
   select(id: Selection) { this.selection = id; if (this.life.avatars.has(id as AvatarId)) this.selectedAvatar = id as AvatarId; this.callbacks.select(id); }
   commandUse(id: EquipmentId) { const error = this.life.use(this.selectedAvatar, id); this.callbacks.notice(error ?? '친구가 기구로 가요.'); }
-  commandKind(kind: 'bench' | 'swing') {
+  commandKind(kind: 'bench' | 'swing' | 'seesaw') {
     for (const seat of this.life.seats.filter(s => s.kind === kind && !this.life.reservations.has(s.id))) if (!this.life.use(this.selectedAvatar, seat.equipment)) { this.callbacks.notice('친구가 빈자리로 가요.'); return; }
     this.callbacks.notice('빈자리가 없거나 먼저 기구에서 내려와야 해요.');
   }
@@ -341,7 +371,6 @@ export class PixelGarden {
   zoomBy(factor: number) { this.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, this.zoom * factor)); this.callbacks.zoom(Math.round(this.zoom * 100)); }
   reset() { this.focus = null; this.pan = { x: 0, y: 0 }; this.zoom = 1; this.callbacks.zoom(100); }
   focusFriend() { this.focus = this.selectedAvatar; this.pan = { x: 0, y: 0 }; this.zoom = ZOOM.friend; this.callbacks.zoom(Math.round(ZOOM.friend * 100)); }
-  setGrid(show: boolean) { this.grid = show; }
   setRegion(id: RegionId) { this.region = id; }
   setSeason(id: SeasonId) { this.season = id; }
   /** Decorating starts on the whole map (no friend close-up, centred) at the zoom the player chose. */
