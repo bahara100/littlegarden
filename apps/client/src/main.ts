@@ -2,6 +2,7 @@ import './style.css';
 import './garden-ui.css';
 import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
+import { PROFILES } from './friendProfiles';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
@@ -70,17 +71,15 @@ function refresh() {
     setText('model-review', friend.id === 'character' ? '홍련 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
     el('selection-icon').dataset.friend = friend.id;
-    setText('selection-subtitle', '우리 정원의 작은 친구');
-    setText('selection-description', '자유롭게 산책하고 빈 기구를 찾아 쉬어요. 바닥이나 기구를 눌러 이 친구에게 부탁할 수도 있어요.');
+    const profile = PROFILES[friend.id];
+    setText('selection-subtitle', profile.subtitle); setText('selection-description', profile.intro);
     if (friend.id === 'character') {
-      setText('selection-subtitle', '오늘도 정원에서 함께 쉬어요');
-      setText('selection-description', '바닥을 누르면 그곳으로 걸어가요. 벤치에서 쉬거나, 가까이 다가가 작은 인사를 건네보세요.');
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}${SCARLET_SD.review}`;
     } else {
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
     }
     const points = life.affinity[friend.id], today = life.petted[friend.id] === todayKey();
-    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요'], ['해금', unlockSummary(life.unlocks, friend.id, points)]]);
+    details([...profile.facts, ['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요'], ['해금', unlockSummary(life.unlocks, friend.id, points)]]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     el('selection-icon').removeAttribute('data-friend');

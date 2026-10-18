@@ -3,6 +3,7 @@ export type { Point, Seat } from './layout';
 import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type AffinityLevel, type Moment, type Unlock } from './affinity';
 import { UNLOCKS } from './unlocks';
 import type { ActionId } from './friendActions';
+import { PROFILES, twins } from './friendProfiles';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
@@ -262,6 +263,13 @@ export class LifeSimulation {
         this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id) && this.reservations.get(o.id) !== a.id));
       if (beside && !this.use(a.id, beside.equipment, false)) return;
     }
+    // Friends who love walking (friendProfiles.ts) often set off on a stroll before going to the bench or swing, after their twin when the twin is out walking.
+    const profile = PROFILES[a.id];
+    if (profile.stroll && this.random() < profile.stroll) {
+      const twin = profile.twin && this.avatars.get(profile.twin);
+      if (twin && twin.phase === 'walking' && !twin.seatId && twin.path.length && this.random() < (profile.followTwin ?? 0) && this.walkBeside(a, twin.path.at(-1)!)) return;
+      if (this.wander(a)) return;
+    }
     // At night friends mostly rest on benches; by day they take turns between bench and swing.
     const preferred: EquipmentId = this.night && a.lastEquipment !== null ? 'bench' : a.lastEquipment === 'bench' ? 'swing' : a.lastEquipment === 'swing' ? 'bench' : a.id === 'lilac' ? 'swing' : 'bench';
     if (a.lastEquipment === null || this.random() < .7) {
@@ -272,17 +280,27 @@ export class LifeSimulation {
     const strolling = [...this.avatars.values()].filter(o => o.id !== a.id && o.phase === 'walking' && !o.seatId && o.path.length);
     if (strolling.length && this.random() < REACTION.walkAlong) {
       const goal = strolling[Math.floor(this.random() * strolling.length)].path.at(-1)!;
-      for (const [dx, dz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
-        const path = findPath(a, { x: goal.x + dx, z: goal.z + dz }, this.world);
-        if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return; }
-      }
+      if (this.walkBeside(a, goal)) return;
     }
+    if (this.wander(a)) return;
+    a.leftItem = left; a.until = this.time + 2;  // nothing to do yet: try again soon, still skipping that equipment
+  }
+  /** Sets off for a tile beside `goal` (where a strolling friend is going). */
+  private walkBeside(a: Avatar, goal: Point): boolean {
+    for (const [dx, dz] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+      const path = findPath(a, { x: goal.x + dx, z: goal.z + dz }, this.world);
+      if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return true; }
+    }
+    return false;
+  }
+  /** Sets off for a random tile centre somewhere in the garden. */
+  private wander(a: Avatar): boolean {
     for (let i = 0; i < 20; i++) {
       const target = world(1 + 2 * Math.floor(this.random() * (N - 1) / 2), 1 + 2 * Math.floor(this.random() * (N - 1) / 2));
       const path = findPath(a, target, this.world);
-      if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return; }
+      if (path && path.length > 2) { a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return true; }
     }
-    a.leftItem = left; a.until = this.time + 2;  // nothing to do yet: try again soon, still skipping that equipment
+    return false;
   }
   /** Friends meeting: two free friends (not on a seat, not following an order) who come close stop, turn to each
    * other and greet. Each pair rolls once per meeting and then waits a while before greeting again. */
@@ -293,7 +311,7 @@ export class LifeSimulation {
       if (d > REACTION.leave) { this.met.delete(key); continue; }
       if (d > REACTION.meet || this.met.has(key) || this.time < (this.greetedUntil.get(key) ?? 0)) continue;
       this.met.add(key);
-      if (this.random() >= REACTION.greet) continue;
+      if (!twins(a.id, b.id) && this.random() >= REACTION.greet) continue;  // twins always stop for each other
       this.greetedUntil.set(key, this.time + REACTION.cooldown);
       for (const [p, q] of [[a, b], [b, a]] as const) {
         p.phase = 'greeting'; p.path = []; p.partner = q.id; p.since = this.time; p.until = this.time + REACTION.duration;
@@ -334,7 +352,7 @@ export class LifeSimulation {
         const s = this.seatOf(a); if (!s) { this.settle(a); continue; }
         a.progress = Math.min(1, Math.max(0, a.progress + (a.phase === 'boarding' ? dt : -dt) / .7));
         a.x = s.approach.x + (s.x - s.approach.x) * a.progress; a.z = s.approach.z + (s.z - s.approach.z) * a.progress; a.yaw = s.yaw;
-        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; this.moment(a, 'seat'); a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1); }
+        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; this.moment(a, 'seat'); a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1) * (PROFILES[a.id].rest ?? 1); }
         else if (a.phase === 'leaving' && a.progress === 0) { a.leftItem = s.equipment; this.settle(a, 2.5); }
       } else if (this.time >= a.until) this.beginExit(a);
     }
