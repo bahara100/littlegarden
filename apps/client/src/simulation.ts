@@ -1,5 +1,6 @@
 import { DEFAULT_LAYOUT, HUB, cloneLayout, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
 export type { Point, Seat } from './layout';
+import { AFFINITY_MAX, affinityLevel, type AffinityLevel } from './affinity';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
@@ -97,13 +98,18 @@ export class LifeSimulation {
   get seats() { return this.world.seats; }
   readonly avatars = new Map<AvatarId, Avatar>();
   readonly reservations = new Map<string, AvatarId>();
-  /** How close each friend feels to you: one point per pat, kept with the garden save. */
+  /** How close each friend feels to you (affinity.ts): one point for the first pat of each day, kept with the save. */
   readonly affinity: Record<AvatarId, number> = { character: 0, peach: 0, lilac: 0 };
+  /** The day (YYYY-MM-DD) each friend's affinity last went up. */
+  readonly petted: Partial<Record<AvatarId, string>> = {};
   /** Whether the day passes (morning → afternoon → evening → night); off keeps a bright afternoon. */
   dayCycle = true;
   /** Fraction of the day at time 0 (0 = midnight); a day lasts DAY.length seconds. */
   dayStart: number = DAY.start;
-  dayFraction() { return this.dayCycle ? (this.dayStart + this.time / DAY.length) % 1 : DAY.still; }
+  dayFraction() { return this.dayCycle ? this.clock() : DAY.still; }
+  /** Where the day has got to (0 = midnight), whether or not the cycle is shown; this is what the save keeps. */
+  clock() { return ((this.dayStart + this.time / DAY.length) % 1 + 1) % 1; }
+  setClock(fraction: number) { this.dayStart = ((fraction - this.time / DAY.length) % 1 + 1) % 1; }
   get night() { return dayPart(this.dayFraction()) === 'night'; }
   private lastPet: Partial<Record<AvatarId, number>> = {};
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
@@ -152,17 +158,22 @@ export class LifeSimulation {
     this.free(a); this.reservations.set(choice.seat.id, id); a.seatId = choice.seat.id;
     a.path = choice.path!; a.phase = 'walking'; a.directed = directed; a.deadline = this.time + 40; return null;
   }
-  /** A pat: the friend is happy for a moment (a heart over their head) and feels a little closer. */
-  pet(id: AvatarId): string | null {
+  /**
+   * A pat: the friend is happy for a moment (a heart over their head). The first pat on each calendar day `today`
+   * (YYYY-MM-DD) also raises affinity by one. Returns null while pats are too quick to count, otherwise whether
+   * affinity went up and the level reached when it crossed into a new one.
+   */
+  pet(id: AvatarId, today: string): { gained: boolean; levelUp: AffinityLevel | null } | null {
     const a = this.avatars.get(id)!;
     if (this.time - (this.lastPet[id] ?? -Infinity) < PET.cooldown) return null;
     this.lastPet[id] = this.time;
-    this.affinity[id] = Math.min(PET.max, this.affinity[id] + 1);
-    if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) { a.cheerUntil = this.time + PET.duration; return null; }
-    if (a.phase === 'greeting') { a.cheerUntil = this.time + PET.duration; return null; }
+    const gained = this.petted[id] !== today && this.affinity[id] < AFFINITY_MAX, before = affinityLevel(this.affinity[id]).index;
+    if (gained) { this.affinity[id]++; this.petted[id] = today; }
+    const after = affinityLevel(this.affinity[id]), result = { gained, levelUp: after.index > before ? after.level : null };
+    if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) || a.phase === 'greeting') { a.cheerUntil = this.time + PET.duration; return result; }
     const directed = a.directed;
     this.settle(a); a.phase = 'happy'; a.since = this.time; a.until = this.time + PET.duration; a.directed = directed;
-    return null;
+    return result;
   }
   wave(id: AvatarId): string | null {
     const a = this.avatars.get(id)!;
@@ -286,8 +297,8 @@ export function reactionLabel(a: Avatar, time: number) {
   const turn = Math.floor((t - 1) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
   return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
 }
-/** Patting a friend: seconds of happiness, seconds between counted pats, the most affinity a friend can reach. */
-export const PET = { duration: 1.8, cooldown: .8, max: 99 } as const;
+/** Patting a friend: seconds of happiness and seconds before another pat counts. */
+export const PET = { duration: 1.8, cooldown: .8 } as const;
 /**
  * The garden's day: DAY.length seconds per day, starting at DAY.start (a fraction of the day, 0 = midnight); with the
  * day cycle off it stays at DAY.still. At night seated friends rest DAY.nightRest times as long.

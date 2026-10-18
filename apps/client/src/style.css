@@ -76,3 +76,7 @@ a.focus-friend { text-decoration:none; font-size:12px; }
 .scene-pop .music-stop{justify-content:center;border-color:#e2e8d8;margin-top:4px;color:#7b8c6e}
 @media (prefers-reduced-motion:reduce){.marquee{animation:none;padding-left:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis}}
 @media (max-width:780px){.scene-bar{left:13px;top:13px}.music-bar{right:13px;top:58px}.now-playing{width:170px}}
+.music-volume{display:flex;align-items:center;gap:8px;padding:6px 6px 2px;border-top:1px solid #edf0e5;margin-top:4px}
+.scene-pop .music-volume button{padding:6px 8px;font-size:14px;flex-shrink:0}
+.music-volume input{flex:1;min-width:0;accent-color:#8da37a}
+#music-volume-value{font-size:9px;color:#9aa58d;width:22px;text-align:right}

@@ -3,7 +3,8 @@ import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
-import { loadGarden, saveLayout, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type Affinity } from './persistence';
+import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
+import { affinityLevel, todayKey } from './affinity';
 import { SCARLET_SD } from './scarletApproved';
 import { REGIONS, region, type RegionId } from './regions';
 import { SEASONS, season, seasonGround, type SeasonId } from './seasons';
@@ -20,6 +21,8 @@ let inventoryKey = '';
 const settings = loadSettings(window.localStorage);
 let settingsReady = false;
 function remember(change: Partial<typeof settings>) { if (settingsReady) { Object.assign(settings, change); saveSettings(window.localStorage, settings); } }
+// Each region keeps its own layout (persistence.ts). The garden shows the current region's; the others wait here.
+let currentRegion: RegionId = settings.region, regionLayouts: GardenSave['regions'] = {};
 const defaultHint = '친구 선택 → 바닥을 눌러 이동 · 기구를 눌러 이용';
 function notice(message: string) { setText('scene-hint', message); toastUntil = performance.now() + 3500; }
 function details(rows: [string, string][]) {
@@ -68,7 +71,8 @@ function refresh() {
     } else {
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
     }
-    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${life.affinity[friend.id]}`]]);
+    const points = life.affinity[friend.id], today = life.petted[friend.id] === todayKey();
+    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${points} · ${affinityLevel(points).level.name}`], ['오늘 쓰다듬기', today ? '했어요 ♡' : '아직이에요']]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     const equipment = life.layout.find(i => i.id === selected)?.kind === 'bench' ? 'bench' : 'swing', slots = life.seats.filter(s => s.equipment === selected);
@@ -100,9 +104,12 @@ function showDay(fraction: number, cycle: boolean) {
 }
 function pet(id: AvatarId) {
   if (!garden || garden.editor.active) return;
-  garden.life.pet(id); persist();
-  const a = garden.life.avatars.get(id)!;
-  notice(`${a.name}이(가) 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}`); refresh();
+  const result = garden.life.pet(id, todayKey()); if (!result) return;
+  const a = garden.life.avatars.get(id)!, who = `${a.name}${batchim(a.name) ? '이' : '가'}`;
+  if (result.gained) persist(true);
+  notice(result.levelUp ? `${who} 기분 좋아해요 ♡ 이제 '${result.levelUp.name}'예요! 친밀도 ${garden.life.affinity[id]}`
+    : result.gained ? `${who} 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}` : `${who} 기분 좋아해요 ♡ 오늘 친밀도는 이미 올랐어요. 내일 또 쓰다듬어 주세요.`);
+  refresh();
 }
 function refreshEditor() {
   if (!garden) return;
@@ -141,7 +148,12 @@ try {
     garden = created;
     try {
       const saved = loadGarden(window.localStorage);
-      if (saved) { garden.restoreLayout(saved.layout); Object.assign(garden.life.affinity, saved.affinity); setText('save-status', '저장된 놀이터를 복원했어요.'); }
+      if (saved) {
+        regionLayouts = saved.regions; Object.assign(garden.life.affinity, saved.affinity); Object.assign(garden.life.petted, saved.petted); garden.life.setClock(saved.clock);
+        setText('save-status', '저장된 놀이터를 복원했어요.');
+      }
+      // A region never saved yet keeps the fresh start (friends head for their first seats).
+      const start = regionLayouts[currentRegion]; if (start) garden.restoreLayout(start);
     } catch { setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
     // Remembered view settings.
     el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
@@ -182,22 +194,37 @@ try {
   el('editor-apply').onclick = () => { const error = garden?.applyEdit(); if (!error) persist(); notice(error ?? '새 배치에서 친구들이 다시 놀기 시작해요.'); refresh(); };
   for (const axis of ['x', 'z']) el<HTMLInputElement>(`item-${axis}`).oninput = () => { garden?.positionItem(Number(el<HTMLInputElement>('item-x').value), Number(el<HTMLInputElement>('item-z').value)); refresh(); };
 } catch (error) { el('loading').hidden = true; el('render-error').hidden = false; console.error('Pixel scene initialization failed', error); }
-function persist() {
-  if (!garden) return;
-  try { saveLayout(window.localStorage, garden.editor.committed, garden.life.affinity); setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
+/** Everything the save keeps: every region's layout (the current one as applied), friends and the time of day. */
+function snapshot(): GardenSave | null {
+  if (!garden) return null;
+  const life = garden.life;
+  return { regions: { ...regionLayouts, [currentRegion]: garden.editor.committed }, affinity: { ...life.affinity }, petted: { ...life.petted }, clock: life.clock() };
+}
+/** Saves to this browser; `quiet` (the regular clock save, a pat) leaves the status line alone unless it fails. */
+function persist(quiet = false) {
+  const save = snapshot(); if (!save) return;
+  try { saveGarden(window.localStorage, save); if (!quiet) setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
   catch { setText('save-status', '브라우저에 저장하지 못했어요. 현재 배치는 유지돼요. 새로고침 전에 파일로 백업해주세요.'); }
 }
-let replacement: Layout | null = null, replacementAffinity: Affinity | null = null;
+// The time of day is saved now and then, and when the page is hidden or closed.
+setInterval(() => { if (settingsReady) persist(true); }, 30_000);
+document.addEventListener('visibilitychange', () => { if (document.hidden && settingsReady) persist(true); });
+window.addEventListener('pagehide', () => { if (settingsReady) persist(true); });
+/** What the replace dialog will apply: a whole backup, or a fresh layout for the current region only. */
+let replacement: { layout: Layout; backup: GardenSave | null } | null = null;
 el('export-save').onclick = () => {
   if (!garden) return;
-  const url = URL.createObjectURL(new Blob([encodeSave(garden.editor.committed, garden.life.affinity)], { type: 'application/json' }));
+  const url = URL.createObjectURL(new Blob([encodeSave(snapshot()!)], { type: 'application/json' }));
   const link = document.createElement('a'); link.href = url; link.download = `little-garden-${new Date().toISOString().slice(0, 10)}.json`; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
-function propose(layout: Layout, reset = false) {
-  replacement = layout;
-  setText('replace-title', reset ? '처음 놀이터로 돌아갈까요?' : '이 백업을 불러올까요?');
-  setText('replace-description', `${layout.items.length}개 배치 · ${layout.stored.length}개 보관. 현재 배치와 보관함을 바꾸고 자동 저장합니다. 필요하면 먼저 파일로 백업해주세요.`);
+function propose(layout: Layout, backup: GardenSave | null) {
+  replacement = { layout, backup };
+  const here = region(currentRegion).name, regions = backup ? Object.keys(backup.regions).length : 0;
+  setText('replace-title', backup ? '이 백업을 불러올까요?' : `${here}${batchim(here) ? '을' : '를'} 처음 배치로 돌릴까요?`);
+  setText('replace-description', backup
+    ? `지역 ${regions}곳 · ${here} ${layout.items.length}개 배치 · ${layout.stored.length}개 보관. 모든 지역의 배치와 친구 친밀도, 하루 시각을 바꾸고 자동 저장합니다. 필요하면 먼저 파일로 백업해주세요.`
+    : `${here}의 배치와 보관함을 처음으로 바꾸고 자동 저장합니다(${layout.items.length}개 배치). 다른 지역은 그대로예요.`);
   el<HTMLDialogElement>('replace-dialog').showModal();
 }
 el('import-save').onclick = () => el<HTMLInputElement>('save-file').click();
@@ -207,15 +234,20 @@ el<HTMLInputElement>('save-file').onchange = async event => {
   try {
     if (file.size > MAX_SAVE_BYTES) throw new Error('파일이 너무 커요. 200KB 이하의 백업을 골라주세요.');
     const backup = decodeGarden(await file.text());
-    if (!garden.editor.active) { propose(backup.layout); replacementAffinity = backup.affinity; }
+    if (!garden.editor.active) propose(backup.regions[currentRegion] ?? DEFAULT_LAYOUT, backup);
   } catch (error) { setText('save-status', `불러오지 못했어요. 현재 놀이터는 유지돼요. ${error instanceof SyntaxError ? 'JSON 백업 파일을 확인해주세요.' : error instanceof Error ? error.message : ''}`); }
 };
-el('reset-layout').onclick = () => { propose(DEFAULT_LAYOUT, true); replacementAffinity = null; };
-el('replace-cancel').onclick = () => { replacement = null; replacementAffinity = null; el<HTMLDialogElement>('replace-dialog').close(); };
+el('reset-layout').onclick = () => propose(DEFAULT_LAYOUT, null);
+el('replace-cancel').onclick = () => { replacement = null; el<HTMLDialogElement>('replace-dialog').close(); };
 el('replace-confirm').onclick = () => {
   if (!replacement || !garden || garden.editor.active) return;
-  garden.restoreLayout(replacement); replacement = null;
-  if (replacementAffinity) { Object.assign(garden.life.affinity, replacementAffinity); replacementAffinity = null; } el<HTMLDialogElement>('replace-dialog').close(); persist(); refresh();
+  const { layout, backup } = replacement; replacement = null;
+  if (backup) {
+    regionLayouts = backup.regions; const life = garden.life;
+    Object.assign(life.affinity, backup.affinity); for (const id of Object.keys(life.petted) as AvatarId[]) delete life.petted[id];
+    Object.assign(life.petted, backup.petted); life.setClock(backup.clock);
+  }
+  garden.restoreLayout(layout); el<HTMLDialogElement>('replace-dialog').close(); persist(); refresh();
 };
 const refreshTimer = setInterval(refresh, 150);
 // FPS: browser frames counted over half a second while the readout is on.
@@ -243,6 +275,13 @@ window.addEventListener('keydown', e => {
 /** Whether a Korean word ends in a final consonant (for 은/는, 으로/로). */
 const batchim = (word: string) => { const c = word.charCodeAt(word.length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 !== 0; };
 // Regions (regions.ts): the label names the current one; regions without their own art yet only change the ground colours.
+/** Goes to another region: the current layout is kept for coming back, and the new region's own layout comes out. */
+function enterRegion(id: RegionId) {
+  if (!garden || id === currentRegion) return;
+  regionLayouts[currentRegion] = garden.editor.committed;
+  currentRegion = id; garden.restoreLayout(regionLayouts[id] ?? DEFAULT_LAYOUT);
+  showRegion(id); persist(true);
+}
 function showRegion(id: RegionId) {
   const r = region(id);
   garden?.setRegion(r.id); remember({ region: r.id });
@@ -257,7 +296,9 @@ el('region-list').replaceChildren(...REGIONS.map(r => {
   b.innerHTML = `<i style="background:${r.ground.tiles[0]}"></i><span><strong></strong><small></small></span>${r.ready ? '' : '<em>준비 중</em>'}`;
   b.querySelector('strong')!.textContent = `${r.number} · ${r.name}`; b.querySelector('small')!.textContent = r.note;
   b.onclick = () => {
-    showRegion(r.id); openMenu(null); el('region-button').focus();
+    openMenu(null); el('region-button').focus();
+    if (garden?.editor.active) { notice('꾸미기를 마친 뒤 지역을 바꿀 수 있어요.'); return; }
+    enterRegion(r.id);
     notice(r.ready ? `${r.name}${batchim(r.name) ? '으로' : '로'} 왔어요.` : `${r.name}${batchim(r.name) ? '은' : '는'} 그림을 준비 중이에요. 지금은 바닥 색만 바뀌어요.`);
   };
   return b;
@@ -280,8 +321,32 @@ el('season-list').replaceChildren(...SEASONS.map(s => {
   return b;
 }));
 // Songs (music.ts): the title scrolls right to left beside the label; the list picks one to play, then the next follows.
+// Volume, mute and the song last heard (with its place) are remembered; that song carries on at the next visit.
 const audio = new Audio();
-let track: Track | null = null;
+audio.preload = 'metadata'; audio.volume = settings.volume; audio.muted = settings.muted;
+let track: Track | null = TRACKS.find(t => t.id === settings.track) ?? null, savedAt = 0;
+if (track) {
+  audio.src = track.src;
+  const at = settings.trackTime;
+  audio.addEventListener('loadedmetadata', () => { if (at < audio.duration) audio.currentTime = at; }, { once: true });
+  // Browsers only start sound after the player has touched the page; until then the song waits, paused.
+  if (settings.playing) audio.play().catch(() => {
+    const go = () => { document.removeEventListener('pointerdown', go); document.removeEventListener('keydown', go); if (track && audio.paused) audio.play().catch(() => {}); };
+    document.addEventListener('pointerdown', go); document.addEventListener('keydown', go);
+  });
+}
+function showVolume() {
+  const level = Math.round(audio.volume * 100), silent = audio.muted || level === 0;
+  setText('music-mute', silent ? '🔇' : '🔈'); el('music-mute').setAttribute('aria-pressed', String(audio.muted));
+  el('music-mute').title = audio.muted ? '소리 켜기' : '음소거';
+  el<HTMLInputElement>('music-volume').value = String(level); setText('music-volume-value', String(level));
+}
+el<HTMLInputElement>('music-volume').oninput = e => { audio.volume = Number((e.target as HTMLInputElement).value) / 100; if (audio.muted && audio.volume > 0) audio.muted = false; };
+el('music-mute').onclick = () => { audio.muted = !audio.muted; };
+audio.addEventListener('volumechange', () => { showVolume(); remember({ volume: audio.volume, muted: audio.muted }); });
+audio.addEventListener('timeupdate', () => { if (track && Math.abs(audio.currentTime - savedAt) >= 3) { savedAt = audio.currentTime; remember({ trackTime: audio.currentTime }); } });
+window.addEventListener('pagehide', () => { if (track) remember({ trackTime: audio.currentTime }); });
+showVolume();
 function showMusic() {
   const playing = !!track && !audio.paused, text = trackLabel(track, playing, TRACKS), title = el('track-title');
   if (title.textContent !== text) { title.textContent = text; title.style.animationDuration = `${Math.max(9, text.length * .45)}s`; }
@@ -296,13 +361,15 @@ function showMusic() {
 }
 function play(next: Track | null) {
   track = next;
-  if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); showMusic(); return; }
+  if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); remember({ track: null, trackTime: 0, playing: false }); showMusic(); return; }
+  if (next.id !== settings.track) { savedAt = 0; remember({ track: next.id, trackTime: 0 }); }
   if (!audio.src.endsWith(next.src)) audio.src = next.src;
   audio.play().catch(() => notice('노래를 재생하지 못했어요.'));
   showMusic();
 }
 audio.addEventListener('ended', () => play(nextTrack(TRACKS, track?.id ?? null)));
-audio.addEventListener('play', showMusic); audio.addEventListener('pause', showMusic);
+audio.addEventListener('play', () => { remember({ playing: true }); showMusic(); });
+audio.addEventListener('pause', () => { if (track) remember({ playing: false, trackTime: audio.currentTime }); showMusic(); });
 audio.addEventListener('error', () => { if (track) notice(`'${track.title}'을(를) 불러오지 못했어요.`); });
 el('music-stop').onclick = () => play(null);
 showMusic();
