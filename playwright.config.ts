@@ -14,7 +14,8 @@ export default defineConfig({
   workers: process.env.CI ? 2 : 3,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
+  // On GitHub each failure also shows as a note on the run page, readable without opening the logs.
+  reporter: process.env.CI ? [['github'], ['list'], ['html', { open: 'never' }]] : 'list',
   use: { baseURL: `http://127.0.0.1:${PORT}/`, trace: 'retain-on-failure', screenshot: 'only-on-failure', locale: 'ko-KR' },
   projects: [{ name: 'desktop', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
