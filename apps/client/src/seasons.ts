@@ -14,10 +14,10 @@ export interface Season {
   speck?: string;
 }
 export const SEASONS: readonly Season[] = [
-  { id: 'spring', name: '봄', icon: '✿', note: '새싹 돋는 연둣빛', tone: '#ffffff', amount: 0, speck: '#e6a3b4' },
-  { id: 'summer', name: '여름', icon: '☀', note: '짙푸른 풀밭', tone: '#7fb35e', amount: .3 },
-  { id: 'autumn', name: '가을', icon: '❦', note: '노랗게 물든 바닥', tone: '#dfa856', amount: .55, speck: '#c46f3c' },
-  { id: 'winter', name: '겨울', icon: '❄', note: '하얗게 덮인 눈', tone: '#f1f4f6', amount: .72, speck: '#ffffff' },
+  { id: 'spring', name: '봄', icon: '✿', note: '꽃이 피는 따스한 날', tone: '#ffffff', amount: 0, speck: '#e6a3b4' },
+  { id: 'summer', name: '여름', icon: '☀', note: '햇살 가득한 푸른 날', tone: '#7fb35e', amount: .3 },
+  { id: 'autumn', name: '가을', icon: '❦', note: '단풍 물드는 선선한 날', tone: '#dfa856', amount: .55, speck: '#c46f3c' },
+  { id: 'winter', name: '겨울', icon: '❄', note: '눈 내리는 포근한 날', tone: '#f1f4f6', amount: .72, speck: '#ffffff' },
 ];
 export const DEFAULT_SEASON: SeasonId = 'spring';
 export function season(id: SeasonId): Season { return SEASONS.find(s => s.id === id) ?? SEASONS[0]; }

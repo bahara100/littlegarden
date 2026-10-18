@@ -119,6 +119,7 @@ h1 > span { color: #b99b67; }
 #season-button[aria-expanded=true] .season-icon { color: #f5d5d6; }
 #season-button b { min-width: 20px; }
 #region-menu, #season-menu { top: calc(100% + 10px); border-color: #cbd7bc; background: #fcfdf5; }
+#season-menu { min-width: 0; width: max-content; }  /* just wide enough for an icon, a name and a short note */
 .season-icon { font-size: 14px; }
 .now-playing {
   width: 204px; min-height: 40px; display: flex; align-items: center; gap: 8px;
@@ -279,7 +280,7 @@ dialog p { color: #67795b; }
   .viewport { min-height: 440px; }
   .map-top { top: 12px; left: 12px; right: 12px; gap: 6px; }
   #fps { top: 66px; right: 12px; }
-  #season-menu { min-width: 255px; }  /* opens to the right, below its button (the bar no longer spans the width) */
+  #season-menu { min-width: 0; }  /* opens to the right, below its button (the bar no longer spans the width) */
   #region-menu { min-width: 255px; }
   #music-menu { width: min(285px, calc(100vw - 58px)); }
   .scene-hint { left: 12px; bottom: 65px; max-width: calc(100% - 24px); font-size: 9px; }
