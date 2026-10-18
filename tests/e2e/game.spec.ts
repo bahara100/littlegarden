@@ -149,4 +149,23 @@ test.describe('on a phone', () => {
     await expect(page.locator('#music-volume')).toBeVisible();
     expect(problems).toEqual([]);
   });
+  test('two fingers zoom in and out without sending anyone walking', async ({ page, context }) => {
+    await open(page);
+    const box = (await page.locator('#game').boundingBox())!, cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+    const cdp = await context.newCDPSession(page);
+    const fingers = (type: string, gap: number) => cdp.send('Input.dispatchTouchEvent', { type: type as 'touchStart', touchPoints: type === 'touchEnd' ? [] : [{ x: cx - gap / 2, y: cy, id: 1 }, { x: cx + gap / 2, y: cy, id: 2 }] });
+    const pinch = async (from: number, to: number) => {
+      await fingers('touchStart', from);
+      for (let i = 1; i <= 16; i++) { await fingers('touchMove', from + (to - from) * i / 16); await page.waitForTimeout(16); }
+      await fingers('touchEnd', 0);
+    };
+    const percent = async () => Number((await page.locator('#zoom-value').textContent())!.replace('%', ''));
+    expect(await percent()).toBe(100);
+    await pinch(40, 200);
+    await expect.poll(percent).toBeGreaterThan(250);
+    const wide = await percent();
+    await pinch(200, 80);
+    await expect.poll(percent).toBeLessThan(wide);
+    await expect(page.locator('#scene-hint')).not.toContainText('이동을 부탁했어요');
+  });
 });
