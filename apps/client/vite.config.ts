@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { existsSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { availableParallelism } from 'node:os';
 import { join, relative, sep } from 'node:path';
 
 /**
@@ -42,10 +43,13 @@ function gameFilesOnly(): Plugin {
       prune(outDir);
       this.info?.(`kept ${files.length - removed} files, left out ${removed} review/history files`);
       const pngs = files.filter(f => used(f) && f.endsWith('.png')).map(f => join(outDir, f));
+      if (process.env.OXIPNG === 'off') { this.info?.('oxipng off (OXIPNG=off): PNGs left as they are'); return; }
       const oxipng = findOxipng();
       if (!oxipng) { this.info?.('oxipng not found: PNGs left as they are (install with `winget install Shssoichiro.Oxipng`)'); return; }
       const before = pngs.reduce((n, f) => n + statSync(f).size, 0);
-      const run = spawnSync(oxipng, ['-o', '4', '--strip', 'safe', '-q', ...pngs], { stdio: 'inherit' });
+      // On GitHub use every core; on the player's own computer at most half, so the machine stays usable.
+      const threads = process.env.CI ? availableParallelism() : Math.max(1, Math.floor(availableParallelism() / 2));
+      const run = spawnSync(oxipng, ['-o', '4', '--strip', 'safe', '-q', '-t', String(threads), ...pngs], { stdio: 'inherit' });
       if (run.status !== 0) throw new Error(`oxipng failed (exit ${run.status})`);
       const after = pngs.reduce((n, f) => n + statSync(f).size, 0);
       this.info?.(`oxipng: ${pngs.length} PNGs ${(before / 1e6).toFixed(2)} MB → ${(after / 1e6).toFixed(2)} MB`);

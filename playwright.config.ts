@@ -10,8 +10,9 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,
-  // Each test runs the whole game; a few at a time keeps timing honest on small machines.
-  workers: process.env.CI ? 2 : 3,
+  // Each test runs the whole game in its own browser. On the player's own computer one at a time keeps it usable
+  // (several browsers at once made it stall); GitHub runs two.
+  workers: process.env.CI ? 2 : 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   // On GitHub each failure also shows as a note on the run page, readable without opening the logs.
@@ -22,6 +23,8 @@ export default defineConfig({
     command: `npm run build && npx vite preview apps/client --host 127.0.0.1 --port ${PORT} --strictPort`,
     url: `http://127.0.0.1:${PORT}/`,
     reuseExistingServer: !process.env.CI,
+    // Lossless PNG compression changes nothing the tests see, so local test builds skip it (GitHub still runs it).
+    env: process.env.CI ? {} : { OXIPNG: 'off' },
     timeout: 180_000,
   },
 });
