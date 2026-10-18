@@ -1,6 +1,10 @@
 name: Publish game to Pages
+# Deploys only after Verify (type check, rule tests, build, screen tests) has passed for a push to main, so a broken
+# game never reaches the public site. Run it by hand (workflow_dispatch) to redeploy the current main.
 on:
-  push:
+  workflow_run:
+    workflows: [Verify]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 permissions:
@@ -12,24 +16,37 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      # A check that finishes late for an older commit must not replace a newer one already on the site.
+      - name: Still the newest commit on main?
+        id: newest
+        run: |
+          latest=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$latest" = "$(git rev-parse HEAD)" ]; then echo "deploy=true" >> "$GITHUB_OUTPUT"; else echo "A newer commit ($latest) will deploy instead."; fi
+      - uses: actions/setup-node@v7
+        if: steps.newest.outputs.deploy == 'true'
         with:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run check
-      - run: npm test
+        if: steps.newest.outputs.deploy == 'true'
       - run: npm run build -w apps/client
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+        if: steps.newest.outputs.deploy == 'true'
+      - uses: actions/configure-pages@v6
+        if: steps.newest.outputs.deploy == 'true'
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.newest.outputs.deploy == 'true'
         with:
           path: apps/client/dist
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        if: steps.newest.outputs.deploy == 'true'
+        uses: actions/deploy-pages@v5
