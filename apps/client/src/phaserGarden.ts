@@ -9,7 +9,9 @@ import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle }
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
 
-type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void };
+type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
+/** Two taps on the same friend within this many ms pat them. */
+const DOUBLE_TAP_MS = 400;
 
 /** Logical pixels per ground unit. The camera scales this to the viewport, nearest-neighbour. */
 const U = 18;
@@ -139,6 +141,9 @@ class GardenScene extends Phaser.Scene {
   private overlayKey = '';
   /** Any drag past 6px pans the view; a press that stays put is a click. */
   private drag: { x: number; y: number; sx: number; sy: number; moved: boolean } | null = null;
+  /** Two fingers down: the distance between them and the zoom when they landed. */
+  private pinch: { distance: number; zoom: number } | null = null;
+  private lastTap: { id: string; at: number } | null = null;
   private reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
   constructor(private g: PhaserGarden) { super('garden'); }
@@ -184,6 +189,7 @@ class GardenScene extends Phaser.Scene {
       this.avatars.set(a.id, { sprite, label });
     }
     this.ring = this.add.image(0, 0, 'ring');
+    this.input.addPointer(1);  // a second touch, for pinch zoom
     this.input.on('pointerdown', this.pointerDown, this);
     this.input.on('pointermove', this.pointerMove, this);
     this.input.on('pointerup', this.pointerUp, this);
@@ -434,10 +440,18 @@ class GardenScene extends Phaser.Scene {
   }
   private pointerDown(p: Phaser.Input.Pointer) {
     if (p.button !== 0 && p.button !== 2) return;
+    if (this.drag) { this.drag.moved = true; return; }  // a second finger: pinch, never a click
     this.drag = { x: p.x, y: p.y, sx: this.g.pan.x, sy: this.g.pan.y, moved: false };
   }
   private pointerMove(p: Phaser.Input.Pointer) {
     const d = this.drag, canvas = this.game.canvas;
+    const one = this.input.pointer1, two = this.input.pointer2;
+    if (one?.isDown && two?.isDown) {
+      const distance = Math.hypot(one.x - two.x, one.y - two.y);
+      if (!this.pinch) this.pinch = { distance, zoom: this.g.zoom };
+      else if (this.pinch.distance > 0) this.g.zoomBy(this.pinch.zoom * distance / this.pinch.distance / this.g.zoom);
+      return;
+    }
     if (d && p.isDown) {
       if (Math.hypot(p.x - d.x, p.y - d.y) > 6) d.moved = true;
       if (d.moved) { canvas.style.cursor = 'grabbing'; this.g.focus = null; this.g.pan = { x: d.sx + p.x - d.x, y: d.sy + p.y - d.y }; }
@@ -448,6 +462,7 @@ class GardenScene extends Phaser.Scene {
     if (e.active && e.pending) { const q = this.ground(p); e.followPointer(q.x, q.z); }
   }
   private pointerUp(p: Phaser.Input.Pointer) {
+    if (this.pinch) { if (!this.input.pointer1?.isDown && !this.input.pointer2?.isDown) { this.pinch = null; this.drag = null; } return; }
     const d = this.drag; this.drag = null;
     if (!d || d.moved || p.button === 2) return;
     const g = this.g, target = this.ground(p);
@@ -457,7 +472,11 @@ class GardenScene extends Phaser.Scene {
       return;
     }
     const id = this.pick(p);
-    if (id) { g.select(id); if (!g.life.avatars.has(id as AvatarId)) g.commandUse(id); }
+    if (id && g.life.avatars.has(id as AvatarId)) {
+      const now = performance.now(), again = this.lastTap?.id === id && now - this.lastTap.at < DOUBLE_TAP_MS;
+      this.lastTap = again ? null : { id, at: now };
+      g.select(id); if (again) g.callbacks.pet(id as AvatarId);
+    } else if (id) { g.select(id); g.commandUse(id); }
     else { const error = g.life.moveTo(g.selectedAvatar, target); g.callbacks.notice(error ?? `${g.life.avatars.get(g.selectedAvatar)!.name}에게 이동을 부탁했어요.`); }
   }
 }

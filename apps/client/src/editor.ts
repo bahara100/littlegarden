@@ -18,8 +18,30 @@ export class LayoutEditor {
   private sequence = 1;
   private validationKey = '';
   private validationResult: string | null = null;
-  enter() { this.draft = cloneLayout(this.committed); this.selected = null; this.pending = null; this.active = true; }
-  cancel() { this.draft = cloneLayout(this.committed); this.pending = null; this.selected = null; this.active = false; }
+  /** Drafts before each placement or storing, for undo; redo holds what undo took back. Cleared when editing ends. */
+  private undoStack: Layout[] = [];
+  private redoStack: Layout[] = [];
+  static readonly HISTORY = 50;
+  get canUndo() { return this.undoStack.length > 0; }
+  get canRedo() { return this.redoStack.length > 0; }
+  private remember() {
+    this.undoStack.push(cloneLayout(this.draft));
+    if (this.undoStack.length > LayoutEditor.HISTORY) this.undoStack.shift();
+    this.redoStack = [];
+  }
+  /** Back one placement or storing (an unplaced preview is dropped first and counts as no step). */
+  undo() {
+    if (this.pending) { this.pending = null; return true; }
+    const previous = this.undoStack.pop(); if (!previous) return false;
+    this.redoStack.push(cloneLayout(this.draft)); this.draft = previous; this.selected = null; return true;
+  }
+  redo() {
+    const next = this.redoStack.pop(); if (!next) return false;
+    this.undoStack.push(cloneLayout(this.draft)); this.draft = next; this.pending = null; this.selected = null; return true;
+  }
+  private forget() { this.undoStack = []; this.redoStack = []; }
+  enter() { this.draft = cloneLayout(this.committed); this.selected = null; this.pending = null; this.active = true; this.forget(); }
+  cancel() { this.draft = cloneLayout(this.committed); this.pending = null; this.selected = null; this.active = false; this.forget(); }
   begin(kind: ItemKind): string | null {
     if (this.draft.items.length + this.draft.stored.length >= 160) return '기구와 장식은 보관함을 포함해 최대 160개까지 만들 수 있어요.';
     let id: string; do { id = `placed-${this.sequence++}`; } while ([...this.draft.items, ...this.draft.stored].some(i => i.id === id));
@@ -36,6 +58,7 @@ export class LayoutEditor {
   place(): string | null {
     if (!this.pending) return '먼저 놓을 기구나 장식을 선택해주세요.';
     const error = this.error; if (error) return error;
+    this.remember();
     const item = { ...this.pending }; this.draft.items = this.candidates().map(i => ({ ...i }));
     if (this.source === 'stored') this.draft.stored = this.draft.stored.filter(i => i.id !== item.id);
     this.pending = null; this.selected = item.id; return null;
@@ -45,12 +68,13 @@ export class LayoutEditor {
     const id = this.pending && this.source === 'move' ? this.pending.id : this.selected;
     const item = this.draft.items.find(i => i.id === id); if (!item) return '보관할 기구를 먼저 선택해주세요.';
     const items = this.draft.items.filter(i => i.id !== id), error = layoutError(items); if (error) return error;
+    this.remember();
     this.draft.items = items; this.draft.stored.push({ ...item }); this.selected = null; this.pending = null; return null;
   }
   apply(): string | null {
     if (this.pending) return '배치 중인 기구를 놓거나 배치를 취소해주세요.';
     const error = layoutError(this.draft.items); if (error) return error;
-    this.committed = cloneLayout(this.draft); this.active = false; this.selected = null; return null;
+    this.committed = cloneLayout(this.draft); this.active = false; this.selected = null; this.forget(); return null;
   }
   get selectedItem() { return this.pending ?? this.draft.items.find(i => i.id === this.selected); }
   get selectedName() { return this.selectedItem ? CATALOG[this.selectedItem.kind].name : '기구나 장식을 선택하세요'; }

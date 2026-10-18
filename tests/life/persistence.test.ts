@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DEFAULT_LAYOUT, cloneLayout } from '../../apps/client/src/layout.js';
 import { LayoutEditor } from '../../apps/client/src/editor.js';
-import { decodeSave, encodeSave, loadLayout, saveLayout, SAVE_KEY, type SaveStorage } from '../../apps/client/src/persistence.js';
+import { DEFAULT_SETTINGS, SAVE_VERSION, SETTINGS_KEY, decodeGarden, decodeSave, encodeSave, loadGarden, loadLayout, loadSettings, saveLayout, saveSettings, SAVE_KEY, type SaveStorage } from '../../apps/client/src/persistence.js';
 
 function memory(): SaveStorage {
   const values = new Map<string, string>();
@@ -26,7 +26,7 @@ test('malformed, future-version, oversized and unsafe backups are rejected', () 
   assert.throws(() => decodeSave('x'.repeat(200_001)));
   const original = JSON.parse(encodeSave(DEFAULT_LAYOUT));
   const reject = (change: (data: typeof original) => void) => { const value = structuredClone(original); change(value); assert.throws(() => decodeSave(JSON.stringify(value))); };
-  reject(d => { d.version = 2; });
+  reject(d => { d.version = 3; });
   reject(d => { d.layout.items = null; });
   reject(d => { d.layout.items[0].kind = 'unknown'; });
   reject(d => { d.layout.items[0].id = 'character'; });
@@ -50,4 +50,20 @@ test('saves from before tile alignment load onto whole tiles', () => {
   const loaded = decodeSave(encodeSave(old));
   assert.deepEqual(loaded.items.find(i => i.id === 'bench'), { id: 'bench', kind: 'bench', x: -3.5, z: -2, turn: 0 });
   assert.deepEqual(loaded.items.find(i => i.id === 'tree-0'), { id: 'tree-0', kind: 'tree', x: -6.5, z: -5.5, turn: 0 });
+});
+test('version-1 saves upgrade to the current format; affinity and settings round-trip', () => {
+  const v1 = JSON.stringify({ app: 'little-garden', version: 1, savedAt: '2026-10-17T00:00:00Z', layout: cloneLayout(DEFAULT_LAYOUT) });
+  const old = decodeGarden(v1);
+  assert.deepEqual(old.layout, decodeSave(encodeSave(DEFAULT_LAYOUT)));
+  assert.deepEqual(old.affinity, { character: 0, peach: 0, lilac: 0 });
+  assert.equal(JSON.parse(encodeSave(DEFAULT_LAYOUT)).version, SAVE_VERSION);
+  const storage = memory();
+  saveLayout(storage, DEFAULT_LAYOUT, { character: 3, peach: 0, lilac: 12 });
+  assert.deepEqual(loadGarden(storage)!.affinity, { character: 3, peach: 0, lilac: 12 });
+  assert.throws(() => decodeGarden(JSON.stringify({ ...JSON.parse(encodeSave(DEFAULT_LAYOUT)), friends: { affinity: { peach: -1 } } })));
+  assert.deepEqual(loadSettings(storage), DEFAULT_SETTINGS);
+  saveSettings(storage, { grid: true, zoom: 9, selected: 'lilac', dayCycle: false, fps: true });
+  assert.deepEqual(loadSettings(storage), { grid: true, zoom: 5, selected: 'lilac', dayCycle: false, fps: true });
+  storage.setItem(SETTINGS_KEY, JSON.stringify({ zoom: 9, selected: 'nobody', grid: 'yes' }));
+  assert.deepEqual(loadSettings(storage), { ...DEFAULT_SETTINGS, zoom: 5 });
 });

@@ -8,7 +8,9 @@ import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCyc
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 
 export type Selection = AvatarId | EquipmentId;
-type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void };
+type Callbacks = { select(id: Selection): void; zoom(value: number): void; error(): void; notice(message: string): void; pet(id: AvatarId): void };
+/** Two taps on the same friend within this many ms pat them. */
+const DOUBLE_TAP_MS = 400;
 type Sprite = { image: HTMLCanvasElement; width: number; height: number };
 type Hit = { id: string; x: number; y: number; w: number; h: number; image?: HTMLCanvasElement; frame?: number };
 
@@ -29,7 +31,7 @@ export class PixelGarden {
   private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private props: Sprite[] = [];
   private hits: Hit[] = [];
-  private zoom = 1;
+  zoom = 1;
   private pan = { x: 0, y: 0 };
   private grid = false;
   private frame = 0;
@@ -253,12 +255,25 @@ export class PixelGarden {
       return [...this.editor.draft.items].reverse().find(i => { const f = footprint(i); return Math.abs(p.x - i.x) <= f.w / 2 && Math.abs(p.z - i.z) <= f.d / 2; })?.id;
     }
   }
+  /** Fingers on the canvas (for pinch zoom) and the last tap (two taps on a friend pat them). */
+  private touches = new Map<number, { x: number; y: number }>();
+  private pinch: { distance: number; zoom: number } | null = null;
+  private lastTap: { id: string; at: number } | null = null;
   private pointerDown = (e: PointerEvent) => {
     if (e.button !== 0 && e.button !== 2) return;
     this.canvas.setPointerCapture(e.pointerId);
+    this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (this.drag) { this.drag.moved = true; return; }  // a second finger: pinch, never a click
     this.drag = { x: e.clientX, y: e.clientY, sx: this.pan.x, sy: this.pan.y, moved: false, id: e.pointerId };
   };
   private pointerMove = (e: PointerEvent) => {
+    if (this.touches.has(e.pointerId)) this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (this.touches.size >= 2) {
+      const [a, b] = [...this.touches.values()], distance = Math.hypot(a.x - b.x, a.y - b.y);
+      if (!this.pinch) this.pinch = { distance, zoom: this.zoom };
+      else if (this.pinch.distance > 0) this.zoomBy(this.pinch.zoom * distance / this.pinch.distance / this.zoom);
+      return;
+    }
     const d = this.drag;
     if (d) {
       const dx = e.clientX - d.x, dy = e.clientY - d.y;
@@ -271,8 +286,10 @@ export class PixelGarden {
     if (this.editor.active && this.editor.pending) { const target = this.ground(p.x, p.y); this.editor.followPointer(target.x, target.z); }
   };
   private pointerUp = (e: PointerEvent) => {
-    const d = this.drag; this.drag = null;
+    this.touches.delete(e.pointerId);
     if (this.canvas.hasPointerCapture(e.pointerId)) this.canvas.releasePointerCapture(e.pointerId);
+    if (this.pinch) { if (!this.touches.size) { this.pinch = null; this.drag = null; } return; }
+    const d = this.drag; this.drag = null;
     if (!d || d.moved || e.button === 2) return;
     const p = this.coords(e), target = this.ground(p.x, p.y);
     if (this.editor.active) {
@@ -281,10 +298,14 @@ export class PixelGarden {
       return;
     }
     const id = this.pick(p.x, p.y);
-    if (id) { this.select(id); if (!this.life.avatars.has(id as AvatarId)) this.commandUse(id); }
+    if (id && this.life.avatars.has(id as AvatarId)) {
+      const now = performance.now(), again = this.lastTap?.id === id && now - this.lastTap.at < DOUBLE_TAP_MS;
+      this.lastTap = again ? null : { id, at: now };
+      this.select(id); if (again) this.callbacks.pet(id as AvatarId);
+    } else if (id) { this.select(id); this.commandUse(id); }
     else { const error = this.life.moveTo(this.selectedAvatar, target); this.callbacks.notice(error ?? `${this.life.avatars.get(this.selectedAvatar)!.name}에게 이동을 부탁했어요.`); }
   };
-  private pointerCancel = () => { this.drag = null; };
+  private pointerCancel = (e: PointerEvent) => { this.touches.delete(e.pointerId); this.drag = null; this.pinch = null; };
   private wheel = (e: WheelEvent) => { e.preventDefault(); this.zoomBy(Math.exp(-e.deltaY * .001)); };
   private contextMenu = (e: Event) => e.preventDefault();
   select(id: Selection) { this.selection = id; if (this.life.avatars.has(id as AvatarId)) this.selectedAvatar = id as AvatarId; this.callbacks.select(id); }

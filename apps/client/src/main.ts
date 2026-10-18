@@ -1,9 +1,9 @@
 import './style.css';
 import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
-import { FRIENDS, activityLabel, type AvatarId } from './simulation';
+import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
 import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
-import { loadLayout, saveLayout, encodeSave, decodeSave, MAX_SAVE_BYTES } from './persistence';
+import { loadGarden, saveLayout, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type Affinity } from './persistence';
 import { SCARLET_SD } from './scarletApproved';
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 function setText(id: string, value: string) { const node = el(id); if (node.textContent !== value) node.textContent = value; }
@@ -13,6 +13,10 @@ const usePhaser = params.get('renderer') !== 'canvas';
 let garden: PixelGarden | PhaserGarden | undefined, selected: Selection = 'character';
 let toastUntil = 0, panelKey = '';
 let inventoryKey = '';
+// View settings remembered in this browser. Changes reported before the garden has applied them are its start-up defaults and are ignored.
+const settings = loadSettings(window.localStorage);
+let settingsReady = false;
+function remember(change: Partial<typeof settings>) { if (settingsReady) { Object.assign(settings, change); saveSettings(window.localStorage, settings); } }
 const defaultHint = '친구 선택 → 바닥을 눌러 이동 · 기구를 눌러 이용';
 function notice(message: string) { setText('scene-hint', message); toastUntil = performance.now() + 3500; }
 function details(rows: [string, string][]) {
@@ -30,6 +34,7 @@ function refresh() {
   setText('mode-label', editing ? '꾸미기 모드' : '생활 모드');
   setText('mode-note', editing ? '친구들은 잠시 쉬는 중' : '친구들의 하루');
   setText('equipment-count', String(garden.life.layout.filter(i => ['bench', 'swing'].includes(i.kind)).length));
+  showDay(garden.life.dayFraction(), garden.life.dayCycle);
   if (editing) { refreshEditor(); return; }
   const life = garden.life, active = life.avatars.get(garden.selectedAvatar)!;
   FRIENDS.forEach(f => {
@@ -60,7 +65,7 @@ function refresh() {
     } else {
       el<HTMLAnchorElement>('model-review').href = `${import.meta.env.BASE_URL}friends-base-walk-v1/index.html`;
     }
-    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중']]);
+    details([['지금은', activityLabel(friend)], ['행동', friend.directed ? '부탁한 일 하는 중' : '자유롭게 생활 중'], ['친밀도', `♥ ${life.affinity[friend.id]}`]]);
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     const equipment = life.layout.find(i => i.id === selected)?.kind === 'bench' ? 'bench' : 'swing', slots = life.seats.filter(s => s.equipment === selected);
@@ -75,7 +80,27 @@ function refresh() {
   }
   if (performance.now() > toastUntil) setText('scene-hint', defaultHint);
 }
-function showSelection(id: Selection) { selected = id; refresh(); }
+function showSelection(id: Selection) { selected = id; if (garden?.life.avatars.has(id as AvatarId)) remember({ selected: id as AvatarId }); refresh(); }
+const DAY_TEXT: Record<DayPart, [string, string]> = { morning: ['☀', '맑은 아침'], afternoon: ['☀', '포근한 오후'], evening: ['☼', '노을 지는 저녁'], night: ['☾', '고요한 밤'] };
+/** Colour laid over the scene through the day (multiplied, so white light leaves the pixels as drawn). */
+const DAY_TINT: [number, [number, number, number, number]][] = [
+  [0, [62, 72, 142, .42]], [4.5, [62, 72, 142, .42]], [6.5, [255, 196, 170, .16]], [8.5, [255, 255, 255, 0]], [16, [255, 255, 255, 0]],
+  [18, [255, 158, 96, .22]], [19.5, [150, 108, 172, .3]], [21, [62, 72, 142, .42]], [24, [62, 72, 142, .42]],
+];
+let tintKey = '';
+function showDay(fraction: number, cycle: boolean) {
+  const [icon, label] = DAY_TEXT[dayPart(fraction)];
+  setText('day-icon', icon); setText('day-label', label); setText('day-clock', cycle ? clockLabel(fraction) : '시간이 멈춰 있어요');
+  const h = fraction * 24, i = DAY_TINT.findIndex(([at]) => at > h), [h0, c0] = DAY_TINT[i - 1], [h1, c1] = DAY_TINT[i], t = (h - h0) / (h1 - h0);
+  const c = c0.map((v, k) => v + (c1[k] - v) * t), key = c.map(v => v.toFixed(3)).join();
+  if (key !== tintKey) { tintKey = key; el('day-tint').style.background = `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${c[3].toFixed(3)})`; }
+}
+function pet(id: AvatarId) {
+  if (!garden || garden.editor.active) return;
+  garden.life.pet(id); persist();
+  const a = garden.life.avatars.get(id)!;
+  notice(`${a.name}이(가) 기분 좋아해요 ♡ 친밀도 ${garden.life.affinity[id]}`); refresh();
+}
 function refreshEditor() {
   if (!garden) return;
   const editor = garden.editor, item = editor.selectedItem, pending = !!editor.pending, error = pending ? editor.error : null;
@@ -91,6 +116,8 @@ function refreshEditor() {
   el<HTMLButtonElement>('item-store').disabled = !editor.selected;
   el<HTMLButtonElement>('item-cancel').disabled = !pending;
   el<HTMLButtonElement>('editor-apply').disabled = pending;
+  el<HTMLButtonElement>('edit-undo').disabled = !pending && !editor.canUndo;
+  el<HTMLButtonElement>('edit-redo').disabled = !editor.canRedo;
   setText('draft-count', `${editor.draft.items.length}개 배치 · ${editor.draft.stored.length}개 보관`);
   const key = JSON.stringify(editor.draft.stored.map(i => [i.id, i.kind]));
   if (key !== inventoryKey) {
@@ -104,20 +131,31 @@ el('help').onclick = () => el<HTMLDialogElement>('help-dialog').showModal();
 el('close-help').onclick = () => el<HTMLDialogElement>('help-dialog').close();
 el('retry').onclick = () => location.reload();
 try {
-  const callbacks = { select: showSelection, notice, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; }, error: () => { el('render-error').hidden = false; } };
+  const callbacks = { select: showSelection, notice, pet, zoom: (percent: number) => { setText('zoom-value', `${percent}%`); el<HTMLButtonElement>('zoom-in').disabled = percent >= 500; el<HTMLButtonElement>('zoom-out').disabled = percent <= 65; remember({ zoom: percent / 100 }); }, error: () => { el('render-error').hidden = false; } };
   // Phaser (about 1.2 MB) is its own chunk, loaded after the page and its controls are up; ?renderer=canvas never loads it.
   const created = usePhaser ? import('./phaserGarden').then(m => new m.PhaserGarden(el('game'), callbacks)) : Promise.resolve(new PixelGarden(el('game'), callbacks));
   created.then(created => {
     garden = created;
     try {
-      const saved = loadLayout(window.localStorage);
-      if (saved) { garden.restoreLayout(saved); setText('save-status', '저장된 놀이터를 복원했어요.'); }
+      const saved = loadGarden(window.localStorage);
+      if (saved) { garden.restoreLayout(saved.layout); Object.assign(garden.life.affinity, saved.affinity); setText('save-status', '저장된 놀이터를 복원했어요.'); }
     } catch { setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
+    // Remembered view settings.
+    el<HTMLInputElement>('grid-toggle').checked = settings.grid; garden.setGrid(settings.grid);
+    el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
+    el<HTMLInputElement>('fps-toggle').checked = settings.fps; showFps(settings.fps);
+    garden.zoomBy(settings.zoom / garden.zoom); garden.select(settings.selected);
+    settingsReady = true;
     el('loading').hidden = true; refresh();
   }, () => { el('render-error').hidden = false; });
   FRIENDS.forEach(f => { el(`friend-${f.id}`).onclick = () => { garden?.select(f.id); refresh(); }; });
   el('zoom-in').onclick = () => garden?.zoomBy(1.15); el('zoom-out').onclick = () => garden?.zoomBy(1 / 1.15); el('reset-view').onclick = () => garden?.reset();
-  el<HTMLInputElement>('grid-toggle').onchange = e => garden?.setGrid((e.target as HTMLInputElement).checked);
+  el<HTMLInputElement>('grid-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; garden?.setGrid(on); remember({ grid: on }); };
+  el<HTMLInputElement>('day-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; if (garden) garden.life.dayCycle = on; remember({ dayCycle: on }); refresh(); };
+  el<HTMLInputElement>('fps-toggle').onchange = e => { const on = (e.target as HTMLInputElement).checked; showFps(on); remember({ fps: on }); };
+  el('pet').onclick = () => { if (garden) pet(garden.selectedAvatar); };
+  el('edit-undo').onclick = () => { if (garden?.editor.undo()) notice('한 단계 되돌렸어요.'); refresh(); };
+  el('edit-redo').onclick = () => { if (garden?.editor.redo()) notice('다시 했어요.'); refresh(); };
   el('wave').onclick = () => garden?.wave();
   el('focus-friend').onclick = () => { garden?.focusFriend(); notice('친구를 가까이 살펴봐요. ⌖ 버튼을 누르면 전체 놀이터로 돌아가요.'); };
   el('resume').onclick = () => garden?.resume();
@@ -142,13 +180,13 @@ try {
 } catch (error) { el('loading').hidden = true; el('render-error').hidden = false; console.error('Pixel scene initialization failed', error); }
 function persist() {
   if (!garden) return;
-  try { saveLayout(window.localStorage, garden.editor.committed); setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
+  try { saveLayout(window.localStorage, garden.editor.committed, garden.life.affinity); setText('save-status', `이 브라우저에 저장했어요 · ${new Date().toLocaleTimeString('ko-KR')}`); }
   catch { setText('save-status', '브라우저에 저장하지 못했어요. 현재 배치는 유지돼요. 새로고침 전에 파일로 백업해주세요.'); }
 }
-let replacement: Layout | null = null;
+let replacement: Layout | null = null, replacementAffinity: Affinity | null = null;
 el('export-save').onclick = () => {
   if (!garden) return;
-  const url = URL.createObjectURL(new Blob([encodeSave(garden.editor.committed)], { type: 'application/json' }));
+  const url = URL.createObjectURL(new Blob([encodeSave(garden.editor.committed, garden.life.affinity)], { type: 'application/json' }));
   const link = document.createElement('a'); link.href = url; link.download = `little-garden-${new Date().toISOString().slice(0, 10)}.json`; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
@@ -164,20 +202,36 @@ el<HTMLInputElement>('save-file').onchange = async event => {
   if (!file || !garden || garden.editor.active) return;
   try {
     if (file.size > MAX_SAVE_BYTES) throw new Error('파일이 너무 커요. 200KB 이하의 백업을 골라주세요.');
-    const layout = decodeSave(await file.text());
-    if (!garden.editor.active) propose(layout);
+    const backup = decodeGarden(await file.text());
+    if (!garden.editor.active) { propose(backup.layout); replacementAffinity = backup.affinity; }
   } catch (error) { setText('save-status', `불러오지 못했어요. 현재 놀이터는 유지돼요. ${error instanceof SyntaxError ? 'JSON 백업 파일을 확인해주세요.' : error instanceof Error ? error.message : ''}`); }
 };
-el('reset-layout').onclick = () => propose(DEFAULT_LAYOUT, true);
-el('replace-cancel').onclick = () => { replacement = null; el<HTMLDialogElement>('replace-dialog').close(); };
+el('reset-layout').onclick = () => { propose(DEFAULT_LAYOUT, true); replacementAffinity = null; };
+el('replace-cancel').onclick = () => { replacement = null; replacementAffinity = null; el<HTMLDialogElement>('replace-dialog').close(); };
 el('replace-confirm').onclick = () => {
   if (!replacement || !garden || garden.editor.active) return;
-  garden.restoreLayout(replacement); replacement = null; el<HTMLDialogElement>('replace-dialog').close(); persist(); refresh();
+  garden.restoreLayout(replacement); replacement = null;
+  if (replacementAffinity) { Object.assign(garden.life.affinity, replacementAffinity); replacementAffinity = null; } el<HTMLDialogElement>('replace-dialog').close(); persist(); refresh();
 };
 const refreshTimer = setInterval(refresh, 150);
+// FPS: browser frames counted over half a second while the readout is on.
+let fpsOn = false, fpsFrames = 0, fpsSince = performance.now();
+function showFps(on: boolean) { fpsOn = on; el('fps').hidden = !on; fpsFrames = 0; fpsSince = performance.now(); }
+function countFrame(now: number) {
+  if (fpsOn) {
+    fpsFrames++;
+    if (now - fpsSince >= 500) { setText('fps', `${Math.round(fpsFrames * 1000 / (now - fpsSince))} FPS`); fpsFrames = 0; fpsSince = now; }
+  }
+  requestAnimationFrame(countFrame);
+}
+requestAnimationFrame(countFrame);
 const editKeys = (event: KeyboardEvent) => {
   if (!garden?.editor.active || ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName ?? '')) return;
-  if (event.key.toLowerCase() === 'r') { event.preventDefault(); garden.rotateItem(); }
+  const key = event.key.toLowerCase(), command = event.ctrlKey || event.metaKey;
+  if (command && (key === 'y' || (key === 'z' && event.shiftKey))) { event.preventDefault(); if (garden.editor.redo()) notice('다시 했어요.'); refresh(); return; }
+  if (command && key === 'z') { event.preventDefault(); if (garden.editor.undo()) notice('한 단계 되돌렸어요.'); refresh(); return; }
+  if (command) return;
+  if (key === 'r') { event.preventDefault(); garden.rotateItem(); }
   if (event.key === 'Escape') { event.preventDefault(); garden.cancelPlacement(); }
   refresh();
 };

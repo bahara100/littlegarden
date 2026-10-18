@@ -95,3 +95,18 @@ test('additional furniture has independent seats; a garden without equipment sti
   sim.applyLayout(empty); for (let t = 0; t < 10; t += .1) sim.update(.1);
   assert.equal(sim.reservations.size, 0); assert.equal(sim.seats.length, 0);
 });
+test('undo and redo step through placements and storing, and end with editing', () => {
+  const e = new LayoutEditor(); e.enter();
+  const start = JSON.stringify(e.draft);
+  assert.equal(e.canUndo, false); assert.equal(e.undo(), false);
+  e.begin('tree'); e.position(4.2, 1.9); assert.equal(e.place(), null);
+  const placed = JSON.stringify(e.draft);
+  e.selected = 'bench'; assert.equal(e.store(), null);
+  assert.equal(e.draft.stored.length, 1);
+  assert.ok(e.undo()); assert.equal(JSON.stringify(e.draft), placed);
+  assert.ok(e.undo()); assert.equal(JSON.stringify(e.draft), start); assert.equal(e.canUndo, false);
+  assert.ok(e.redo()); assert.equal(JSON.stringify(e.draft), placed);
+  e.begin('flower'); assert.ok(e.undo(), 'an unplaced preview is dropped first'); assert.equal(e.pending, null); assert.equal(JSON.stringify(e.draft), placed);
+  e.begin('tree'); e.position(-4.5, 6.5); assert.equal(e.place(), null); assert.equal(e.canRedo, false, 'a new step clears redo');
+  assert.equal(e.apply(), null); assert.equal(e.canUndo, false);
+});

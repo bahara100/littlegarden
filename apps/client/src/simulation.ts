@@ -3,7 +3,7 @@ export type { Point, Seat } from './layout';
 export type AvatarId = 'character' | 'peach' | 'lilac';
 export type EquipmentId = string;
 
-export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting';
+export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting' | 'happy';
 export const FRIENDS = [
   { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.5, z: 2.5 } },
   { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.5, z: 2.5 } },
@@ -85,6 +85,8 @@ export interface Avatar extends Point {
   progress: number; until: number; deadline: number; directed: boolean; lastEquipment: EquipmentId | null;
   /** While greeting: the friend being greeted and when it started. */
   partner: AvatarId | null; since: number;
+  /** Until when a petted friend who stays put (e.g. on a seat) shows a heart. */
+  cheerUntil: number;
 }
 export class LifeSimulation {
   time = 0;
@@ -93,8 +95,17 @@ export class LifeSimulation {
   get seats() { return this.world.seats; }
   readonly avatars = new Map<AvatarId, Avatar>();
   readonly reservations = new Map<string, AvatarId>();
+  /** How close each friend feels to you: one point per pat, kept with the garden save. */
+  readonly affinity: Record<AvatarId, number> = { character: 0, peach: 0, lilac: 0 };
+  /** Whether the day passes (morning → afternoon → evening → night); off keeps a bright afternoon. */
+  dayCycle = true;
+  /** Fraction of the day at time 0 (0 = midnight); a day lasts DAY.length seconds. */
+  dayStart: number = DAY.start;
+  dayFraction() { return this.dayCycle ? (this.dayStart + this.time / DAY.length) % 1 : DAY.still; }
+  get night() { return dayPart(this.dayFraction()) === 'night'; }
+  private lastPet: Partial<Record<AvatarId, number>> = {};
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, partner: null, since: 0 }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, partner: null, since: 0, cheerUntil: 0 }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -139,6 +150,18 @@ export class LifeSimulation {
     this.free(a); this.reservations.set(choice.seat.id, id); a.seatId = choice.seat.id;
     a.path = choice.path!; a.phase = 'walking'; a.directed = directed; a.deadline = this.time + 40; return null;
   }
+  /** A pat: the friend is happy for a moment (a heart over their head) and feels a little closer. */
+  pet(id: AvatarId): string | null {
+    const a = this.avatars.get(id)!;
+    if (this.time - (this.lastPet[id] ?? -Infinity) < PET.cooldown) return null;
+    this.lastPet[id] = this.time;
+    this.affinity[id] = Math.min(PET.max, this.affinity[id] + 1);
+    if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) { a.cheerUntil = this.time + PET.duration; return null; }
+    if (a.phase === 'greeting') { a.cheerUntil = this.time + PET.duration; return null; }
+    const directed = a.directed;
+    this.settle(a); a.phase = 'happy'; a.since = this.time; a.until = this.time + PET.duration; a.directed = directed;
+    return null;
+  }
   wave(id: AvatarId): string | null {
     const a = this.avatars.get(id)!;
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '기구에서 내려온 뒤 인사할 수 있어요.';
@@ -152,7 +175,8 @@ export class LifeSimulation {
         this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id) && this.reservations.get(o.id) !== a.id));
       if (beside && !this.use(a.id, beside.equipment, false)) return;
     }
-    const preferred: EquipmentId = a.lastEquipment === 'bench' ? 'swing' : a.lastEquipment === 'swing' ? 'bench' : a.id === 'lilac' ? 'swing' : 'bench';
+    // At night friends mostly rest on benches; by day they take turns between bench and swing.
+    const preferred: EquipmentId = this.night && a.lastEquipment !== null ? 'bench' : a.lastEquipment === 'bench' ? 'swing' : a.lastEquipment === 'swing' ? 'bench' : a.id === 'lilac' ? 'swing' : 'bench';
     if (a.lastEquipment === null || this.random() < .7) {
       const options = [...new Set(this.seats.filter(s => s.kind === preferred).map(s => s.equipment))];
       for (const id of options) if (!this.use(a.id, id, false)) return;
@@ -195,7 +219,7 @@ export class LifeSimulation {
   update(seconds: number) {
     const dt = Math.min(.1, Math.max(0, seconds)); this.time += dt;
     for (const a of this.avatars.values()) {
-      if (a.phase === 'idle' || a.phase === 'waving' || a.phase === 'greeting') {
+      if (a.phase === 'idle' || a.phase === 'waving' || a.phase === 'greeting' || a.phase === 'happy') {
         if (this.time >= a.until) { if (a.phase === 'idle') this.choose(a); else { a.partner = null; this.settle(a, 1.5); } }
       } else if (a.phase === 'walking') {
         if (this.time > a.deadline) { this.settle(a, 1); continue; }
@@ -217,7 +241,7 @@ export class LifeSimulation {
         const s = this.seatOf(a); if (!s) { this.settle(a); continue; }
         a.progress = Math.min(1, Math.max(0, a.progress + (a.phase === 'boarding' ? dt : -dt) / .7));
         a.x = s.approach.x + (s.x - s.approach.x) * a.progress; a.z = s.approach.z + (s.z - s.approach.z) * a.progress; a.yaw = s.yaw;
-        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; a.until = this.time + 7 + this.random() * 5; }
+        if (a.phase === 'boarding' && a.progress === 1) { a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.lastEquipment = s.kind; a.until = this.time + (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1); }
         else if (a.phase === 'leaving' && a.progress === 0) this.settle(a, 2.5);
       } else if (this.time >= a.until) this.beginExit(a);
     }
@@ -240,7 +264,7 @@ export class LifeSimulation {
   }
 }
 export function activityLabel(a: Avatar) {
-  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중' };
+  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중' };
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
@@ -251,10 +275,28 @@ export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 25, durati
  * renderers can play it for these phases instead.
  */
 export function reactionLabel(a: Avatar, time: number) {
-  if (a.phase === 'waving') return '♡';
+  if (a.phase === 'waving' || time < a.cheerUntil) return '♡';
+  if (a.phase === 'happy') return time - a.since < PET.duration / 2 ? '♡' : '♪';
   if (a.phase !== 'greeting') return '';
   const t = time - a.since;
   if (t < 1) return '♡';
   const turn = Math.floor((t - 1) / .8), speaking = (turn % 2 === 0) === (a.id < (a.partner ?? ''));
   return speaking ? (turn % 4 < 2 ? '···' : '♪') : '';
+}
+/** Patting a friend: seconds of happiness, seconds between counted pats, the most affinity a friend can reach. */
+export const PET = { duration: 1.8, cooldown: .8, max: 99 } as const;
+/**
+ * The garden's day: DAY.length seconds per day, starting at DAY.start (a fraction of the day, 0 = midnight); with the
+ * day cycle off it stays at DAY.still. At night seated friends rest DAY.nightRest times as long.
+ */
+export const DAY = { length: 600, start: .3, still: .58, nightRest: 1.8 } as const;
+export type DayPart = 'morning' | 'afternoon' | 'evening' | 'night';
+export function dayPart(fraction: number): DayPart {
+  const h = fraction * 24;
+  return h >= 5 && h < 11 ? 'morning' : h >= 11 && h < 17 ? 'afternoon' : h >= 17 && h < 20 ? 'evening' : 'night';
+}
+/** "오전 7:12" for a day fraction. */
+export function clockLabel(fraction: number) {
+  const minutes = Math.floor(fraction * 24 * 60) % (24 * 60), h = Math.floor(minutes / 60), m = minutes % 60;
+  return `${h < 12 ? '오전' : '오후'} ${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, '0')}`;
 }
