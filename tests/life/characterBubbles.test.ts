@@ -28,5 +28,5 @@ test('emotion icons grow with the map in whole steps (1x, 2x, 3x)', async () => 
   assert.equal(emoteScale(EMOTE_TILE * 1.6), 2);
   assert.equal(emoteScale(EMOTE_TILE * 3), 3);
   assert.equal(emoteScale(EMOTE_TILE * 9), 3);      // capped so a close-up does not swallow the friend
-  assert.deepEqual(EMOTE_ICONS, { '♡': 'heart', '♪': 'note', '👋': 'wave', '!': 'exclaim', '···': 'dots' });
+  assert.deepEqual(EMOTE_ICONS, { '♡': 'heart', '♪': 'note', '👋': 'wave', '!': 'exclaim', '···': 'dots', '🐟': 'fish' });
 });

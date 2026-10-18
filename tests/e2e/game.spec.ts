@@ -92,8 +92,15 @@ test('regions and seasons are picked from the map label and remembered', async (
   await page.click('#region-button'); await page.click('[data-region=onsen]');
   await expect(page.locator('#region-label')).toHaveText('HOT SPRING');
   await expect(page.locator('[data-region=onsen]')).toHaveAttribute('aria-checked', 'true');
-  await page.click('#season-button'); await page.click('[data-season=winter]');
+  await page.click('#season-button');
+  for (const id of ['spring', 'summer', 'autumn', 'winter']) {  // each season shows its pixel icon
+    const img = page.locator(`#season-list [data-season=${id}] img.pixel-icon`);
+    await expect(img).toHaveAttribute('src', new RegExp(`sprites/ui/seasons/${id}\.png$`));
+    expect(await img.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBe(16);
+  }
+  await page.click('[data-season=winter]');
   await expect(page.locator('#season-label')).toHaveText('겨울');
+  await expect(page.locator('#season-icon img')).toHaveAttribute('src', /winter\.png$/);
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   await expect(page.locator('#region-label')).toHaveText('HOT SPRING');
   await expect(page.locator('#season-label')).toHaveText('겨울');

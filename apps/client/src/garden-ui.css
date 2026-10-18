@@ -330,3 +330,6 @@ dialog p { color: #67795b; }
 @media (prefers-reduced-motion: reduce) {
   button, a, summary, input { transition: none; }
 }
+/* 16x16 pixel icons in the UI (season picker), kept sharp. */
+.pixel-icon { display: inline-block; width: 16px; height: 16px; image-rendering: pixelated; vertical-align: -3px; }
+.scene-pop strong .pixel-icon { margin-right: 2px; }

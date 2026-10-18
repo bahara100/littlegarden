@@ -327,10 +327,17 @@ el('region-list').replaceChildren(...REGIONS.map(r => {
   return b;
 }));
 // Seasons (seasons.ts): recolour the ground of every region; their own trees, flowers and snow come later.
+/** A season's pixel icon (flower, sun, maple leaf, snowman: tools/art/make-emote-icons.py). */
+function seasonArt(id: SeasonId) {
+  const img = document.createElement('img');
+  img.className = 'pixel-icon'; img.src = `${import.meta.env.BASE_URL}sprites/ui/seasons/${id}.png`; img.alt = ''; img.width = 16; img.height = 16; img.draggable = false;
+  return img;
+}
 function showSeason(id: SeasonId) {
   const s = season(id);
   garden?.setSeason(s.id); remember({ season: s.id });
-  setText('season-icon', s.icon); setText('season-label', s.name);
+  const icon = el('season-icon'); if (icon.dataset.season !== s.id) { icon.dataset.season = s.id; icon.replaceChildren(seasonArt(s.id)); }
+  setText('season-label', s.name);
   el('season-button').title = `${s.name} · 계절 고르기`;
   el('viewport').style.background = seasonGround(region(settings.region).ground, s.id).background;
   el('season-list').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.season === s.id)));
@@ -339,7 +346,7 @@ el('season-list').replaceChildren(...SEASONS.map(s => {
   const b = document.createElement('button');
   b.setAttribute('role', 'menuitemradio'); b.dataset.season = s.id; b.setAttribute('aria-checked', String(s.id === settings.season));
   b.innerHTML = `<i style="background:${seasonGround(REGIONS[0].ground, s.id).tiles[0]}"></i><span><strong></strong><small></small></span>`;
-  b.querySelector('strong')!.textContent = `${s.icon} ${s.name}`; b.querySelector('small')!.textContent = s.note;
+  b.querySelector('strong')!.replaceChildren(seasonArt(s.id), ` ${s.name}`); b.querySelector('small')!.textContent = s.note;
   b.onclick = () => { showSeason(s.id); openMenu(null); el('season-button').focus(); notice(`${s.name}${batchim(s.name) ? '이' : '가'} 왔어요. ${s.note}.`); };
   return b;
 }));

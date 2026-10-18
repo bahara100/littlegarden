@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DEFAULT_LAYOUT, CATALOG, footprint, snapToTiles, type PlacedItem } from '../../apps/client/src/layout.js';
 import { LayoutEditor, layoutError } from '../../apps/client/src/editor.js';
-import { LAKE, LifeSimulation, activityLabel, walkable } from '../../apps/client/src/simulation.js';
+import { LAKE, LifeSimulation, activityLabel, reactionLabel, walkable } from '../../apps/client/src/simulation.js';
 
 const POND: PlacedItem = { id: 'pond-1', kind: 'pond', x: 4, z: 4.5, turn: 0 };
 const withPond = () => [...DEFAULT_LAYOUT.items.filter(i => i.id !== 'tree-3'), POND];
@@ -28,6 +28,7 @@ test('tapping a pond sends the friend to the shore, where they stand facing the 
   assert.equal(activityLabel(lulu), '호수 보러 가는 중');
   until(sim, () => lulu.phase === 'watching');
   assert.equal(activityLabel(lulu), '호수 구경하는 중');
+  assert.equal(reactionLabel(lulu, sim.time), '🐟', 'a fish shows up as she starts watching');
   const f = footprint(POND);
   const outside = Math.abs(lulu.x - f.x) > f.w / 2 || Math.abs(lulu.z - f.z) > f.d / 2;
   assert.ok(outside, 'she stands on the shore, not in the water');
