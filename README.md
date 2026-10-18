@@ -131,12 +131,16 @@ push마다 `verify.yml`(Verify)이 타입 검사·규칙 테스트·빌드·화�
 
 - Python 3.13(`py` 명령, `winget install Python.Python.3.13`)과 Pillow·numpy·imageio를 씁니다: `py -m pip install pillow numpy imageio`. `tools/` 스크립트는 `py <스크립트>`로 실행합니다. 예전 3D 도우미 `tools/art/color-hunyuan-head.py`와 `tools/art/pydeps/`(3.10용)는 3D 작업을 지운 뒤 쓰지 않습니다.
 - ffmpeg(노래 변환), oxipng(배포 PNG 압축), gh(검사·배포 확인), Playwright(화면 테스트).
+- 악기 노래 만들기: FluidSynth 2.6.1(`%LOCALAPPDATA%\Programs\FluidSynth`, GitHub 공식 릴리스), 사운드폰트 GeneralUser GS v2.0.3(`%LOCALAPPDATA%\SoundFonts\GeneralUser-GS`, 32MB라 저장소에는 넣지 않음), 악보 패키지 `mido`·`pretty_midi`(`py -m pip install mido pretty_midi`). 사운드폰트는 만든 음악을 상업용까지 자유롭게 쓸 수 있습니다(같은 폴더의 LICENSE.txt).
 
 ## 노래 넣기
 
 1. ffmpeg를 준비합니다(`winget install Gyan.FFmpeg`).
-2. `py tools/audio/prepare-track.py <원본 파일> <영문 id> "<제목>" ["<가수>"]`를 실행합니다. 앞뒤 무음을 자르고 음량을 고르게(-16 LUFS) 맞춘 128kbps MP3를 `apps/client/public/music/<id>.mp3`로 만들고, 길이·크기와 함께 `music.ts`에 붙일 한 줄을 보여 줍니다. 원본 파일은 바꾸지 않습니다.
-3. 그 줄을 `apps/client/src/music.ts`의 `TRACKS`에 넣습니다. 빌드는 코드에 적힌 `music/...` 파일만 배포합니다.
+2. 이미 있는 소리 파일은 `py tools/audio/prepare-track.py <원본 파일> <영문 id> "<제목>" ["<가수>"]`를 실행합니다. 앞뒤 무음을 자르고 음량을 고르게(-16 LUFS) 맞춘 128kbps MP3를 `apps/client/public/music/<id>.mp3`로 만들고, 길이·크기와 함께 `music.ts`에 붙일 한 줄을 보여 줍니다. 원본 파일은 바꾸지 않습니다.
+3. 그 줄을 `apps/client/src/music.ts`의 `TRACKS`에 넣습니다.
+
+**악보로 만들 때**: `pretty_midi`나 `mido`로 악보(.mid)를 쓴 뒤 `py tools/audio/render-midi.py <악보.mid> <영문 id> "<제목>" ["<가수>"]`를 실행하면 FluidSynth가 실제 악기 소리로 연주하고, 위 2단계(무음 자르기·음량 맞추기·MP3)까지 한 번에 합니다. 악기는 General MIDI 번호를 씁니다(0 피아노, 24 나일론 기타, 73 플루트, 40 바이올린 등). 배경음은 끝과 처음이 자연스럽게 이어지게 만들면 좋습니다.
+**8비트(칩튠) 느낌**은 Python(numpy)으로 파형을 계산해 WAV를 만든 뒤 `prepare-track.py`에 넣습니다. 빌드는 코드에 적힌 `music/...` 파일만 배포합니다.
 
 ## 아트 제작
 
