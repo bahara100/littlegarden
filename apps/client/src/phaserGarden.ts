@@ -4,7 +4,8 @@ import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SE
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
-import { depth, project, unproject } from './isometric';
+import { project, unproject } from './isometric';
+import { sceneOrder } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
@@ -327,7 +328,7 @@ class GardenScene extends Phaser.Scene {
   }
   private placeProp(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const index = propIndex(item), size = PROP_WIDTH[item.kind] * U * 128 / this.propWidths[index], p = iso(item);
-    image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(depth(item));
+    image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(this.rank(item.id));
   }
   /** Current pose of a swing: its ropes + seat frame, and where its seat moved (world px; `ground` is the part along the floor). */
   private swingPose(item: PlacedItem) {
@@ -342,7 +343,7 @@ class GardenScene extends Phaser.Scene {
    */
   private placeSwing(image: Phaser.GameObjects.Image, item: PlacedItem) {
     const cell = propIndex(item) as SwingCell, size = PROP_WIDTH.swing * U * 128 / this.swingArt.get(cell)!.width;
-    const p = iso(item), x = p.x, y = p.y + U * PROP_ART_BASE.swing, z = depth(item), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
+    const p = iso(item), x = p.x, y = p.y + U * PROP_ART_BASE.swing, z = this.rank(item.id), flip = item.turn >= 2, framed = size * (128 + SWING.pad * 2) / 128;
     let view = this.swingViews.get(item.id);
     if (!view) {
       const part = (originY: number) => { const o = this.add.image(0, 0, 'prop0').setOrigin(.5, originY).setInteractive({ pixelPerfect: true }); o.setData('id', item.id); return o; };
@@ -387,6 +388,16 @@ class GardenScene extends Phaser.Scene {
     this.ghost.setVisible(!!pending && !onFloor(pending.kind));
     if (pending && !onFloor(pending.kind)) this.placeProp(this.ghost, pending);
   }
+  /** Draw ranks for this frame (drawOrder.ts): props by id, walking friends as `avatar:<id>`; seated friends follow their seat. */
+  private order = new Map<string, number>();
+  private rank(id: string) { return this.order.get(id) ?? 0; }
+  private sortScene(items: PlacedItem[]) {
+    const pending = this.g.editor.pending, editing = this.g.editor.active;
+    const walkers = editing ? [] : [...this.g.life.avatars.values()].filter(a => !this.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z }));
+    this.order = sceneOrder(pending ? [...items, pending] : items, walkers);
+  }
+  /** On a seat (getting on, sitting, getting off): drawn with the seat instead of by their own feet. */
+  private riding(a: Avatar) { return !!this.g.life.seatOf(a) && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) && a.progress > 0; }
   private placeAvatar(a: Avatar, still: boolean) {
     const view = this.avatars.get(a.id)!, p = iso(a), seat = this.g.life.seatOf(a), editing = this.g.editor.active;
     view.sprite.setVisible(!editing);
@@ -404,7 +415,7 @@ class GardenScene extends Phaser.Scene {
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
-    const z = seat && seated ? Math.max(depth(a), equipment ? depth(equipment) : depth(a)) + .35 : depth(a);
+    const z = seat && seated ? this.rank(seat.equipment) + .35 : this.rank(`avatar:${a.id}`);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
     const x = p.x + swing.x, base = p.y - lift * U + swing.y, moving = a.phase === 'walking' && !still;
     view.sprite.setPosition(x, base).setDepth(z);
@@ -451,6 +462,7 @@ class GardenScene extends Phaser.Scene {
       this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !editing && a.phase === 'walking');
     }
     const items = this.items;
+    this.sortScene(items);
     this.drawFloor(items); this.drawOverlay(); this.syncProps(items);
     this.camera();
     this.g.bubbles.begin(this.scale.width, this.scale.height, editing, U * this.cameras.main.zoom);

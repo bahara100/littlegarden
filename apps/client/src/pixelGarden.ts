@@ -4,7 +4,8 @@ import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
 import { loadPixelAtlas } from './pixelAtlas';
-import { depth, project, unproject } from './isometric';
+import { project, unproject } from './isometric';
+import { sceneOrder } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
@@ -239,8 +240,11 @@ export class PixelGarden {
       const c = this.ctx; c.fillStyle = this.groundTheme.background; c.fillRect(0, 0, this.canvas.width, this.canvas.height); this.hits = [];
       const items = this.editor.active ? this.editor.draft.items.filter(i => i.id !== this.editor.pending?.id) : this.life.layout;
       this.drawGround(items);
-      const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: depth(i), draw: () => this.drawItem(i) }));
-      if (!this.editor.active) for (const a of this.life.avatars.values()) layers.push({ depth: depth(a) + (this.life.seatOf(a) ? .35 : 0), draw: () => this.drawAvatar(a) });
+      // Back to front by ground boxes (drawOrder.ts); a friend on a seat is drawn just after that seat.
+      const friends = this.editor.active ? [] : [...this.life.avatars.values()];
+      const order = sceneOrder(items, friends.filter(a => !this.life.seatOf(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
+      const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
+      for (const a of friends) { const seat = this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + .35 : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');
