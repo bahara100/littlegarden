@@ -31,3 +31,12 @@ test('every box gets one rank, also when the pairwise order would loop', () => {
   const boxes = [boxAround({ x: 0, z: 0 }, 1), boxAround({ x: 1, z: 0 }, 1), boxAround({ x: 0, z: 1 }, 1), boxAround({ x: .3, z: .3 }, 1)];
   assert.deepEqual([...drawRanks(boxes)].sort(), [0, 1, 2, 3]);
 });
+test('a friend walking to a reserved seat is not yet drawn with the seat; one sitting down is', async () => {
+  const { LifeSimulation } = await import('../../apps/client/src/simulation.js');
+  const sim = new LifeSimulation(() => .5), momo = sim.avatars.get('peach')!;
+  assert.equal(sim.use('peach', 'bench'), null);
+  assert.ok(sim.seatOf(momo) && momo.phase === 'walking');
+  assert.equal(sim.riding(momo), false, 'still on the way: drawn by her own feet');
+  for (let t = 0; t < 40 && !(momo.phase === 'boarding' && momo.progress > 0); t += .05) sim.update(.05);
+  assert.equal(sim.riding(momo), true);
+});

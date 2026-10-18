@@ -4,7 +4,7 @@ import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
 import { PROFILES } from './friendProfiles';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
-import { CATALOG, DEFAULT_LAYOUT, type Layout, type ItemKind } from './layout';
+import { CATALOG, DEFAULT_LAYOUT, HALF, type Layout, type ItemKind } from './layout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
 import { affinityLevel, nextUnlock, todayKey, unlockedFor } from './affinity';
 import { SCARLET_SD } from './scarletApproved';
@@ -211,6 +211,7 @@ try {
   el('item-store').onclick = () => { const error = garden?.storeItem(); notice(error ?? '보관함에 넣었어요.'); refresh(); };
   el('editor-cancel').onclick = () => { garden?.cancelEdit(); notice('변경을 취소하고 원래 놀이터로 돌아왔어요.'); refresh(); };
   el('editor-apply').onclick = () => { const error = garden?.applyEdit(); if (!error) persist(); notice(error ?? '새 배치에서 친구들이 다시 놀기 시작해요.'); refresh(); };
+  for (const axis of ['x', 'z']) Object.assign(el<HTMLInputElement>(`item-${axis}`), { min: String(-HALF), max: String(HALF) });  // the garden's edges (layout.ts)
   for (const axis of ['x', 'z']) el<HTMLInputElement>(`item-${axis}`).oninput = () => { garden?.positionItem(Number(el<HTMLInputElement>('item-x').value), Number(el<HTMLInputElement>('item-z').value)); refresh(); };
 } catch (error) { el('loading').hidden = true; el('render-error').hidden = false; console.error('Pixel scene initialization failed', error); }
 /** Everything the save keeps: every region's layout (the current one as applied), friends and the time of day. */

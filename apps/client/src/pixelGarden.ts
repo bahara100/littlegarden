@@ -242,9 +242,9 @@ export class PixelGarden {
       this.drawGround(items);
       // Back to front by ground boxes (drawOrder.ts); a friend on a seat is drawn just after that seat.
       const friends = this.editor.active ? [] : [...this.life.avatars.values()];
-      const order = sceneOrder(items, friends.filter(a => !this.life.seatOf(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
+      const order = sceneOrder(items, friends.filter(a => !this.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
       const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
-      for (const a of friends) { const seat = this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + .35 : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
+      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + .35 : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');

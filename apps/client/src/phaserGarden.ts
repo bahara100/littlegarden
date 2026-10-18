@@ -393,11 +393,9 @@ class GardenScene extends Phaser.Scene {
   private rank(id: string) { return this.order.get(id) ?? 0; }
   private sortScene(items: PlacedItem[]) {
     const pending = this.g.editor.pending, editing = this.g.editor.active;
-    const walkers = editing ? [] : [...this.g.life.avatars.values()].filter(a => !this.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z }));
+    const walkers = editing ? [] : [...this.g.life.avatars.values()].filter(a => !this.g.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z }));
     this.order = sceneOrder(pending ? [...items, pending] : items, walkers);
   }
-  /** On a seat (getting on, sitting, getting off): drawn with the seat instead of by their own feet. */
-  private riding(a: Avatar) { return !!this.g.life.seatOf(a) && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) && a.progress > 0; }
   private placeAvatar(a: Avatar, still: boolean) {
     const view = this.avatars.get(a.id)!, p = iso(a), seat = this.g.life.seatOf(a), editing = this.g.editor.active;
     view.sprite.setVisible(!editing);

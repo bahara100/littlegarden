@@ -169,6 +169,8 @@ export class LifeSimulation {
     }
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
+  /** On the seat itself (getting on, sitting, getting off), not just walking to a reserved one: drawn with the seat. */
+  riding(a: Avatar) { return !!a.seatId && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) && a.progress > 0; }
   private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.watchSpot = null; a.lookAt = null; }
   /** Ponds in the current layout. */
   get ponds() { return this.layout.filter(i => i.kind === 'pond'); }

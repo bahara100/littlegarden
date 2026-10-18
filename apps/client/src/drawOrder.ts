@@ -11,8 +11,11 @@ import { footprint, onFloor, type PlacedItem, type Point } from './layout';
 export interface GroundBox { x0: number; x1: number; z0: number; z1: number }
 export const boxAround = (p: Point, w: number, d = w): GroundBox => ({ x0: p.x - w / 2, x1: p.x + w / 2, z0: p.z - d / 2, z1: p.z + d / 2 });
 const centre = (b: GroundBox) => (b.x0 + b.x1 + b.z0 + b.z1) / 2;
-/** How far (in x − z) art can reach beyond its ground box sideways; pairs further apart than this never overlap. */
-const SIDE_REACH = 1.5;
+/**
+ * How far apart (in x − z) two ground boxes can be and still have their art overlap sideways: a tree canopy reaches
+ * about 1 past its tile and Scarlet's sprite (3.9 wide) about 1.7 past her feet. Pairs further apart are not compared.
+ */
+const SIDE_REACH = 3;
 const EPS = 1e-6;
 
 /** Whether `a` has to be drawn before `b` (it is behind it). */
