@@ -1,0 +1,22 @@
+# One line-ending rule for everyone (Claude, Codex, any editor): text files are LF in the repository and on disk.
+# Windows-only scripts keep CRLF. Art, archives and Pixelorama projects are binary and never converted.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+*.png binary
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.zip binary
+*.pxo binary
+*.pck binary
+*.glb binary
+*.mp3 binary
+*.ogg binary
+*.wav binary
+*.woff binary
+*.woff2 binary
