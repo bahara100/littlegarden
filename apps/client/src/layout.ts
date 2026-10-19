@@ -145,10 +145,11 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
     rectangles.push(...pieces);
   }
   // A fixed floor feature, not a placed item: existing saved layouts need no migration.
-  // Two offset positions leave room for the large heads; each faces toward the other.
+  // Two offset positions leave room for the large heads. Both sit facing the viewer (front poses only, as the player
+  // asked): the left one turns down-right (SE), the right one down-left (SW), so they still lean toward each other.
   for (const side of [-1, 1] as const) seats.push({ id: `${PICNIC_RUG_ID}-${side}`, equipment: PICNIC_RUG_ID, kind: 'picnicRug', side,
     x: PICNIC.x + side * .6, z: PICNIC.z - side * .3,
-    approach: { x: PICNIC.x + side * .5, z: PICNIC.z - side * 1.5 }, height: 0, yaw: -side * Math.PI / 2 });
+    approach: { x: PICNIC.x + side * .5, z: PICNIC.z - side * 1.5 }, height: 0, yaw: side < 0 ? Math.PI / 2 : 0 });
   // Friends walk tile centre to tile centre, so each seat's approach (where they step on and off) is the nearest
   // free tile centre to the art's approach point.
   const used: Point[] = [];

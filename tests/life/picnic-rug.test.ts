@@ -47,3 +47,8 @@ test('two rug reservations are exclusive; leaving and layout resets release them
   sim.applyLayout([]); assert.equal(sim.reservations.size, 0);
   assert.ok([...sim.avatars.values()].every(a => a.seatId === null && walkable(a, sim.world)));
 });
+test('both rug seats face the viewer: only front sitting poses (SE and SW)', async () => {
+  const { scarletDirection } = await import('../../apps/client/src/scarletDirections');
+  const seats = worldFrom([]).seats.filter(s => s.kind === 'picnicRug').sort((a, b) => (a.x - a.z) - (b.x - b.z));
+  assert.deepEqual(seats.map(s => scarletDirection(s.yaw)), ['se', 'sw'], 'left seat turns down-right, right seat down-left');
+});
