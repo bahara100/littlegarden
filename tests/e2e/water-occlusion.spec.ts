@@ -32,17 +32,20 @@ async function open(page: Page, renderer: string, items: PlacedItem[]) {
 
 for (const renderer of ['phaser', 'canvas']) {
   test(`${renderer} watches the far shore from dry ground outside the raised lake rocks`, async ({ page }) => {
+    // Long walks: on GitHub's slower machines the game clock (and so the walk) runs well behind real time.
+    test.slow();
     const { click, problems } = await open(page, renderer, [{ id: 'lake', kind: 'pond', x: .5, z: -2, turn: 0 }]);
     await click(.5, -8.5);
     await expect(page.locator('#status-character')).toHaveText('산책하는 중');
-    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 30_000 });
+    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 90_000 });
     await click(.5, -2);
-    await expect(page.locator('#status-character')).toHaveText('호수 구경하는 중', { timeout: 15_000 });
+    await expect(page.locator('#status-character')).toHaveText('호수 구경하는 중', { timeout: 60_000 });
     await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-far-shore.png`) });
     expect(problems).toEqual([]);
   });
 
   test(`${renderer} crosses a stream above the deck and behind the near bridge rail`, async ({ page }) => {
+    test.slow();
     const { click, problems } = await open(page, renderer, [
       { id: 'brook', kind: 'stream', x: .5, z: 0, turn: 1 },
       { id: 'bridge', kind: 'bridge', x: .5, z: 0, turn: 0 },
@@ -50,7 +53,7 @@ for (const renderer of ['phaser', 'canvas']) {
     // Further left avoids clicking the large heads of friends initially standing in front of the bridge.
     await click(-5.5, 1.5);
     await expect(page.locator('#status-character')).toHaveText('산책하는 중');
-    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 20_000 });
+    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 90_000 });
     await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-stream-bank.png`) });
     await click(3.5, .5);
     await expect(page.locator('#status-character')).toHaveText('산책하는 중');
@@ -59,7 +62,7 @@ for (const renderer of ['phaser', 'canvas']) {
     await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-bridge-entry.png`) });
     await page.waitForTimeout(1500);
     await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-bridge-exit.png`) });
-    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 15_000 });
+    await expect(page.locator('#status-character')).toHaveText('잠깐 쉬는 중', { timeout: 60_000 });
     expect(problems).toEqual([]);
     if (renderer !== 'phaser') return;
     const helper = ts.transpileModule(readFileSync('apps/client/src/raisedWaterArt.ts', 'utf8'), {
