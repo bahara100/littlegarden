@@ -3,21 +3,55 @@ import assert from 'node:assert/strict';
 import { DEFAULT_LAYOUT, CATALOG, footprint, snapToTiles, type PlacedItem } from '../../apps/client/src/layout.js';
 import { LayoutEditor, layoutError } from '../../apps/client/src/editor.js';
 import { LAKE, LifeSimulation, activityLabel, reactionLabel, walkable } from '../../apps/client/src/simulation.js';
+import { decodeGarden, encodeSave } from '../../apps/client/src/persistence.js';
+import { pondFishPose, pondFishFrame, POND_FISH } from '../../apps/client/src/pondFish.js';
 
-const POND: PlacedItem = { id: 'pond-1', kind: 'pond', x: 4, z: 4.5, turn: 0 };
+const POND: PlacedItem = { id: 'pond-1', kind: 'pond', x: 4.5, z: 4, turn: 0 };
 const withPond = () => [...DEFAULT_LAYOUT.items.filter(i => i.id !== 'tree-3'), POND];
 const until = (sim: LifeSimulation, done: () => boolean, seconds = 40) => { for (let t = 0; t < seconds && !done(); t += .05) sim.update(.05); assert.ok(done(), 'expected state not reached'); };
 
-test('a pond is a 4x5 decoration that fills whole tiles and cannot be walked on', () => {
-  assert.deepEqual([CATALOG.pond.w, CATALOG.pond.d], [4, 5]);
+test('a pond is a 5x6 decoration that fills whole tiles and cannot be walked on', () => {
+  assert.deepEqual([CATALOG.pond.w, CATALOG.pond.d], [5, 6]);
   const snapped = snapToTiles({ ...POND, x: 4.3, z: 4.2 });
-  assert.deepEqual([snapped.x, snapped.z], [4, 4.5], 'even width on a tile edge, odd depth on a tile centre');
-  assert.deepEqual(footprint({ ...POND, turn: 1 }).w, 5, 'turning it swaps width and depth');
+  assert.deepEqual([snapped.x, snapped.z], [4.5, 4], 'odd width on a tile centre, even depth on a tile edge');
+  assert.deepEqual(footprint({ ...POND, turn: 1 }).w, 6, 'turning it swaps width and depth');
   assert.equal(layoutError(withPond()), null);
   assert.ok(layoutError([...DEFAULT_LAYOUT.items, { ...POND, x: 10, z: 8.5 }]), 'it may not overlap the tree');
   const sim = new LifeSimulation(() => .5); sim.applyLayout(withPond());
   assert.equal(walkable({ x: 4, z: 4.5 }, sim.world), false);
   const e = new LayoutEditor(); e.enter(); assert.equal(e.begin('pond'), null);
+});
+
+test('v3 lakes grow where safe; crowded and edge lakes keep their old footprint without losing a save', () => {
+  const old: PlacedItem = { id: 'old-lake', kind: 'pond', x: 4, z: 4.5, turn: 0 };
+  const oldSave = (items: PlacedItem[]) => JSON.stringify({ app: 'little-garden', version: 3, regions: { garden: { items, stored: [{ ...old, id: 'stored-lake' }] } } });
+  const grown = decodeGarden(oldSave([old]));
+  assert.deepEqual(grown.regions.garden!.items[0], { ...old, x: 4.5, z: 5, w: 5, d: 6 });
+  const tree: PlacedItem = { id: 'nearby-tree', kind: 'tree', x: 6.5, z: 4.5, turn: 0 };
+  const crowded = decodeGarden(oldSave([old, tree]));
+  assert.deepEqual(crowded.regions.garden!.items, [{ ...old, w: 4, d: 5 }, tree]);
+  assert.deepEqual(footprint(crowded.regions.garden!.stored[0]), { x: 4.5, z: 5, w: 5, d: 6 });
+  const edge = decodeGarden(oldSave([{ ...old, x: 10, z: .5 }]));
+  assert.equal(footprint(edge.regions.garden!.items[0]).w, 4);
+  assert.deepEqual(decodeGarden(encodeSave(crowded)), crowded, 'the retained legacy footprint survives future saves');
+  const editor = new LayoutEditor(); editor.committed = crowded.regions.garden!; editor.enter(); editor.move(old.id);
+  assert.deepEqual([editor.pending!.w, editor.pending!.d], [5, 6]);
+  assert.ok(editor.error, 'the larger preview still checks nearby furniture');
+  editor.position(4.5, -3); assert.equal(editor.place(), null); assert.equal(editor.apply(), null);
+  assert.deepEqual(editor.committed.items.find(i => i.id === tree.id), tree, 'moving the lake does not move nearby furniture');
+});
+
+test('fish swim in smooth closed loops inside the central water and stop with reduced motion', () => {
+  for (let fish = 0; fish < POND_FISH.count; fish++) {
+    assert.deepEqual(pondFishPose(fish, 0), pondFishPose(fish, POND_FISH.frames));
+    for (let frame = 0; frame < POND_FISH.frames; frame++) {
+      const a = pondFishPose(fish, frame), b = pondFishPose(fish, frame + 1);
+      assert.ok(a.x >= 77 && a.x <= 179 && a.y >= 66 && a.y <= 104);
+      assert.ok(Math.hypot(a.x - b.x, a.y - b.y) <= 2, 'no position jump on turns or the loop seam');
+    }
+  }
+  assert.equal(pondFishFrame(17, true), 0);
+  assert.equal(pondFishFrame(32), 0);
 });
 
 test('tapping a pond sends the friend to the shore, where they stand facing the water', () => {

@@ -1,0 +1,23 @@
+{
+  "size": [
+    256,
+    160
+  ],
+  "opaque_width": 240,
+  "ground_anchor": [
+    128,
+    90
+  ],
+  "footprint": [
+    4,
+    5
+  ],
+  "colours": 96,
+  "source_crop": [
+    29,
+    66,
+    1507,
+    970
+  ],
+  "sha256": "1d76a2b4d2e14f382c010b20cc2aba2a278887d01c13934f94b9189ad7b1dc27"
+}

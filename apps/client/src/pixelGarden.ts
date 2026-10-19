@@ -1,11 +1,15 @@
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
-import { naturalGroundDetails } from './groundTexture';
+import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
+import { loadGroundMaterials } from './groundMaterials';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
-import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar } from './simulation';
+import { picnicTabletop, picnicGridArt } from './picnicTable';
+import { fountainFrames, fountainFrame } from './fountainWater';
+import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
+import { loadPondArt, paintPondSprite, paintPondFish } from './pondSprite';
 import { loadPixelAtlas } from './pixelAtlas';
 import { project, unproject } from './isometric';
 import { sceneOrder } from './drawOrder';
@@ -42,6 +46,8 @@ export class PixelGarden {
   private props: Sprite[] = [];
   private parkProps = new Map<ParkPropKind, Sprite>();
   private seesawArt: HTMLCanvasElement[] = [];
+  private picnicTop?: HTMLCanvasElement;
+  private fountainArt: HTMLCanvasElement[] = [];
   private hits: Hit[] = [];
   zoom = 1;
   private pan = { x: 0, y: 0 };
@@ -74,6 +80,7 @@ export class PixelGarden {
   }
   private async loadArt() {
     try {
+      await Promise.all([loadGroundMaterials(), loadPondArt()]);
       const park = await Promise.all((Object.keys(PARK_PROPS) as ParkPropKind[]).map(async kind => {
         const image = await this.loadImage(parkPropUrl(kind));
         const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
@@ -81,11 +88,13 @@ export class PixelGarden {
         const data = canvas.getContext('2d')!.getImageData(0, 0, 128, 128).data;
         let left = 128, right = 0;
         for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) if (data[(y * 128 + x) * 4 + 3] >= 180) { left = Math.min(left, x); right = Math.max(right, x); }
-        return [kind, { image: canvas, width: right - left + 1, height: 124 }] as const;
+        if (kind === 'picnicTable') this.picnicTop = picnicGridArt(picnicTabletop(canvas));
+        return [kind, { image: kind === 'picnicTable' ? picnicGridArt(canvas) : canvas, width: right - left + 1, height: 124 }] as const;
       }));
       if (this.disposed) return;
       park.forEach(([kind, art]) => this.parkProps.set(kind, art));
       this.seesawArt = seesawFrames(this.parkProps.get('seesaw')!.image);
+      this.fountainArt = fountainFrames(this.parkProps.get('fountain')!.image);
       const [friends, friendsSw, image, approved, dressed, rearSit] = await Promise.all([
         loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
@@ -162,22 +171,20 @@ export class PixelGarden {
     for (const [a, b, color] of [[corners[1], corners[2], g.edges[0]], [corners[2], corners[3], g.edges[1]]] as const)
       this.polygon([a, b, { x: b.x, y: b.y + 9 }, { x: a.x, y: a.y + 9 }], color, g.edgeLine);
     this.tile({ x: 0, z: 0 }, GARDEN, GARDEN, g.tiles[0]);
-    if (this.editor.active) for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
-      const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      this.tile({ x, z }, 1, 1, g.tiles[hash], g.grid);
-    }
-    if (!this.editor.active) naturalGroundDetails(c, g, p => this.screen(p));
-    for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); this.tile(item, f.w, f.d, g.path[0], this.editor.active ? g.path[1] : g.path[0]);
-      const p = this.screen(item); c.fillStyle = g.path[2]; c.fillRect(p.x - 2, p.y - 1, 3, 1);
-    }
-    for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => this.polygon3(pts, color, line));
+    naturalGroundDetails(c, g, p => this.screen(p), items, this.unit, this.region === 'garden');
+    naturalPaths(c, g, p => this.screen(p), items, this.unit, this.region === 'garden');
+    if (this.editor.active) groundGrid(c, g, p => this.screen(p));
+    for (const item of items.filter(i => i.kind === 'pond')) this.paintLake(item);
     for (const item of items.filter(i => i.kind === 'stream')) this.drawItem(item);
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
     this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
     for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
     const sign = this.screen(SIGN);
     c.fillStyle = '#766454'; c.fillRect(sign.x - 1, sign.y - 14, 2, 14); c.fillStyle = '#f8e8bd'; c.fillRect(sign.x - 9, sign.y - 20, 18, 9); c.fillStyle = '#b6b989'; c.fillRect(sign.x - 6, sign.y - 17, 10, 2);
+  }
+  private paintLake(item: PlacedItem) {
+    if (!paintPondSprite(this.ctx, item, p => this.screen(p), this.unit)) paintPond(item, (pts, color, line) => this.polygon3(pts, color, line));
+    paintPondFish(this.ctx, item, p => this.screen(p), this.unit, this.last / 1000, this.reduced.matches || this.editor.active);
   }
   private drawItem(item: PlacedItem, ghost = false) {
     const c = this.ctx, p = this.screen(item), unit = this.unit;
@@ -193,6 +200,7 @@ export class PixelGarden {
     if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
     const frame = item.kind === 'seesaw' && !ghost ? this.seesawArt[SEESAW.poses + seesawFrame(this.life.seesawTilt(item.id), this.reduced.matches || this.editor.active)] : undefined;
     if (frame) { const pad = size * SEESAW.pad / 128; c.drawImage(frame, x - pad, y - pad, size + pad * 2, size + pad * 2); }
+    else if (item.kind === 'fountain' && !ghost && this.fountainArt.length) c.drawImage(this.fountainArt[fountainFrame(this.last / 1000, this.reduced.matches || this.editor.active)], x, y, size, size);
     else c.drawImage(art.image, x, y, size, size);
     c.restore(); c.globalAlpha = 1;
     if (!ghost) this.hits.push({ id: item.id, x, y, w: size, h: size, image: art.image, frame: flip ? -1 : undefined });
@@ -200,12 +208,20 @@ export class PixelGarden {
       const f = footprint(item); c.globalAlpha = .45; this.tile(item, f.w, f.d, ghost && this.editor.error ? '#d07880' : '#fff4bc', '#66547b'); c.globalAlpha = 1;
     }
   }
+  private drawPicnicTop(item: PlacedItem) {
+    const art = this.parkProps.get('picnicTable'); if (!art || !this.picnicTop) return;
+    const c = this.ctx, p = this.screen(item), size = Math.round(PARK_PROPS.picnicTable.width * this.unit * 128 / art.width);
+    const x = Math.round(p.x - size / 2), y = Math.round(p.y - size + this.unit * PROP_ART_BASE.picnicTable), flip = !!(item.turn % 2);
+    c.save(); if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
+    c.drawImage(this.picnicTop, x, y, size, size); c.restore();
+    this.hits.push({ id: item.id, x, y, w: size, h: size, image: this.picnicTop, frame: flip ? -1 : undefined });
+  }
   private drawAvatar(a: Avatar) {
     const c = this.ctx, p = this.screen(a), u = this.unit, seat = this.life.seatOf(a);
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
-    const facing = seat?.kind === 'seesaw' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
+    const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const drawnSit = a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
@@ -274,13 +290,14 @@ export class PixelGarden {
       const friends = this.editor.active ? [] : [...this.life.avatars.values()];
       const order = sceneOrder(items, friends.filter(a => !this.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
       const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
-      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + .35 : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
+      for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .2, draw: () => this.drawPicnicTop(item) });
+      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');
         else if (this.editor.pending.kind === 'pond') {
           const pond = this.editor.pending, f = footprint(pond);
-          c.globalAlpha = .75; paintPond(pond, (pts, color, line) => this.polygon3(pts, color, line));
+          c.globalAlpha = .75; this.paintLake(pond);
           c.globalAlpha = .45; this.tile(pond, f.w, f.d, this.editor.error ? '#d07880' : '#fff4bc', '#66547b'); c.globalAlpha = 1;
         }
         else this.drawItem(this.editor.pending, true);
@@ -292,7 +309,7 @@ export class PixelGarden {
   private pick(x: number, y: number) {
     for (const hit of [...this.hits].reverse()) {
       if (x < hit.x || x >= hit.x + hit.w || y < hit.y || y >= hit.y + hit.h) continue;
-      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing', 'seesaw'].includes(i.kind))) continue;
+      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing', 'seesaw', 'picnicTable'].includes(i.kind))) continue;
       if (hit.image) {
         let px = Math.floor((x - hit.x) / hit.w * 128); if (hit.frame === -1) px = 127 - px;
         const py = Math.floor((y - hit.y) / hit.h * 128);
@@ -361,7 +378,7 @@ export class PixelGarden {
   private contextMenu = (e: Event) => e.preventDefault();
   select(id: Selection) { this.selection = id; if (this.life.avatars.has(id as AvatarId)) this.selectedAvatar = id as AvatarId; this.callbacks.select(id); }
   commandUse(id: EquipmentId) { const error = this.life.use(this.selectedAvatar, id); this.callbacks.notice(error ?? '친구가 기구로 가요.'); }
-  commandKind(kind: 'bench' | 'swing' | 'seesaw') {
+  commandKind(kind: Seat['kind']) {
     for (const seat of this.life.seats.filter(s => s.kind === kind && !this.life.reservations.has(s.id))) if (!this.life.use(this.selectedAvatar, seat.equipment)) { this.callbacks.notice('친구가 빈자리로 가요.'); return; }
     this.callbacks.notice('빈자리가 없거나 먼저 기구에서 내려와야 해요.');
   }

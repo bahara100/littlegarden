@@ -1,7 +1,7 @@
-import { reactionLabel, speaking, type Avatar } from './simulation';
+import { reactionLabel, speaking, type Avatar, type Seat } from './simulation';
 
 /** Presentation only: keep unlock content, timing and existing reactions in the simulation. */
-export function bubbleContent(a: Avatar, time: number, seat?: 'bench' | 'swing' | 'seesaw') {
+export function bubbleContent(a: Avatar, time: number, seat?: Seat['kind']) {
   const value = reactionLabel(a, time) || (seat ? seat === 'swing' || a.seesaw === 'playing' ? '♪' : '···' : '');
   return { value, kind: speaking(a, time) ? 'speech' : 'emote' } as const;
 }
@@ -35,7 +35,7 @@ export class CharacterBubbles {
     if (this.layer.style.getPropertyValue('--emote-scale') !== String(scale)) this.layer.style.setProperty('--emote-scale', String(scale));
   }
 
-  update(a: Avatar, time: number, x: number, headY: number, seat?: 'bench' | 'swing' | 'seesaw') {
+  update(a: Avatar, time: number, x: number, headY: number, seat?: Seat['kind']) {
     let view = this.views.get(a.id);
     if (!view) {
       view = document.createElement('div');

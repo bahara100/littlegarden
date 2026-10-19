@@ -138,6 +138,7 @@ test('a pat raises affinity once a day', async ({ page }) => {
 });
 
 test('decorating can be undone and redone', async ({ page }) => {
+  await seed(page, encodeSave(gardenSave(DEFAULT_LAYOUT))); // known empty plot for this editor regression
   await open(page);
   await page.click('#edit-mode');
   const before = await placedCount(page);
@@ -186,6 +187,7 @@ test('a volume change before the playground is ready is remembered', async ({ pa
 });
 
 test('a pond can be placed from the decoration list', async ({ page }) => {
+  await seed(page, encodeSave(gardenSave(DEFAULT_LAYOUT))); // placement mechanics, separate from the furnished park
   const problems = await open(page);
   await page.click('#edit-mode');
   const before = await placedCount(page);
@@ -203,6 +205,7 @@ test('each region keeps its own layout', async ({ page }) => {
   await page.click('#edit-mode'); const gardenCount = await placedCount(page); await page.click('#edit-mode');
   await page.click('#region-button'); await page.click('[data-region=onsen]');
   await page.click('#edit-mode');
+  const onsenCount = await placedCount(page);
   await page.click('[data-catalog=tree]');
   await page.fill('#item-x', '4.5'); await page.fill('#item-z', '4.5');
   await page.click('#item-place'); await page.click('#editor-apply');
@@ -210,7 +213,7 @@ test('each region keeps its own layout', async ({ page }) => {
   await page.click('#edit-mode'); expect(await placedCount(page)).toBe(gardenCount); await page.click('#edit-mode');
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   await page.click('#region-button'); await page.click('[data-region=onsen]');
-  await page.click('#edit-mode'); expect(await placedCount(page)).toBe(gardenCount + 1);
+  await page.click('#edit-mode'); expect(await placedCount(page)).toBe(onsenCount + 1);
 });
 
 test('the time of day carries on from the save', async ({ page }) => {

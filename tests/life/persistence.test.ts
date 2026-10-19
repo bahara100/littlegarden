@@ -74,7 +74,7 @@ test('older saves upgrade step by step: v1 and v2 layouts become the garden regi
   assert.deepEqual(Object.keys(fromV2.regions), ['garden']);
   assert.deepEqual(fromV2.affinity, { character: 3, peach: 0, lilac: 12 });
   assert.equal(JSON.parse(encode(DEFAULT_LAYOUT)).version, SAVE_VERSION);
-  assert.equal(SAVE_VERSION, 3);
+  assert.equal(SAVE_VERSION, 4);
 });
 test('each region keeps its own layout; friends, pat days and the clock round-trip', () => {
   const onsen = cloneLayout(DEFAULT_LAYOUT); onsen.stored.push(onsen.items.splice(onsen.items.findIndex(i => i.kind === 'swing'), 1)[0]);

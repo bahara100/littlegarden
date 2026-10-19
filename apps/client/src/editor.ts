@@ -47,8 +47,9 @@ export class LayoutEditor {
     let id: string; do { id = `placed-${this.sequence++}`; } while ([...this.draft.items, ...this.draft.stored].some(i => i.id === id));
     this.source = 'new'; this.pending = snapToTiles({ id, kind, x: 0, z: 4.5, turn: 0 }); this.positionLocked = false; this.selected = null; return null;
   }
-  move(id: string) { const item = this.draft.items.find(i => i.id === id); if (!item) return; this.pending = { ...item }; this.positionLocked = false; this.source = 'move'; this.selected = id; }
-  restore(id: string) { const item = this.draft.stored.find(i => i.id === id); if (!item) return; this.pending = { ...item }; this.positionLocked = false; this.source = 'stored'; this.selected = null; }
+  private editingSize(item: PlacedItem) { return item.kind === 'pond' && item.w === 4 && item.d === 5 ? snapToTiles({ ...item, w: 5, d: 6 }) : { ...item }; }
+  move(id: string) { const item = this.draft.items.find(i => i.id === id); if (!item) return; this.pending = this.editingSize(item); this.positionLocked = false; this.source = 'move'; this.selected = id; }
+  restore(id: string) { const item = this.draft.stored.find(i => i.id === id); if (!item) return; this.pending = this.editingSize(item); this.positionLocked = false; this.source = 'stored'; this.selected = null; }
   /** Positions snap so the footprint covers whole floor tiles. */
   position(x: number, z: number, lock = true) { if (this.pending) { this.pending = snapToTiles({ ...this.pending, x, z }); this.positionLocked = lock; } }
   followPointer(x: number, z: number) { if (!this.positionLocked) this.position(x, z, false); }

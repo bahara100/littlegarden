@@ -1,4 +1,5 @@
 import { seesawSeatDistance } from './seesaw';
+import { PICNIC_SEATS, picnicPoint } from './picnicTable';
 
 export type Point = { x: number; z: number };
 /** The garden is GARDEN×GARDEN floor tiles centred on 0 (edges at ±HALF); everything sizes itself from this. */
@@ -23,7 +24,7 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
   bench: { name: '나무 벤치', icon: '▤', w: 4.3 * B, d: 3.2 * B }, swing: { name: '산들 그네', icon: '⋂', w: 4.2 * S, d: 4.1 * S },
   tree: { name: '초록 나무', icon: '♣', w: 1.25, d: 1.25 }, flower: { name: '작은 화단', icon: '✿', w: 2, d: 1 },
   fence: { name: '나무 울타리', icon: '▥', w: 2, d: .2 }, path: { name: '길 타일', icon: '▧', w: 1, d: 1 },
-  pond: { name: '호수', icon: '≈', w: 4, d: 5 },
+  pond: { name: '호수', icon: '≈', w: 5, d: 6 },
   picnicTable: { name: '피크닉 테이블', icon: '▦', w: 4, d: 3 },
   seesaw: { name: '시소', icon: '⚖', w: 4, d: 1 },
   drinkingFountain: { name: '음수대', icon: '♧', w: 1, d: 1 },
@@ -41,7 +42,7 @@ export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond' ||
 export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2, pond: .2,
   picnicTable: 1.2, seesaw: 1, drinkingFountain: .4, fountain: 1.2, bridge: 1.5, stream: 1.5 };
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
-export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33, seesaw: .08 }, standing: { bench: .75, swing: -.1, seesaw: .48 } } as const;
+export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33, seesaw: .08, picnicTable: .3 }, standing: { bench: .75, swing: -.1, seesaw: .48, picnicTable: .8 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
   const angle = item.turn * Math.PI / 2, c = Math.round(Math.cos(angle)), s = Math.round(Math.sin(angle));
   return { x: item.x + local.x * c + local.z * s, z: item.z - local.x * s + local.z * c };
@@ -66,7 +67,7 @@ export function snapToTiles<T extends PlacedItem>(item: T): T {
 /** The two fixed floor features, on whole tiles: a picnic rug and a garden sign. */
 export const PICNIC = { x: -3, z: 4, w: 2, d: 2 } as const;
 export const SIGN = { x: -.5, z: -HALF + 1.5, w: .4, d: .4 } as const;
-export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing' | 'seesaw'; approach: Point; height: number; yaw: number; side?: -1 | 1 }
+export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing' | 'seesaw' | 'picnicTable'; approach: Point; height: number; yaw: number; side?: -1 | 1; bench?: 'near' | 'far' }
 export interface NavigationWorld { rectangles: { x: number; z: number; w: number; d: number }[]; trunks: (Point & { r: number })[]; seats: Seat[] }
 type Rectangle = NavigationWorld['rectangles'][number];
 /** Remove the bridge deck from a water obstacle; ordinary furniture is never cut away. */
@@ -107,6 +108,13 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
         approach: transform({ x: side * BENCH_SEAT.approachX, z: BENCH_SEAT.approachZ }, item), height: .975 * B, yaw: item.turn * Math.PI / 2,
       });
     } else if (item.kind === 'swing') seats.push({ id: `${item.id}-seat`, equipment: item.id, kind: 'swing', ...transform({ x: 0, z: 0 }, item), approach: transform({ x: .15 * S, z: 2.25 * S }, item), height: .965 * S, yaw: item.turn * Math.PI / 2 });
+    else if (item.kind === 'picnicTable') for (const bench of ['near', 'far'] as const) for (const side of [-1, 1] as const) {
+      const near = bench === 'near', x = side * PICNIC_SEATS.along;
+      seats.push({ id: `${item.id}-${bench}-${side}`, equipment: item.id, kind: 'picnicTable', bench, side,
+        ...picnicPoint(item, { x, z: PICNIC_SEATS[bench] }),
+        approach: picnicPoint(item, { x, z: near ? 2.2 : -2.2 }), height: PICNIC_SEATS.height,
+        yaw: item.turn % 2 ? (near ? -Math.PI / 2 : Math.PI / 2) : (near ? Math.PI : 0) });
+    }
     else if (item.kind === 'seesaw') for (const side of [-1, 1] as const) {
       // The artwork uses a mirrored diagonal for odd turns, just like the other new park props.
       const odd = item.turn % 2;

@@ -2,12 +2,17 @@ import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
 import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
-import { naturalGroundDetails } from './groundTexture';
+import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
+import { loadGroundMaterials } from './groundMaterials';
 import { paintSwingFrame } from './swingFrames';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
+import { picnicTabletop, picnicGridArt } from './picnicTable';
+import { fountainFrames, fountainFrame } from './fountainWater';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
+import { loadPondArt, paintPondSprite, paintPondFish } from './pondSprite';
+import { pondFishArt, pondFishFrame } from './pondFish';
 import { project, unproject } from './isometric';
 import { sceneOrder } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
@@ -116,7 +121,7 @@ export class PhaserGarden {
   }
   select(id: Selection) { this.selection = id; if (this.life.avatars.has(id as AvatarId)) this.selectedAvatar = id as AvatarId; this.callbacks.select(id); }
   commandUse(id: EquipmentId) { const error = this.life.use(this.selectedAvatar, id); this.callbacks.notice(error ?? '친구가 기구로 가요.'); }
-  commandKind(kind: 'bench' | 'swing' | 'seesaw') {
+  commandKind(kind: Seat['kind']) {
     for (const seat of this.life.seats.filter(s => s.kind === kind && !this.life.reservations.has(s.id))) if (!this.life.use(this.selectedAvatar, seat.equipment)) { this.callbacks.notice('친구가 빈자리로 가요.'); return; }
     this.callbacks.notice('빈자리가 없거나 먼저 기구에서 내려와야 해요.');
   }
@@ -156,6 +161,9 @@ class GardenScene extends Phaser.Scene {
   /** Per swing cell: width of the trimmed art in its 128 texture and the seat's depth below the rope tops there. */
   private swingArt = new Map<SwingCell, { width: number; seatDrop: number }>();
   private swingViews = new Map<string, SwingView>();
+  private picnicTops = new Map<string, Phaser.GameObjects.Image>();
+  private pondFishViews = new Map<string, Phaser.GameObjects.Image>();
+  private fishFrame = -1;
   /** Per swing item: swing phase (radians) and how hard it swings (0 = hanging still, 1 = full swing). */
   private swingMotion = new Map<string, { phase: number; amp: number }>();
   private ghost!: Phaser.GameObjects.Image;
@@ -194,7 +202,7 @@ class GardenScene extends Phaser.Scene {
   /** Bench and swing art only has front views: turns 0 and 3 face down-left (SW), turns 1 and 2 down-right (SE). */
   private seatFacing(seat: Seat): 'sw' | 'se' | 'nw' | 'ne' {
     const turn = this.g.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0;
-    if (seat.kind === 'seesaw') return scarletDirection(seat.yaw);
+    if (seat.kind === 'seesaw' || seat.kind === 'picnicTable') return scarletDirection(seat.yaw);
     return turn === 0 || turn === 3 ? 'sw' : 'se';
   }
 
@@ -202,6 +210,8 @@ class GardenScene extends Phaser.Scene {
     if (this.g.scarletModel === 'fallback') return;
     try {
       this.input.mouse?.disableContextMenu();
+      await Promise.all([loadGroundMaterials(), loadPondArt()]);
+      this.textures.addCanvas('pond-fish', pondFishArt(0, true)!);
       this.makeProps(); this.makeSwings(); this.makeShapes(); await this.makeFriends();
     } catch (error) { this.fail(error); return; }
     this.floor = this.textures.createCanvas('floor', FLOOR.w, FLOOR.h)!;
@@ -241,8 +251,11 @@ class GardenScene extends Phaser.Scene {
     for (const kind of Object.keys(PARK_PROPS) as ParkPropKind[]) {
       const source = this.textures.get(`park-${kind}`).getSourceImage() as HTMLImageElement;
       const cell = cutCell(source, 0, 0, source.naturalWidth, source.naturalHeight), fit = fitCell(cell);
-      this.textures.addCanvas(`park-fit-${kind}`, drawFit(cell, fit)); this.parkWidths.set(kind, fit.dw);
+      const fitted = drawFit(cell, fit);
+      this.textures.addCanvas(`park-fit-${kind}`, kind === 'picnicTable' ? picnicGridArt(fitted) : fitted); this.parkWidths.set(kind, fit.dw);
       if (kind === 'seesaw') seesawFrames(cell).forEach((frame, i) => this.textures.addCanvas(`seesaw-${i}`, frame));
+      if (kind === 'picnicTable') this.textures.addCanvas('picnic-tabletop', picnicGridArt(picnicTabletop(fitted)));
+      if (kind === 'fountain') fountainFrames(cell).forEach((frame, i) => this.textures.addCanvas(`fountain-${i}`, drawFit(frame, fit)));
     }
   }
   /** Raster water is drawn with the ground, before every upright prop and character. */
@@ -317,16 +330,11 @@ class GardenScene extends Phaser.Scene {
       c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.lineTo(b.x, b.y + 9); c.lineTo(a.x, a.y + 9); c.closePath(); c.fillStyle = color; c.fill(); c.strokeStyle = g.edgeLine; c.lineWidth = 1; c.stroke();
     }
     diamond(c, { x: 0, z: 0 }, GARDEN, GARDEN, g.tiles[0]);
-    if (lines) for (let x = -HALF + .5; x < HALF; x++) for (let z = -HALF + .5; z < HALF; z++) {
-      const hash = Math.abs(Math.round(x * 11 + z * 23)) % 5;
-      diamond(c, { x, z }, 1, 1, g.tiles[hash], g.grid);
-    }
-    if (!lines) naturalGroundDetails(c, g, p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; });
-    for (const item of items.filter(i => i.kind === 'path')) {
-      const f = footprint(item); diamond(c, item, f.w, f.d, g.path[0], lines ? g.path[1] : g.path[0]);
-      const p = iso(item); c.fillStyle = g.path[2]; c.fillRect(Math.round(p.x + FLOOR.ox) - 2, Math.round(p.y + FLOOR.oy) - 1, 3, 1);
-    }
-    for (const item of items.filter(i => i.kind === 'pond')) paintPond(item, (pts, color, line) => floorPolygon(c, pts, color, line));
+    const groundScreen = (p: Point) => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; };
+    naturalGroundDetails(c, g, groundScreen, items, U, this.g.region === 'garden');
+    naturalPaths(c, g, groundScreen, items, U, this.g.region === 'garden');
+    if (lines) groundGrid(c, g, groundScreen);
+    for (const item of items.filter(i => i.kind === 'pond')) this.paintLake(c, item);
     for (const item of items.filter(i => i.kind === 'stream')) this.paintStream(c, item);
     // The two fixed navigation obstacles: a picnic rug and a garden sign.
     diamond(c, PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
@@ -345,7 +353,7 @@ class GardenScene extends Phaser.Scene {
     if (pending?.kind === 'path') diamond(c, pending, 1, 1, error ? '#d07880' : '#fff4bc', '#66547b');
     else {
       // A pond being placed shows itself (faded) under the footprint highlight.
-      if (pending?.kind === 'pond') { c.globalAlpha = .75; paintPond(pending, (pts, color, line) => floorPolygon(c, pts, color, line)); }
+      if (pending?.kind === 'pond') { c.globalAlpha = .75; this.paintLake(c, pending); paintPondFish(c, pending, p => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; }, U, 0, true); }
       if (pending?.kind === 'stream') { c.globalAlpha = .75; this.paintStream(c, pending); }
       c.globalAlpha = .45;
       for (const item of [pending, selected]) if (item) { const f = footprint(item); diamond(c, item, f.w, f.d, item === pending && error ? '#d07880' : '#fff4bc', '#66547b'); }
@@ -353,11 +361,37 @@ class GardenScene extends Phaser.Scene {
     }
     this.overlay.refresh();
   }
+  private paintLake(c: CanvasRenderingContext2D, item: PlacedItem) {
+    const screen = (p: Point) => { const q = iso(p); return { x: q.x + FLOOR.ox, y: q.y + FLOOR.oy }; };
+    if (!paintPondSprite(c, item, screen, U)) paintPond(item, (pts, color, line) => floorPolygon(c, pts, color, line));
+  }
+  private syncPondFish(items: PlacedItem[]) {
+    const ponds = items.filter(i => i.kind === 'pond'), live = new Set(ponds.map(i => i.id));
+    for (const [id, view] of this.pondFishViews) if (!live.has(id)) { view.destroy(); this.pondFishViews.delete(id); }
+    if (!ponds.length) return;
+    const still = this.reduced.matches || this.g.editor.active, frame = pondFishFrame(this.time.now / 1000, still);
+    if (frame !== this.fishFrame) {
+      pondFishArt(this.time.now / 1000, still);
+      (this.textures.get('pond-fish') as Phaser.Textures.CanvasTexture).refresh(); this.fishFrame = frame;
+    }
+    for (const item of ponds) {
+      let view = this.pondFishViews.get(item.id);
+      if (!view) { view = this.add.image(0, 0, 'pond-fish').setOrigin(.5, 90 / 160).setDepth(-999); this.pondFishViews.set(item.id, view); }
+      const f = footprint(item), scale = (f.w + f.d) * U / 240, p = iso(item);
+      view.setPosition(Math.round(p.x), Math.round(p.y)).setDisplaySize(Math.round(256 * scale), Math.round(160 * scale)).setFlipX(!!(item.turn % 2));
+    }
+  }
   private placeProp(image: Phaser.GameObjects.Image, item: PlacedItem) {
     if (isParkProp(item.kind)) {
       const size = PARK_PROPS[item.kind].width * U * 128 / this.parkWidths.get(item.kind)!, p = iso(item);
       image.setTexture(`park-fit-${item.kind}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind])
         .setDisplaySize(size, size).setFlipX(item.turn % 2 === 1).setDepth(this.rank(item.id));
+      if (item.kind === 'fountain' && image !== this.ghost) image.setTexture(`fountain-${fountainFrame(this.time.now / 1000, this.reduced.matches || this.g.editor.active)}`);
+      if (item.kind === 'picnicTable' && image !== this.ghost) {
+        let top = this.picnicTops.get(item.id);
+        if (!top) { top = this.add.image(0, 0, 'picnic-tabletop').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); top.setData('id', item.id); this.picnicTops.set(item.id, top); }
+        top.setPosition(p.x, p.y + U * PROP_ART_BASE.picnicTable).setDisplaySize(size, size).setFlipX(item.turn % 2 === 1).setDepth(this.rank(item.id) + .2);
+      }
       if (item.kind === 'seesaw') image.setTexture(`seesaw-${SEESAW.poses + seesawFrame(this.g.life.seesawTilt(item.id), this.reduced.matches || this.g.editor.active)}`)
         .setOrigin(.5, (128 + SEESAW.pad) / (128 + SEESAW.pad * 2)).setDisplaySize(size * (128 + SEESAW.pad * 2) / 128, size * (128 + SEESAW.pad * 2) / 128);
       return;
@@ -415,10 +449,11 @@ class GardenScene extends Phaser.Scene {
       if (!image) { image = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); image.setData('id', item.id); this.props.set(item.id, image); }
       if (item.kind === 'swing') this.placeSwing(image, item); else this.placeProp(image, item);
       // Outside the editor only seats are clickable, so trees and fences never swallow floor clicks.
-      image.input!.enabled = editing || item.kind === 'bench' || item.kind === 'swing' || item.kind === 'seesaw';
+      image.input!.enabled = editing || ['bench', 'swing', 'seesaw', 'picnicTable'].includes(item.kind);
     }
     for (const [id, image] of this.props) if (!live.has(id)) { image.destroy(); this.props.delete(id); }
     for (const [id, view] of this.swingViews) if (!live.has(id)) { for (const o of Object.values(view)) o.destroy(); this.swingViews.delete(id); }
+    for (const [id, top] of this.picnicTops) if (!live.has(id)) { top.destroy(); this.picnicTops.delete(id); }
     const pending = this.g.editor.pending;
     this.ghost.setVisible(!!pending && !onFloor(pending.kind));
     if (pending && !onFloor(pending.kind)) this.placeProp(this.ghost, pending);
@@ -448,7 +483,7 @@ class GardenScene extends Phaser.Scene {
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
-    const z = seat && seated ? this.rank(seat.equipment) + .35 : this.rank(`avatar:${a.id}`);
+    const z = seat && seated ? this.rank(seat.equipment) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : this.rank(`avatar:${a.id}`);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.g.life.seesawTilt(seat.equipment), still)) * U * seated : 0;
     const x = p.x + swing.x, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
@@ -497,7 +532,7 @@ class GardenScene extends Phaser.Scene {
     }
     const items = this.items;
     this.sortScene(items);
-    this.drawFloor(items); this.drawOverlay(); this.syncProps(items);
+    this.drawFloor(items); this.drawOverlay(); this.syncProps(items); this.syncPondFish(items);
     this.camera();
     this.g.bubbles.begin(this.scale.width, this.scale.height, editing, U * this.cameras.main.zoom);
     for (const a of this.g.life.avatars.values()) this.placeAvatar(a, still);

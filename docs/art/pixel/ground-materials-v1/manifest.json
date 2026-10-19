@@ -1,0 +1,20 @@
+[
+  {
+    "name": "grass",
+    "size": [
+      256,
+      256
+    ],
+    "colours": 64,
+    "sha256": "78e0877be8018a7a8bfc490ac6d4f036d182aec7121592f55d93b0a60f925154"
+  },
+  {
+    "name": "path",
+    "size": [
+      256,
+      256
+    ],
+    "colours": 64,
+    "sha256": "9445772f2d5c7883407f88fdbf73db5da00bb39ef90978b437d3588a27e925cd"
+  }
+]

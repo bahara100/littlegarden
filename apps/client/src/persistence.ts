@@ -8,7 +8,7 @@ import { DEFAULT_SEASON, isSeasonId, type SeasonId } from './seasons';
 export const SAVE_KEY = 'little-garden.layout.v1';
 export const MAX_SAVE_BYTES = 200_000;
 /** Current save format. Older saves are upgraded step by step by MIGRATIONS; newer ones are refused. */
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 export type Affinity = Record<AvatarId, number>;
 /** The day (YYYY-MM-DD) each friend's affinity last went up from a pat. */
 export type Petted = Partial<Record<AvatarId, string>>;
@@ -29,10 +29,12 @@ type SaveData = { app: string; version: number; [key: string]: unknown };
  *   1 → 2: friends' affinity (how close they feel) is saved with the garden; old saves start everyone at 0.
  *   2 → 3: every region keeps its own layout (the old one becomes the garden's), the time of day is saved, and
  *          friends remember the day they were last patted.
+ *   3 → 4: lakes default to 5x6; enlarge old 4x5 lakes only where the surrounding layout allows it.
  */
 const MIGRATIONS: Record<number, (data: SaveData) => SaveData> = {
   1: data => ({ ...data, version: 2, friends: { affinity: { character: 0, peach: 0, lilac: 0 } } }),
   2: ({ layout, ...data }) => ({ ...data, version: 3, regions: { garden: layout }, world: { clock: DAY.start } }),
+  3: data => ({ ...data, version: 4, growLegacyPonds: true }),
 };
 export function upgradeSave(data: SaveData): SaveData {
   if (!Number.isInteger(data.version) || data.version < 1) throw new Error('지원하는 놀이터 백업 형식이 아니에요.');
@@ -67,14 +69,14 @@ export function decodeGarden(text: string): GardenSave {
   const stored = (data.regions ?? {}) as Record<string, unknown>;
   if (typeof stored !== 'object' || Array.isArray(stored) || Object.keys(stored).some(id => !isRegionId(id))) throw new Error('지역 정보가 올바르지 않아요.');
   const regions: GardenSave['regions'] = {};
-  for (const r of REGIONS) if (stored[r.id] !== undefined) regions[r.id] = decodeLayout(stored[r.id]);
+  for (const r of REGIONS) if (stored[r.id] !== undefined) regions[r.id] = decodeLayout(stored[r.id], data.growLegacyPonds === true);
   const friends = data.friends as { affinity?: unknown; petted?: unknown } | undefined, world = data.world as { clock?: unknown } | undefined;
   const clock = world?.clock ?? DAY.start;
   if (typeof clock !== 'number' || !Number.isFinite(clock) || clock < 0 || clock >= 1) throw new Error('하루 시각 정보가 올바르지 않아요.');
   return { regions, affinity: affinityFrom(friends?.affinity), petted: pettedFrom(friends?.petted), clock };
 }
 /** One region's placements and storage, checked like an editor would. */
-function decodeLayout(value: unknown): Layout {
+function decodeLayout(value: unknown, growLegacyPonds = false): Layout {
   const layout = value as Layout;
   if (!layout || !Array.isArray(layout.items) || !Array.isArray(layout.stored) || layout.items.length + layout.stored.length > MAX_ITEMS) throw new Error('배치 또는 보관함 형식이 올바르지 않아요.');
   const ids = new Set<string>();
@@ -84,13 +86,24 @@ function decodeLayout(value: unknown): Layout {
       !Number.isFinite(v.x) || !Number.isFinite(v.z) || Math.abs(v.x) > HALF || Math.abs(v.z) > HALF || !Number.isInteger(v.turn) || v.turn < 0 || v.turn > 3 ||
       [v.w, v.d].some(n => n !== undefined && (typeof n !== 'number' || !Number.isFinite(n) || n <= 0 || n > 16))) throw new Error('기구 정보나 고유 번호가 올바르지 않아요.');
     ids.add(v.id);
-    return { id: v.id, kind: v.kind, x: v.x, z: v.z, turn: v.turn, ...(v.w === undefined ? {} : { w: v.w }), ...(v.d === undefined ? {} : { d: v.d }) };
+    const w = v.w ?? (growLegacyPonds && v.kind === 'pond' ? 4 : undefined), d = v.d ?? (growLegacyPonds && v.kind === 'pond' ? 5 : undefined);
+    return { id: v.id, kind: v.kind, x: v.x, z: v.z, turn: v.turn, ...(w === undefined ? {} : { w }), ...(d === undefined ? {} : { d }) };
   }
   const result = { items: layout.items.map(item), stored: layout.stored.map(item) };
   const error = layoutError(result.items); if (error) throw new Error(error);
   // Saves from before tile alignment move onto whole tiles when that still gives a valid layout.
   const snapped = { items: result.items.map((i: PlacedItem) => snapToTiles(i)), stored: result.stored.map((i: PlacedItem) => snapToTiles(i)) };
-  return layoutError(snapped.items) ? result : snapped;
+  const aligned = layoutError(snapped.items) ? result : snapped;
+  if (growLegacyPonds) {
+    for (let n = 0; n < aligned.items.length; n++) {
+      const old = aligned.items[n]; if (old.kind !== 'pond' || old.w !== 4 || old.d !== 5) continue;
+      const larger = snapToTiles({ ...old, w: 5, d: 6 });
+      const next = aligned.items.map((i, index) => index === n ? larger : i);
+      if (!layoutError(next)) aligned.items = next;
+    }
+    aligned.stored = aligned.stored.map(i => i.kind === 'pond' && i.w === 4 && i.d === 5 ? snapToTiles({ ...i, w: 5, d: 6 }) : i);
+  }
+  return aligned;
 }
 /** The garden region's layout in a backup (the default layout when it has none). */
 export function decodeSave(text: string): Layout { return decodeGarden(text).regions.garden ?? cloneLayout(DEFAULT_LAYOUT); }

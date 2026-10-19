@@ -4,7 +4,8 @@ import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
 import { PROFILES } from './friendProfiles';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
-import { CATALOG, DEFAULT_LAYOUT, HALF, type Layout, type ItemKind } from './layout';
+import { CATALOG, HALF, type Layout, type ItemKind } from './layout';
+import { initialLayout } from './parkLayout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
 import { affinityLevel, nextUnlock, todayKey, unlockedFor } from './affinity';
 import { SCARLET_SD } from './scarletApproved';
@@ -47,7 +48,7 @@ function refresh() {
   setText('edit-mode', editing ? '꾸미기 취소' : '✿ 놀이터 꾸미기');
   setText('mode-label', editing ? '꾸미기 모드' : '생활 모드');
   setText('mode-note', editing ? '친구들은 잠시 쉬는 중' : '친구들의 하루');
-  setText('equipment-count', String(garden.life.layout.filter(i => ['bench', 'swing', 'seesaw'].includes(i.kind)).length));
+  setText('equipment-count', String(garden.life.layout.filter(i => ['bench', 'swing', 'seesaw', 'picnicTable'].includes(i.kind)).length));
   showDay(garden.life.dayFraction(), garden.life.dayCycle);
   if (editing) { refreshEditor(); return; }
   const life = garden.life, active = life.avatars.get(garden.selectedAvatar)!;
@@ -61,10 +62,10 @@ function refresh() {
   el('friend-actions').hidden = !friend; el('equipment-actions').hidden = !!friend;
   el<HTMLButtonElement>('wave').disabled = using;
   el<HTMLButtonElement>('leave-seat').disabled = !using;
-  for (const equipment of ['bench', 'swing', 'seesaw'] as const) {
+  for (const equipment of ['bench', 'swing', 'seesaw', 'picnicTable'] as const) {
     const slots = life.seats.filter(s => s.kind === equipment), free = slots.filter(s => !life.reservations.has(s.id)).length;
     el<HTMLButtonElement>(`request-${equipment}`).disabled = using || !free;
-    setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : '그네'} 이용 · ${free}자리`);
+    setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : equipment === 'picnicTable' ? '테이블' : '그네'} 이용 · ${free}자리`);
   }
   if (friend) {
     el('model-review').hidden = false;
@@ -92,6 +93,11 @@ function refresh() {
       setText('selection-icon', '⚖'); setText('selection-title', '함께 타는 시소');
       setText('selection-subtitle', 'GARDEN SEESAW / 02 SEATS');
       setText('selection-description', '양쪽에 한 명씩 앉으면 오르락내리락해요. 먼저 앉은 친구는 반대편 친구를 기다려요.');
+    }
+    if (equipment === 'picnicTable') {
+      setText('selection-icon', '▦'); setText('selection-title', '피크닉 테이블');
+      setText('selection-subtitle', 'PICNIC TABLE / 04 SEATS');
+      setText('selection-description', '양쪽 벤치에 두 명씩 앉을 수 있어요. 친구와 마주 앉아 잠시 쉬어가요.');
     }
     details(slots.map((s, i) => { const id = life.reservations.get(s.id), a = id && life.avatars.get(id); return [`자리 ${i + 1}`, a ? `${a.name} · ${a.phase === 'walking' ? '오는 중' : a.phase === 'leaving' ? '내려오는 중' : '이용 중'}` : '비어 있어요']; }));
     el<HTMLButtonElement>('use-equipment').disabled = using || slots.every(s => life.reservations.has(s.id) && life.reservations.get(s.id) !== active.id);
@@ -176,9 +182,8 @@ try {
         regionLayouts = saved.regions; Object.assign(garden.life.affinity, saved.affinity); Object.assign(garden.life.petted, saved.petted); garden.life.setClock(saved.clock);
         setText('save-status', '저장된 놀이터를 복원했어요.');
       }
-      // A region never saved yet keeps the fresh start (friends head for their first seats).
-      const start = regionLayouts[currentRegion]; if (start) garden.restoreLayout(start);
-    } catch { saveUnreadable = true; setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
+      garden.restoreLayout(regionLayouts[currentRegion] ?? initialLayout(currentRegion));
+    } catch { garden.restoreLayout(initialLayout(currentRegion)); saveUnreadable = true; setText('save-status', '저장 데이터를 읽지 못했어요. 원본은 유지했으며 기본 놀이터를 열었어요. 백업 파일을 불러오거나 새 배치를 적용해주세요.'); }
     // Remembered view settings.
     el<HTMLInputElement>('day-toggle').checked = settings.dayCycle; garden.life.dayCycle = settings.dayCycle;
     el<HTMLInputElement>('fps-toggle').checked = settings.fps; showFps(settings.fps);
@@ -200,6 +205,7 @@ try {
   el('request-bench').onclick = () => garden?.commandKind('bench');
   el('request-swing').onclick = () => garden?.commandKind('swing');
   el('request-seesaw').onclick = () => garden?.commandKind('seesaw');
+  el('request-picnicTable').onclick = () => garden?.commandKind('picnicTable');
   el('use-equipment').onclick = () => garden?.commandUse(selected);
   el('edit-mode').onclick = () => {
     if (!garden) return;
@@ -261,10 +267,10 @@ el<HTMLInputElement>('save-file').onchange = async event => {
   try {
     if (file.size > MAX_SAVE_BYTES) throw new Error('파일이 너무 커요. 200KB 이하의 백업을 골라주세요.');
     const backup = decodeGarden(await file.text());
-    if (!garden.editor.active) propose(backup.regions[currentRegion] ?? DEFAULT_LAYOUT, backup);
+    if (!garden.editor.active) propose(backup.regions[currentRegion] ?? initialLayout(currentRegion), backup);
   } catch (error) { setText('save-status', `불러오지 못했어요. 현재 놀이터는 유지돼요. ${error instanceof SyntaxError ? 'JSON 백업 파일을 확인해주세요.' : error instanceof Error ? error.message : ''}`); }
 };
-el('reset-layout').onclick = () => propose(DEFAULT_LAYOUT, null);
+el('reset-layout').onclick = () => propose(initialLayout(currentRegion), null);
 el('replace-cancel').onclick = () => { replacement = null; el<HTMLDialogElement>('replace-dialog').close(); };
 el('replace-confirm').onclick = () => {
   if (!replacement || !garden || garden.editor.active) return;
@@ -306,7 +312,7 @@ const batchim = (word: string) => { const c = word.charCodeAt(word.length - 1) -
 function enterRegion(id: RegionId) {
   if (!garden || id === currentRegion) return;
   regionLayouts[currentRegion] = garden.editor.committed;
-  currentRegion = id; garden.restoreLayout(regionLayouts[id] ?? DEFAULT_LAYOUT);
+  currentRegion = id; garden.restoreLayout(regionLayouts[id] ?? initialLayout(id));
   showRegion(id); persist(true);
 }
 function showRegion(id: RegionId) {
