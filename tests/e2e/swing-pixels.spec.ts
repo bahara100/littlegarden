@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { proofPath } from './proof';
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
@@ -73,7 +74,7 @@ test('swing motion keeps the approved rest artwork and samples moving edges from
     return results;
   });
   expect(result).toEqual([{ restEqual: true, clipped: false }, { restEqual: true, clipped: false }]);
-  await page.locator('#swing-proof').screenshot({ path: 'docs/design/swing-pixels-2026-10-19/comparison.png' });
+  await page.locator('#swing-proof').screenshot({ path: proofPath('docs/design/swing-pixels-2026-10-19', 'comparison.png') });
 });
 
 test('a friend boards the swing and the updated motion renders in the game', async ({ page }) => {
@@ -87,6 +88,6 @@ test('a friend boards the swing and the updated motion renders in the game', asy
   await page.click('#request-swing');
   await expect(page.locator('#selection-details')).toContainText('그네 타는 중', { timeout: 25_000 });
   await page.click('#focus-friend');
-  await page.locator('#viewport').screenshot({ path: 'docs/design/swing-pixels-2026-10-19/in-game.png' });
+  await page.locator('#viewport').screenshot({ path: proofPath('docs/design/swing-pixels-2026-10-19', 'in-game.png') });
   expect(problems).toEqual([]);
 });

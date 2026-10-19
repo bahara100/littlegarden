@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { proofPath } from './proof';
+import { readFileSync, writeFileSync } from 'node:fs';
 import ts from 'typescript';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
 
 const proof = 'docs/design/fountain-water-2026-10-19';
 for (const renderer of ['phaser', 'canvas']) test(`${renderer} fountain water flows without changing its stone or silhouette`, async ({ page }) => {
-  mkdirSync(proof, { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1100 });
   const problems: string[] = []; page.on('pageerror', e => problems.push(e.message));
   const save = encodeSave(gardenSave({ items: [{ id: 'water-test', kind: 'fountain', x: .5, z: .5, turn: 0 }], stored: [] }));
@@ -13,13 +13,13 @@ for (const renderer of ['phaser', 'canvas']) test(`${renderer} fountain water fl
   await page.goto(renderer === 'canvas' ? '/?renderer=canvas' : '/');
   await expect(page.locator('#loading')).toBeHidden();
   await page.locator('#game').hover(); await page.mouse.wheel(0, -800);
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}.png`) });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.click('#edit-mode');
   await expect(page.locator('[data-catalog=fountain]')).toBeVisible();
   await page.click('[data-catalog=fountain]');
   await page.click('#item-rotate');
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}-editor.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-editor.png`) });
   const helper = ts.transpileModule(readFileSync('apps/client/src/fountainWater.ts', 'utf8'), {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
   }).outputText.replaceAll('export ', '');
@@ -54,6 +54,6 @@ for (const renderer of ['phaser', 'canvas']) test(`${renderer} fountain water fl
   expect(result.stoneChanges).toBe(0); expect(result.alphaChanges).toBe(0);
   expect(result.waterChanges).toBeGreaterThan(5000); expect(result.unique).toBe(24);
   expect(result.count).toBe(24); expect(result.loop).toBe(true); expect(result.still).toBe(0);
-  if (renderer === 'phaser') writeFileSync(`${proof}/water-frames.png`, Buffer.from(result.atlas.split(',')[1], 'base64'));
+  if (renderer === 'phaser') writeFileSync(proofPath(proof, `water-frames.png`), Buffer.from(result.atlas.split(',')[1], 'base64'));
   expect(problems).toEqual([]);
 });

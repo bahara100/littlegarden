@@ -1,23 +1,22 @@
 import { test, expect } from '@playwright/test';
-import { mkdirSync } from 'node:fs';
+import { proofPath } from './proof';
 import { PARK_INITIAL_LAYOUT } from '../../apps/client/src/parkLayout.js';
 import { DEFAULT_LAYOUT } from '../../apps/client/src/layout.js';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
 
 const proof = 'docs/design/park-initial-2026-10-19';
 for (const renderer of ['phaser', 'canvas']) test(`${renderer} opens the landscaped small park with the full prop collection`, async ({ page }) => {
-  mkdirSync(proof, { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1100 });
   const problems: string[] = []; page.on('pageerror', e => problems.push(e.message));
   page.on('response', r => { if (r.status() >= 400 && r.url().includes('127.0.0.1')) problems.push(`${r.status()} ${r.url()}`); });
   await page.goto(renderer === 'canvas' ? '/?renderer=canvas' : '/');
   await expect(page.locator('#loading')).toBeHidden();
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}-whole.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-whole.png`) });
   await page.locator('#game').hover(); await page.mouse.wheel(0, -200);
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}-detail.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-detail.png`) });
   await page.click('#edit-mode');
   await expect(page.locator('#draft-count')).toContainText(`${PARK_INITIAL_LAYOUT.items.length}개 배치`);
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}-editor.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-editor.png`) });
   await page.click('#editor-cancel');
   // The unopened hot-spring region keeps its old draft instead of inheriting the garden's new park.
   await page.click('#region-button'); await page.click('[data-region=onsen]');

@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { proofPath } from './proof';
+import { readFileSync, writeFileSync } from 'node:fs';
 import ts from 'typescript';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
 
 for (const renderer of ['phaser', 'canvas']) test(`${renderer} new lake art loads, rotates and keeps shore watching`, async ({ page }) => {
-  const proof = 'docs/design/pond-fish-2026-10-19'; mkdirSync(proof, { recursive: true });
+  const proof = 'docs/design/pond-fish-2026-10-19';
   await page.setViewportSize({ width: 1440, height: 1100 });
   const problems: string[] = []; page.on('pageerror', e => problems.push(e.message));
   page.on('response', r => { if (r.status() >= 400 && r.url().includes('127.0.0.1')) problems.push(`${r.status()} ${r.url()}`); });
@@ -22,14 +23,14 @@ for (const renderer of ['phaser', 'canvas']) test(`${renderer} new lake art load
   const unit = Math.min(box.width / 51, box.height / 36) * zoom;
   await page.mouse.click(box.x + box.width / 2 + unit * 2.5, box.y + box.height * .56 - unit * .75);
   await expect(page.locator('#status-lilac')).toHaveText('호수 구경하는 중', { timeout: 30_000 });
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}.png`) });
   await page.click('#edit-mode');
   await expect(page.locator('#draft-count')).toContainText('1개 배치');
   // Select the existing lake by its centre and rotate its 5x6 footprint.
   await page.mouse.click(box.x + box.width / 2 + unit * 2.5, box.y + box.height * .56 - unit * .75);
   await page.click('#item-rotate');
   await expect(page.locator('#item-place')).toBeEnabled();
-  await page.locator('#viewport').screenshot({ path: `${proof}/${renderer}-rotated.png` });
+  await page.locator('#viewport').screenshot({ path: proofPath(proof, `${renderer}-rotated.png`) });
   await page.click('#item-place'); await page.click('#editor-apply');
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   if (renderer === 'phaser') {
@@ -60,7 +61,7 @@ for (const renderer of ['phaser', 'canvas']) test(`${renderer} new lake art load
     });
     expect(fish.outside).toBe(0); expect(fish.minVisible).toBeGreaterThan(60);
     expect(fish.unique).toBeGreaterThan(120); expect(fish.still).toBe(true);
-    writeFileSync(`${proof}/fish-frames.png`, Buffer.from(fish.atlas.split(',')[1], 'base64'));
+    writeFileSync(proofPath(proof, `fish-frames.png`), Buffer.from(fish.atlas.split(',')[1], 'base64'));
   }
   expect(problems).toEqual([]);
 });

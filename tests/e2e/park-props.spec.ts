@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { proofPath } from './proof';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
 import type { PlacedItem } from '../../apps/client/src/layout.js';
 
@@ -23,7 +24,7 @@ for (const renderer of ['phaser', 'canvas']) {
     await page.goto(renderer === 'canvas' ? '/?renderer=canvas' : '/');
     await expect(page.locator('#loading')).toBeHidden();
     await expect(page.locator('#game canvas')).toBeVisible();
-    await page.locator('.viewport').screenshot({ path: `docs/art/pixel/park-props-v1/game-${renderer}.png` });
+    await page.locator('.viewport').screenshot({ path: proofPath('docs/art/pixel/park-props-v1', `game-${renderer}.png`) });
     await page.click('#edit-mode');
     for (const kind of ['picnicTable', 'seesaw', 'drinkingFountain', 'fountain', 'bridge', 'stream']) await expect(page.locator(`[data-catalog=${kind}]`)).toBeVisible();
     await page.click('[data-catalog=fountain]');

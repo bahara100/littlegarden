@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { proofPath } from './proof';
 import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persistence.js';
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
@@ -35,7 +36,7 @@ test('seesaw art keeps the rest pose, fixed feet and unclipped ends through all 
     return { restEqual: original.every((v, i) => v === rest[i]), clipped, feetChanged };
   });
   expect(result).toEqual({ restEqual: true, clipped: false, feetChanged: false });
-  await page.locator('#seesaw-art-proof').screenshot({ path: 'docs/design/seesaw-2026-10-19/motion-frames.png' });
+  await page.locator('#seesaw-art-proof').screenshot({ path: proofPath('docs/design/seesaw-2026-10-19', 'motion-frames.png') });
 });
 
 for (const renderer of ['phaser', 'canvas']) for (const turn of [0, 1]) {
@@ -53,9 +54,9 @@ for (const renderer of ['phaser', 'canvas']) for (const turn of [0, 1]) {
     await expect(page.locator('#request-seesaw')).toBeDisabled();
     await page.locator('#game').hover(); await page.mouse.wheel(0, -1100);
     await page.waitForTimeout(1200);
-    await page.locator('#viewport').screenshot({ path: `docs/design/seesaw-2026-10-19/${renderer}-${turn}.png` });
+    await page.locator('#viewport').screenshot({ path: proofPath('docs/design/seesaw-2026-10-19', `${renderer}-${turn}.png`) });
     await page.waitForTimeout(1600);
-    await page.locator('#viewport').screenshot({ path: `docs/design/seesaw-2026-10-19/${renderer}-${turn}-opposite.png` });
+    await page.locator('#viewport').screenshot({ path: proofPath('docs/design/seesaw-2026-10-19', `${renderer}-${turn}-opposite.png`) });
     await page.click('#leave-seat');
     await expect(page.locator('#status-peach')).toHaveText('시소에서 친구 기다리는 중');
     await expect(page.locator('#status-lilac')).not.toHaveText('시소 타는 중');
