@@ -97,9 +97,11 @@ export interface Avatar extends Point {
   cheerUntil: number;
   /** An unlocked line in a speech bubble and an unlocked emotion over the head, each shown until its time. */
   speech: string; speechUntil: number; emote: string; emoteUntil: number;
-  /** Going to or watching a pond: the shore tile to stand on and the pond centre to face. */
-  watchSpot: Point | null; lookAt: Point | null;
+  /** Going to or watching a pond or fountain: the tile to stand on, the centre to face, and which it is. */
+  watchSpot: Point | null; lookAt: Point | null; watchKind: WatchKind | null;
 }
+/** Things friends stand and look at. */
+export type WatchKind = 'pond' | 'fountain';
 export class LifeSimulation {
   time = 0;
   layout = cloneLayout(DEFAULT_LAYOUT).items;
@@ -155,7 +157,7 @@ export class LifeSimulation {
     }
   }
   constructor(private random: () => number = Math.random, private walkSpeeds: Partial<Record<AvatarId, number>> = {}) {
-    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, seesaw: null, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0, watchSpot: null, lookAt: null }));
+    FRIENDS.forEach((f, i) => this.avatars.set(f.id, { ...f.start, seesaw: null, id: f.id, name: f.name, phase: 'idle', yaw: Math.PI / 4, path: [], seatId: null, progress: 0, until: .7 + i * .9, deadline: 0, directed: false, lastEquipment: null, leftItem: null, partner: null, since: 0, cheerUntil: 0, speech: '', speechUntil: 0, emote: '', emoteUntil: 0, watchSpot: null, lookAt: null, watchKind: null }));
   }
   applyLayout(items: PlacedItem[]) {
     if (geometryError(items)) throw new Error('Invalid playground layout');
@@ -169,24 +171,48 @@ export class LifeSimulation {
       candidates.sort((p, q) => Math.hypot(p.x - HUB.x, p.z - HUB.z) - Math.hypot(q.x - HUB.x, q.z - HUB.z));
       const safe = candidates.find(p => occupied.every(o => Math.hypot(p.x - o.x, p.z - o.z) > .8) && findPath(HUB, p, this.world));
       Object.assign(a, safe ?? HUB); occupied.push({ x: a.x, z: a.z });
-      a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
+      a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; a.watchKind = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
     }
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
   /** On the seat itself (getting on, sitting, getting off), not just walking to a reserved one: drawn with the seat. */
   riding(a: Avatar) { return !!a.seatId && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) && a.progress > 0; }
-  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; }
+  private free(a: Avatar) { if (a.seatId && this.reservations.get(a.seatId) === a.id) this.reservations.delete(a.seatId); a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; a.watchKind = null; }
   /** Ponds in the current layout. */
   get ponds() { return this.layout.filter(i => i.kind === 'pond'); }
   /** The pond a ground point is on, if any. */
   pondAt(p: Point) { return this.ponds.find(i => { const f = waterBounds(i); return Math.abs(p.x - f.x) <= f.w / 2 && Math.abs(p.z - f.z) <= f.d / 2; }); }
-  /** Dry tile centres beyond the raised stone rim, not taken by another watcher. */
-  shoreSpots(pond: PlacedItem, except?: AvatarId): Point[] {
-    const f = footprint(pond), spots: Point[] = [];
-    for (let x = f.x - f.w / 2 + .5; x < f.x + f.w / 2; x++) spots.push({ x, z: f.z - f.d / 2 - POND_WATCH_GAP }, { x, z: f.z + f.d / 2 + POND_WATCH_GAP });
-    for (let z = f.z - f.d / 2 + .5; z < f.z + f.d / 2; z++) spots.push({ x: f.x - f.w / 2 - POND_WATCH_GAP, z }, { x: f.x + f.w / 2 + POND_WATCH_GAP, z });
+  /** Fountains in the current layout. */
+  get fountains() { return this.layout.filter(i => i.kind === 'fountain'); }
+  /** The fountain whose tiles a ground point is on, if any. */
+  fountainAt(p: Point) { return this.fountains.find(i => { const f = footprint(i); return Math.abs(p.x - f.x) <= f.w / 2 && Math.abs(p.z - f.z) <= f.d / 2; }); }
+  /** Free walkable tile centres in a ring `gap` beyond an item's tiles, not taken by another watcher. */
+  private watchSpots(item: PlacedItem, gap: number, except?: AvatarId): Point[] {
+    const f = footprint(item), spots: Point[] = [];
+    for (let x = f.x - f.w / 2 + .5; x < f.x + f.w / 2; x++) spots.push({ x, z: f.z - f.d / 2 - gap }, { x, z: f.z + f.d / 2 + gap });
+    for (let z = f.z - f.d / 2 + .5; z < f.z + f.d / 2; z++) spots.push({ x: f.x - f.w / 2 - gap, z }, { x: f.x + f.w / 2 + gap, z });
     const taken = [...this.avatars.values()].filter(o => o.id !== except && o.watchSpot).map(o => o.watchSpot!);
     return spots.filter(p => walkable(p, this.world) && !taken.some(t => Math.hypot(t.x - p.x, t.z - p.z) < .5));
+  }
+  /** Dry tile centres beyond the raised stone rim, not taken by another watcher. */
+  shoreSpots(pond: PlacedItem, except?: AvatarId): Point[] { return this.watchSpots(pond, POND_WATCH_GAP, except); }
+  /** Tile centres right next to a fountain's tiles, not taken by another watcher. */
+  fountainSpots(fountain: PlacedItem, except?: AvatarId): Point[] { return this.watchSpots(fountain, FOUNTAIN.gap, except); }
+  /**
+   * Walk to the closest free spot by one of `items` (the nearest item first), then stand facing its centre for a
+   * while (phase 'watching'). Returns false when there is nowhere to stand.
+   */
+  private goWatch(a: Avatar, items: PlacedItem[], kind: WatchKind, directed: boolean): boolean {
+    const sorted = [...items].sort((p, q) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(q.x - a.x, q.z - a.z));
+    for (const item of sorted) {
+      const spots = kind === 'pond' ? this.shoreSpots(item, a.id) : this.fountainSpots(item, a.id);
+      const best = spots.map(spot => ({ spot, path: findPath(a, spot, this.world) })).filter(r => r.path).sort((p, q) => p.path!.length - q.path!.length)[0];
+      if (!best) continue;
+      this.free(a); a.directed = directed; a.path = best.path!; a.phase = 'walking'; a.deadline = this.time + 40;
+      a.watchSpot = best.spot; a.lookAt = { x: footprint(item).x, z: footprint(item).z }; a.watchKind = kind;
+      return true;
+    }
+    return false;
   }
   /**
    * Go and watch a pond (the nearest one when none is given): walk to the closest free shore tile, then stand facing
@@ -195,15 +221,13 @@ export class LifeSimulation {
   watchPond(id: AvatarId, pondId: string | null = null, directed = true): string | null {
     const a = this.avatars.get(id)!;
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 호수를 보러 갈 수 있어요.';
-    const ponds = pondId ? this.ponds.filter(p => p.id === pondId) : [...this.ponds].sort((p, q) => Math.hypot(p.x - a.x, p.z - a.z) - Math.hypot(q.x - a.x, q.z - a.z));
-    for (const pond of ponds) {
-      const routes = this.shoreSpots(pond, a.id).map(spot => ({ spot, path: findPath(a, spot, this.world) })).filter(r => r.path).sort((p, q) => p.path!.length - q.path!.length);
-      const best = routes[0]; if (!best) continue;
-      this.free(a); a.directed = directed; a.path = best.path!; a.phase = 'walking'; a.deadline = this.time + 40;
-      a.watchSpot = best.spot; a.lookAt = { x: footprint(pond).x, z: footprint(pond).z };
-      return null;
-    }
-    return '호숫가에 설 자리가 없어요.';
+    return this.goWatch(a, pondId ? this.ponds.filter(p => p.id === pondId) : this.ponds, 'pond', directed) ? null : '호숫가에 설 자리가 없어요.';
+  }
+  /** Go and watch a fountain (the nearest one when none is given), like a pond; a fountain icon shows while watching. */
+  watchFountain(id: AvatarId, fountainId: string | null = null, directed = true): string | null {
+    const a = this.avatars.get(id)!;
+    if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 분수대를 보러 갈 수 있어요.';
+    return this.goWatch(a, fountainId ? this.fountains.filter(f => f.id === fountainId) : this.fountains, 'fountain', directed) ? null : '분수대 앞에 설 자리가 없어요.';
   }
   private settle(a: Avatar, delay = 2) { this.free(a); a.phase = 'idle'; a.path = []; a.progress = 0; a.until = this.time + delay; }
   private beginExit(a: Avatar) { if (a.phase !== 'boarding') a.progress = 1; a.phase = 'leaving'; a.path = []; a.deadline = this.time + 2; }
@@ -219,6 +243,7 @@ export class LifeSimulation {
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 내려온 뒤 이동을 지시해주세요.';
     // A tap on a pond means "go and look at it".
     const pond = this.pondAt(target); if (pond) return this.watchPond(id, pond.id);
+    const fountain = this.fountainAt(target); if (fountain) return this.watchFountain(id, fountain.id);
     // Stop on the centre of the clicked tile; a centre too close to an obstacle falls back to the clicked point.
     const path = findPath(a, tileCentre(target), this.world) ?? findPath(a, target, this.world); if (!path) return '이곳까지 걸어갈 수 없어요. 빈 바닥을 선택해주세요.';
     this.free(a); a.directed = true; a.path = path; a.phase = 'walking'; a.deadline = this.time + 40; return null;
@@ -226,6 +251,8 @@ export class LifeSimulation {
   use(id: AvatarId, equipment: EquipmentId, directed = true): string | null {
     const a = this.avatars.get(id)!;
     if (['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase)) return '먼저 기구에서 내려와주세요.';
+    // A fountain has no seats: "using" it means going to look at it.
+    if (this.fountains.some(f => f.id === equipment)) return this.watchFountain(id, equipment, directed);
     // Plan before replacing the old command: a failed request leaves it intact.
     const candidates = this.seats.filter(s => s.equipment === equipment && (!this.reservations.has(s.id) || this.reservations.get(s.id) === id));
     const choice = candidates.map(s => ({ seat: s, path: findPath(a, s.approach, this.world) })).filter(c => c.path !== null).sort((a, b) => a.path!.length - b.path!.length)[0];
@@ -270,6 +297,8 @@ export class LifeSimulation {
     }
     // Now and then a free friend goes to look at a pond (only rolled when there is one, so pond-less gardens behave as before).
     if (this.ponds.length && this.random() < LAKE.visit && !this.watchPond(a.id, null, false)) return;
+    // The same for fountains (rolled only when there is one).
+    if (this.fountains.length && this.random() < FOUNTAIN.visit && !this.watchFountain(a.id, null, false)) return;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
     if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
       const beside = this.seats.find(s => (s.kind === 'bench' || s.kind === 'picnicTable' || s.kind === 'picnicRug') && s.equipment !== left && !this.reservations.has(s.id) &&
@@ -379,9 +408,11 @@ export class LifeSimulation {
         if (!a.path.length) {
           if (a.seatId) { a.phase = 'boarding'; a.progress = 0; }
           else if (a.lookAt) {
-            // At the shore: face the water and watch it for a while.
+            // At the shore (or by the fountain): face the water and watch it for a while.
             a.phase = 'watching'; a.yaw = Math.atan2(a.lookAt.x - a.x, a.lookAt.z - a.z); a.since = this.time;
-            a.until = this.time + LAKE.watch + this.random() * LAKE.extra; this.moment(a, 'watch');
+            const look = a.watchKind === 'fountain' ? FOUNTAIN : LAKE;
+            a.until = this.time + look.watch + this.random() * look.extra;
+            if (a.watchKind !== 'fountain') this.moment(a, 'watch');  // the 'watch' moment (and its lines) is for ponds
           }
           else this.settle(a, 2 + this.random() * 2);
         }
@@ -421,8 +452,8 @@ export function activityLabel(a: Avatar) {
   if (a.phase === 'seated' && a.lastEquipment === 'picnicRug') return '돗자리에서 쉬는 중';
   if (a.phase === 'seated' && a.lastEquipment === 'picnicTable') return '테이블에서 쉬는 중';
   if (a.phase === 'seated' && a.seesaw) return a.seesaw === 'playing' ? '시소 타는 중' : '시소에서 친구 기다리는 중';
-  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중', watching: '호수 구경하는 중' };
-  if (a.phase === 'walking' && a.lookAt) return '호수 보러 가는 중';
+  const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중', watching: a.watchKind === 'fountain' ? '분수 구경하는 중' : '호수 구경하는 중' };
+  if (a.phase === 'walking' && a.lookAt) return a.watchKind === 'fountain' ? '분수 보러 가는 중' : '호수 보러 가는 중';
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
@@ -438,8 +469,8 @@ export function reactionLabel(a: Avatar, time: number) {
   if (a.phase === 'waving') return '👋';
   if (time < a.cheerUntil) return '♡';
   if (a.phase === 'happy') return time - a.since < PET.duration / 2 ? '♡' : '♪';
-  // Watching a pond: a fish shows up now and then (2.5 s of every 5).
-  if (a.phase === 'watching') return (time - a.since) % 5 < 2.5 ? '🐟' : '';
+  // Watching a pond or fountain: a fish (or the fountain) shows up now and then (2.5 s of every 5).
+  if (a.phase === 'watching') return (time - a.since) % 5 < 2.5 ? (a.watchKind === 'fountain' ? '⛲' : '🐟') : '';
   if (a.phase !== 'greeting') return '';
   // Meeting: notice (!), wave hello (👋), then take turns chatting (··· / ♪).
   const t = time - a.since;
@@ -450,6 +481,8 @@ export function reactionLabel(a: Avatar, time: number) {
 }
 /** Ponds: chance a free friend goes to look when choosing what to do, and how long they watch (s). */
 export const LAKE = { visit: .25, watch: 6, extra: 5 } as const;
+/** Fountains: the same, plus how far beyond its tiles a watcher stands (.5 = the next tile). */
+export const FOUNTAIN = { visit: .2, watch: 6, extra: 5, gap: .5 } as const;
 /** A meeting's opening, in seconds from its start: "!" until `notice`, then a wave until `hello`, then chat. */
 export const GREET = { notice: .6, hello: 1.4 } as const;
 /** How long an unlocked line stays in its speech bubble: a base plus a little per character. */

@@ -325,7 +325,7 @@ export class PixelGarden {
   private pick(x: number, y: number) {
     for (const hit of [...this.hits].reverse()) {
       if (x < hit.x || x >= hit.x + hit.w || y < hit.y || y >= hit.y + hit.h) continue;
-      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing', 'seesaw', 'picnicTable'].includes(i.kind))) continue;
+      if (!this.editor.active && !this.life.avatars.has(hit.id as AvatarId) && !this.life.layout.some(i => i.id === hit.id && ['bench', 'swing', 'seesaw', 'picnicTable', 'fountain'].includes(i.kind))) continue;
       if (hit.image) {
         let px = Math.floor((x - hit.x) / hit.w * 128); if (hit.frame === -1) px = 127 - px;
         const py = Math.floor((y - hit.y) / hit.h * 128);

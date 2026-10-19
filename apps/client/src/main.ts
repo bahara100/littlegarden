@@ -105,10 +105,22 @@ function refresh() {
       setText('selection-subtitle', '두 친구의 나들이 자리');
       setText('selection-description', '돗자리 위에 마주 앉아 쉬어가요. 한 자리씩 이용하고, 쉬고 나면 바깥으로 걸어 나와요.');
     }
-    details(slots.map((s, i) => { const id = life.reservations.get(s.id), a = id && life.avatars.get(id); return [`자리 ${i + 1}`, a ? `${a.name} · ${a.phase === 'walking' ? '오는 중' : a.phase === 'leaving' ? '내려오는 중' : '이용 중'}` : '비어 있어요']; }));
-    el<HTMLButtonElement>('use-equipment').disabled = using || slots.every(s => life.reservations.has(s.id) && life.reservations.get(s.id) !== active.id);
-    setText('use-equipment', `${active.name}에게 ${equipment === 'picnicRug' ? '앉기' : '이용'} 부탁하기`);
-    setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
+    if (equipment === 'fountain') {
+      // No seats: friends stand around it and watch (simulation.ts watchFountain).
+      const watchers = [...life.avatars.values()].filter(a => a.watchKind === 'fountain' && a.lookAt && life.fountainAt(a.lookAt)?.id === selected);
+      setText('selection-icon', '⛲'); setText('selection-title', '맑은 물의 분수대');
+      setText('selection-subtitle', 'GARDEN FOUNTAIN / 구경하기');
+      setText('selection-description', '물줄기가 흐르는 분수대예요. 친구들이 가끔 둘레에 서서 구경하고, 눌러서 구경을 부탁할 수도 있어요.');
+      details(watchers.length ? watchers.map(a => [a.name, a.phase === 'watching' ? '구경하는 중' : '보러 가는 중']) : [['구경하는 친구', '아직 없어요']]);
+      el<HTMLButtonElement>('use-equipment').disabled = using;
+      setText('use-equipment', `${active.name}에게 구경 부탁하기`);
+      setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
+    } else {
+      details(slots.map((s, i) => { const id = life.reservations.get(s.id), a = id && life.avatars.get(id); return [`자리 ${i + 1}`, a ? `${a.name} · ${a.phase === 'walking' ? '오는 중' : a.phase === 'leaving' ? '내려오는 중' : '이용 중'}` : '비어 있어요']; }));
+      el<HTMLButtonElement>('use-equipment').disabled = using || slots.every(s => life.reservations.has(s.id) && life.reservations.get(s.id) !== active.id);
+      setText('use-equipment', `${active.name}에게 ${equipment === 'picnicRug' ? '앉기' : '이용'} 부탁하기`);
+      setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
+    }
   }
   if (performance.now() > toastUntil) setText('announcer', '');
 }

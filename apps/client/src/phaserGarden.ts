@@ -455,8 +455,8 @@ class GardenScene extends Phaser.Scene {
       let image = this.props.get(item.id);
       if (!image) { image = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); image.setData('id', item.id); this.props.set(item.id, image); }
       if (item.kind === 'swing') this.placeSwing(image, item); else this.placeProp(image, item);
-      // Outside the editor only seats are clickable, so trees and fences never swallow floor clicks.
-      image.input!.enabled = editing || ['bench', 'swing', 'seesaw', 'picnicTable'].includes(item.kind);
+      // Outside the editor only seats (and fountains, to watch) are clickable, so trees and fences never swallow floor clicks.
+      image.input!.enabled = editing || ['bench', 'swing', 'seesaw', 'picnicTable', 'fountain'].includes(item.kind);
     }
     for (const [id, image] of this.props) if (!live.has(id)) { image.destroy(); this.props.delete(id); }
     for (const [id, view] of this.swingViews) if (!live.has(id)) { for (const o of Object.values(view)) o.destroy(); this.swingViews.delete(id); }
