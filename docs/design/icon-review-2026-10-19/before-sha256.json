@@ -1,0 +1,14 @@
+{
+  "apps\\client\\public\\sprites\\ui\\emotes\\dots.png": "a37f9c2feb53f72ff2868df3235aff85891fb9c419f712e5cde055b3d78a3e74",
+  "apps\\client\\public\\sprites\\ui\\emotes\\exclaim.png": "7835f36e23d7be2955479d8cdc4689098729dc64ad0f6c38dca47591de1cc9a8",
+  "apps\\client\\public\\sprites\\ui\\emotes\\fish.png": "2eeed60d807f0e225906ad5c8ca77aeda6c2269d0d22720c1a7bbb9c20d95b15",
+  "apps\\client\\public\\sprites\\ui\\emotes\\fishing.png": "061b76223113eb03ff9b03131ab03d7a2c4d173fc73ff340be513e23fb182129",
+  "apps\\client\\public\\sprites\\ui\\emotes\\fountain.png": "6832b67362f0ea45412eee2dfdf4c7fd43bb003ae1a89d7fdaf3dc63151fb989",
+  "apps\\client\\public\\sprites\\ui\\emotes\\heart.png": "05ee3bd5ef4072156e312c245d7e6de327458a6ec7eec69a2e980db304285da1",
+  "apps\\client\\public\\sprites\\ui\\emotes\\note.png": "9268acc0d909ad965e18f180f368175da608e2dd0b511ef70c6a411c3025f3f1",
+  "apps\\client\\public\\sprites\\ui\\emotes\\wave.png": "e44b61e1a17d28ced8b39d355219a9d927b903077c095369d91be790a68d9203",
+  "apps\\client\\public\\sprites\\ui\\seasons\\autumn.png": "b58312ff641f6e513a53fc0967cc5dc952f4d58f53eead683aab3b7b3c9cc1dc",
+  "apps\\client\\public\\sprites\\ui\\seasons\\spring.png": "f92e4ee293d2b2e887bbc9df075605e3a2930183e77de435347f0edd38d06457",
+  "apps\\client\\public\\sprites\\ui\\seasons\\summer.png": "6eba1e7c1b26f6645dc82da2f320fd076c484ad2ce9c0287314a7e791ffbc05a",
+  "apps\\client\\public\\sprites\\ui\\seasons\\winter.png": "8e27408aff6f3fc916da01ced34fdeec6b7a23b3454ca3ce0269d53e5cb7d064"
+}

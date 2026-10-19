@@ -9,6 +9,7 @@ import { loadGroundMaterials } from './groundMaterials';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { picnicTabletop, picnicGridArt } from './picnicTable';
 import { fountainFrames, fountainFrame } from './fountainWater';
+import { drinkingWaterFrames, drinkingWaterFrame } from './drinkingWater';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -52,6 +53,7 @@ export class PixelGarden {
   private seesawArt: HTMLCanvasElement[] = [];
   private picnicTop?: HTMLCanvasElement;
   private fountainArt: HTMLCanvasElement[] = [];
+  private drinkingArt: HTMLCanvasElement[] = [];
   private streamBanks?: HTMLCanvasElement;
   private bridgeFront?: HTMLCanvasElement;
   private hits: Hit[] = [];
@@ -101,6 +103,7 @@ export class PixelGarden {
       park.forEach(([kind, art]) => this.parkProps.set(kind, art));
       this.seesawArt = seesawFrames(this.parkProps.get('seesaw')!.image);
       this.fountainArt = fountainFrames(this.parkProps.get('fountain')!.image);
+      this.drinkingArt = drinkingWaterFrames(this.parkProps.get('drinkingFountain')!.image);
       this.streamBanks = waterBankArt(this.parkProps.get('stream')!.image);
       this.bridgeFront = bridgeFrontArt(this.parkProps.get('bridge')!.image);
       const [friends, friendsSw, image, approved, dressed, rearSit] = await Promise.all([
@@ -208,6 +211,7 @@ export class PixelGarden {
     const frame = item.kind === 'seesaw' && !ghost ? this.seesawArt[SEESAW.poses + seesawFrame(this.life.seesawTilt(item.id), this.reduced.matches || this.editor.active)] : undefined;
     if (frame) { const pad = size * SEESAW.pad / 128; c.drawImage(frame, x - pad, y - pad, size + pad * 2, size + pad * 2); }
     else if (item.kind === 'fountain' && !ghost && this.fountainArt.length) c.drawImage(this.fountainArt[fountainFrame(this.last / 1000, this.reduced.matches || this.editor.active)], x, y, size, size);
+    else if (item.kind === 'drinkingFountain' && !ghost && this.drinkingArt.length) c.drawImage(this.drinkingArt[drinkingWaterFrame(this.last / 1000, this.reduced.matches || this.editor.active)], x, y, size, size);
     else c.drawImage(art.image, x, y, size, size);
     c.restore(); c.globalAlpha = 1;
     if (!ghost) this.hits.push({ id: item.id, x, y, w: size, h: size, image: art.image, frame: flip ? -1 : undefined });

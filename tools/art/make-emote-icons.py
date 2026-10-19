@@ -54,41 +54,45 @@ def fish():
                    ('s', lambda x, y: (body(x, y) or tail(x, y)) and y > 9.6),
                    ('h', lambda x, y: body(x, y) and 6 <= y <= 7 and 6 <= x <= 9),
                    ('w', lambda x, y: body(x, y) and 4.6 <= x <= 5.6 and 6 <= y <= 11),
-                   ('k', lambda x, y: 11.5 <= x <= 12.5 and 7 <= y <= 8)], outline_from='fhswk')
+                   ('w', lambda x, y: body(x, y) and 10 <= x < 12 and 6 <= y < 8),
+                   ('k', lambda x, y: 11 <= x < 12 and 7 <= y < 8)], outline_from='fhswk')
 
 
 def fishing():
-    """A fishing rod held from the bottom-left, its line hanging from the tip to a red-and-white float on a ripple."""
-    def near_segment(ax, ay, bx, by, r):
-        def test(x, y):
-            t = max(0, min(1, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2)))
-            return math.hypot(x - ax - t * (bx - ax), y - ay - t * (by - ay)) <= r
-        return test
-    rod = near_segment(2.2, 13.8, 10.6, 2.6, .75)
-    grip = lambda x, y: rod(x, y) and y > 10.6
-    bobber = disc(11.5, 11.6, 2.3)
-    return shaped([('f', rod), ('c', grip),
-                   ('h', lambda x, y: rod(x, y) and not rod(x - 1, y) and not grip(x, y)),
-                   ('l', lambda x, y: 10 <= x <= 11 and 1 <= y <= 2),
-                   ('l', lambda x, y: 11 <= x <= 12 and 2 <= y <= 9.4),
-                   ('r', lambda x, y: bobber(x, y) and y < 11.6),
-                   ('w', lambda x, y: bobber(x, y) and y >= 11.6),
-                   ('b', lambda x, y: 13.8 <= y <= 14.6 and (6 <= x <= 9 or 14 <= x <= 16))], outline_from='fchrw')
+    """A slender two-pixel rod, one-pixel line and small outlined red/white float."""
+    grid = [['.'] * 16 for _ in range(16)]
+    for x, y in [(2,13),(3,12),(4,11),(4,10),(5,9),(6,8),(6,7),(7,6),(8,5),(8,4),(9,3),(10,2)]:
+        grid[y][x] = 'o'
+        grid[y][x+1] = 'c' if y >= 11 else 'h' if y % 3 == 0 else 'f'
+    for x,y in [(11,1),(12,2),*( (12,y) for y in range(3,9) )]:
+        grid[y][x] = 'l'
+    for y,row in [(9,'oo'),(10,'orro'),(11,'owwo'),(12,'oo')]:
+        start = 11 if len(row) == 2 else 10
+        for x,ch in enumerate(row,start): grid[y][x] = ch
+    for x,y in [(8,14),(9,14),(13,14),(14,14)]: grid[y][x] = 'b'
+    return [''.join(row) for row in grid]
 
 
 def fountain():
-    """A two-tier stone fountain: a wide basin with water, a pillar, a small bowl, a jet, and loose drops (no outline)."""
-    basin = lambda x, y: ((x - 8) / 6.6) ** 2 + ((y - 12.2) / 2.9) ** 2 <= 1 and y >= 10.6
-    bowl = lambda x, y: ((x - 8) / 3.8) ** 2 + ((y - 6.8) / 1.6) ** 2 <= 1 and y >= 6
-    pillar = lambda x, y: abs(x - 8) <= 1.1 and 7 <= y <= 11
-    jet = lambda x, y: abs(x - 8) <= .6 and 1 <= y <= 6
-    drops = lambda x, y: any(disc(cx, cy, .75)(x, y) for cx, cy in ((4.5, 3.5), (11.5, 3.5), (2.5, 7.5), (13.5, 7.5)))
-    return shaped([('f', basin), ('f', bowl), ('f', pillar),
-                   ('s', lambda x, y: (basin(x, y) and y > 13) or (pillar(x, y) and x > 8) or (bowl(x, y) and y > 7.4)),
-                   ('h', lambda x, y: basin(x, y) and y > 12 and y < 13 and x < 7),
-                   ('w', lambda x, y: basin(x, y) and y < 12 and abs(x - 8) <= 5.4),
-                   ('w', lambda x, y: bowl(x, y) and y < 7 and abs(x - 8) <= 2.6),
-                   ('W', jet), ('D', drops)], outline_from='fshwW')
+    """Hand-pixelled warm stone bowls and a blue arcing jet, readable at the native bubble size."""
+    return [
+        '................',
+        '.......bb.......',
+        '.....bbWWbb.....',
+        '....bw.WW.wb....',
+        '...bw..ww..wb...',
+        '..b....ww....b..',
+        '....ohwwwwso....',
+        '.....ofhhso.....',
+        '......osso......',
+        '......ohfo......',
+        '..ooowohfowooo..',
+        '.ohwwWWwwwwwwso.',
+        '..offhhffffsso..',
+        '...offffsssso...',
+        '.....oooooo.....',
+        '................',
+    ]
 
 
 def flower():
@@ -102,7 +106,7 @@ def flower():
 
 
 def sun():
-    cx = cy = 7.75
+    cx = cy = 8.0  # Exact half-way point of a 16px canvas, so all eight rays balance.
     core = disc(cx, cy, 4.3)
 
     def ray(x, y):
@@ -124,10 +128,10 @@ def maple():
         if r <= 3.0:
             return True
         return any(abs(a - at) < w and r <= length * (1 - abs(a - at) / w * .75) for at, length, w in lobes)
-    stem = lambda x, y: 9.5 <= y <= 15 and abs(x - (7.75 + (y - 9.5) * .3)) < .7
+    stem = lambda x, y: 10.5 <= y <= 14.5 and abs(x - (7.75 + (y - 10.5) * .18)) < .56
     vein = lambda x, y: leaf(x, y) and abs(x - cx) < .55 and 2.5 <= y <= 9.5
     return shaped([('f', leaf), ('s', lower_right(leaf, cx, cy, 2.5)), ('h', lambda x, y: leaf(x, y) and x + y < 10.5),
-                   ('v', vein), ('b', stem)], outline_from='fhsvb')
+                   ('v', vein), ('b', stem)], outline_from='fhsv')
 
 
 def snowman():
@@ -137,7 +141,7 @@ def snowman():
     return shaped([('f', snow), ('s', shade),
                    ('r', lambda x, y: 4.6 <= x <= 11 and 7 <= y <= 8.2 and snow(x, y)),
                    ('r', lambda x, y: 9 <= x <= 10.2 and 8 <= y <= 10.4),
-                   ('k', lambda x, y: (6.2 <= x <= 7 or 8.6 <= x <= 9.4) and 4 <= y <= 5),
+                   ('k', lambda x, y: (6 <= x < 7 or 9 <= x < 10) and 4 <= y < 5),
                    ('n', lambda x, y: 7.6 <= x <= 9.6 and 5.2 <= y <= 6),
                    ('k', lambda x, y: 7.2 <= x <= 8.2 and (10.2 <= y <= 11 or 12.4 <= y <= 13.2))], outline_from='fhsrkn')
 
@@ -264,7 +268,7 @@ ICONS = {
     },
     # ⛲ a stone fountain with a jet of water.
     'fountain': {
-        'palette': {'o': '#3f4a57', 'f': '#d9d2c3', 's': '#a9a091', 'h': '#f4efe4', 'w': '#5aa7cc', 'W': '#bfe6f2', 'D': '#5aa7cc'},
+        'palette': {'o': '#765a59', 'f': '#e2bb94', 's': '#b58c76', 'h': '#fff0d5', 'w': '#68bad3', 'W': '#d6f5f5', 'b': '#3e829f'},
         'grid': fountain(),
     },
     # Seasons for the picker in the map's top-left corner (sprites/ui/seasons/).

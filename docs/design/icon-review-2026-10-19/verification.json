@@ -1,0 +1,170 @@
+[
+  {
+    "file": "apps/client/public/sprites/ui/emotes/dots.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "a37f9c2feb53f72ff2868df3235aff85891fb9c419f712e5cde055b3d78a3e74"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/exclaim.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "7835f36e23d7be2955479d8cdc4689098729dc64ad0f6c38dca47591de1cc9a8"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/fish.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": true,
+    "sha256": "8f1ff7efb21ebc26fc350589a2a695a3d00b268dc85cdf09dac43756f191dcbe"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/fishing.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 8,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": true,
+    "sha256": "afe5cb10f078a79c260f3340ccc6cc2ac01e1e42c7f9ab974032186c5b720cde"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/fountain.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 7,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "6832b67362f0ea45412eee2dfdf4c7fd43bb003ae1a89d7fdaf3dc63151fb989"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/heart.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "05ee3bd5ef4072156e312c245d7e6de327458a6ec7eec69a2e980db304285da1"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/note.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "9268acc0d909ad965e18f180f368175da608e2dd0b511ef70c6a411c3025f3f1"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/emotes/wave.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 4,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "e44b61e1a17d28ced8b39d355219a9d927b903077c095369d91be790a68d9203"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/seasons/autumn.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": true,
+    "sha256": "4d0f8a9c928efa34fd86ac9360c6d4bf8139d9e31a16dc832255ebf9b83c0f58"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/seasons/spring.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": false,
+    "sha256": "f92e4ee293d2b2e887bbc9df075605e3a2930183e77de435347f0edd38d06457"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/seasons/summer.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 5,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": true,
+    "sha256": "97ce08c1f58e356829e9fae62017491e3f462c61b85512c6c7296fefd01d6007"
+  },
+  {
+    "file": "apps/client/public/sprites/ui/seasons/winter.png",
+    "size": [
+      16,
+      16
+    ],
+    "opaqueColors": 6,
+    "alpha": [
+      0,
+      255
+    ],
+    "changed": true,
+    "sha256": "54665695f389ef0e4705ce2c459ea8ad3212237c97ad17eedf4f17421809fb0a"
+  }
+]

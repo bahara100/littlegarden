@@ -10,6 +10,7 @@ import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { picnicTabletop, picnicGridArt } from './picnicTable';
 import { paintPicnicRug } from './picnicRug';
 import { fountainFrames, fountainFrame } from './fountainWater';
+import { drinkingWaterFrames, drinkingWaterFrame } from './drinkingWater';
 import { LifeSimulation, type Avatar, type AvatarId, type EquipmentId, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
@@ -262,6 +263,7 @@ class GardenScene extends Phaser.Scene {
       if (kind === 'seesaw') seesawFrames(cell).forEach((frame, i) => this.textures.addCanvas(`seesaw-${i}`, frame));
       if (kind === 'picnicTable') this.textures.addCanvas('picnic-tabletop', picnicGridArt(picnicTabletop(fitted)));
       if (kind === 'fountain') fountainFrames(cell).forEach((frame, i) => this.textures.addCanvas(`fountain-${i}`, drawFit(frame, fit)));
+      if (kind === 'drinkingFountain') drinkingWaterFrames(cell).forEach((frame, i) => this.textures.addCanvas(`drinking-water-${i}`, drawFit(frame, fit)));
       if (kind === 'stream') this.textures.addCanvas('stream-banks', waterBankArt(fitted));
       if (kind === 'bridge') this.textures.addCanvas('bridge-front', bridgeFrontArt(fitted));
     }
@@ -394,6 +396,7 @@ class GardenScene extends Phaser.Scene {
       image.setTexture(`park-fit-${item.kind}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind])
         .setDisplaySize(size, size).setFlipX(item.turn % 2 === 1).setDepth(this.rank(item.id));
       if (item.kind === 'fountain' && image !== this.ghost) image.setTexture(`fountain-${fountainFrame(this.time.now / 1000, this.reduced.matches || this.g.editor.active)}`);
+      if (item.kind === 'drinkingFountain' && image !== this.ghost) image.setTexture(`drinking-water-${drinkingWaterFrame(this.time.now / 1000, this.reduced.matches || this.g.editor.active)}`);
       if (item.kind === 'picnicTable' && image !== this.ghost) {
         let top = this.picnicTops.get(item.id);
         if (!top) { top = this.add.image(0, 0, 'picnic-tabletop').setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); top.setData('id', item.id); this.picnicTops.set(item.id, top); }
