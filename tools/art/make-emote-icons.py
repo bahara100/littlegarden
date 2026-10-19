@@ -76,6 +76,21 @@ def fishing():
                    ('b', lambda x, y: 13.8 <= y <= 14.6 and (6 <= x <= 9 or 14 <= x <= 16))], outline_from='fchrw')
 
 
+def fountain():
+    """A two-tier stone fountain: a wide basin with water, a pillar, a small bowl, a jet, and loose drops (no outline)."""
+    basin = lambda x, y: ((x - 8) / 6.6) ** 2 + ((y - 12.2) / 2.9) ** 2 <= 1 and y >= 10.6
+    bowl = lambda x, y: ((x - 8) / 3.8) ** 2 + ((y - 6.8) / 1.6) ** 2 <= 1 and y >= 6
+    pillar = lambda x, y: abs(x - 8) <= 1.1 and 7 <= y <= 11
+    jet = lambda x, y: abs(x - 8) <= .6 and 1 <= y <= 6
+    drops = lambda x, y: any(disc(cx, cy, .75)(x, y) for cx, cy in ((4.5, 3.5), (11.5, 3.5), (2.5, 7.5), (13.5, 7.5)))
+    return shaped([('f', basin), ('f', bowl), ('f', pillar),
+                   ('s', lambda x, y: (basin(x, y) and y > 13) or (pillar(x, y) and x > 8) or (bowl(x, y) and y > 7.4)),
+                   ('h', lambda x, y: basin(x, y) and y > 12 and y < 13 and x < 7),
+                   ('w', lambda x, y: basin(x, y) and y < 12 and abs(x - 8) <= 5.4),
+                   ('w', lambda x, y: bowl(x, y) and y < 7 and abs(x - 8) <= 2.6),
+                   ('W', jet), ('D', drops)], outline_from='fshwW')
+
+
 def flower():
     cx, cy, petals = 7.75, 7.75, []
     for i in range(5):
@@ -246,6 +261,11 @@ ICONS = {
     'fishing': {
         'palette': {'o': '#4a2d1c', 'f': '#b07a45', 'h': '#e2b47a', 'c': '#5d7a4a', 'l': '#8c97a3', 'r': '#e5574b', 'w': '#ffffff', 'b': '#6aa9c4'},
         'grid': fishing(),
+    },
+    # ⛲ a stone fountain with a jet of water.
+    'fountain': {
+        'palette': {'o': '#3f4a57', 'f': '#d9d2c3', 's': '#a9a091', 'h': '#f4efe4', 'w': '#5aa7cc', 'W': '#bfe6f2', 'D': '#5aa7cc'},
+        'grid': fountain(),
     },
     # Seasons for the picker in the map's top-left corner (sprites/ui/seasons/).
     'spring': {
