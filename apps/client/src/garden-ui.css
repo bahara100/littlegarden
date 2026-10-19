@@ -221,6 +221,7 @@ aside { gap: 12px; }
 .secondary-actions button { border-color: #dfe3d2; color: #617553; background: #f5f7ec; padding: 10px 4px; font-size: 10px; border-radius: 9px; }
 .secondary-actions button:hover:enabled { background: #eaf0df; }
 .equipment-shortcuts button { background: #edf2e3; }
+.equipment-shortcuts #request-picnicRug { grid-column: 1 / -1; }
 .scope-note { color: #7c876e; font-size: 9px; line-height: 1.8; margin-top: 10px; }
 .display-panel { margin-top: 0; padding: 0 17px; }
 .display-panel > summary { display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; padding: 15px 0; font-size: 12px; font-weight: 500; color: #5d7153; }

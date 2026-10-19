@@ -7,7 +7,7 @@ import { LifeSimulation, walkable } from '../../apps/client/src/simulation.js';
 
 test('default layout has no overlaps and every seat can be reached', () => {
   assert.equal(layoutError(DEFAULT_LAYOUT.items), null);
-  assert.equal(worldFrom(DEFAULT_LAYOUT.items).seats.length, 3);
+  assert.equal(worldFrom(DEFAULT_LAYOUT.items).seats.length, 5); // Three furniture seats and the fixed two-person rug.
 });
 test('every default footprint covers whole floor tiles, and the editor keeps it that way when rotating', () => {
   const whole = (v: number) => Math.abs(v - Math.round(v)) < 1e-9;
@@ -55,7 +55,7 @@ test('rotation transforms footprints, seat anchors, approaches and facing togeth
 });
 test('storage and restoration preserve instance identity without duplicating objects', () => {
   const e = new LayoutEditor(); e.enter(); e.selected = 'swing'; assert.equal(e.store(), null);
-  assert.equal(e.draft.stored[0].id, 'swing'); assert.equal(worldFrom(e.draft.items).seats.length, 2);
+  assert.equal(e.draft.stored[0].id, 'swing'); assert.equal(worldFrom(e.draft.items).seats.length, 4);
   e.restore('swing'); e.rotate(); assert.equal(e.place(), null);
   assert.equal(e.draft.stored.length, 0); assert.equal(e.draft.items.filter(i => i.id === 'swing').length, 1);
 });
@@ -91,10 +91,10 @@ test('additional furniture has independent seats; a garden without equipment sti
     { id: 'bench-b', kind: 'bench', x: 3.5, z: -2, turn: 0 },
   ];
   assert.equal(layoutError([...empty, ...added]), null);
-  const sim = new LifeSimulation(); sim.applyLayout([...empty, ...added]); assert.equal(sim.seats.length, 4);
+  const sim = new LifeSimulation(); sim.applyLayout([...empty, ...added]); assert.equal(sim.seats.length, 6);
   assert.equal(sim.use('character', 'bench-b'), null); assert.ok(sim.avatars.get('character')!.seatId!.startsWith('bench-b'));
   sim.applyLayout(empty); for (let t = 0; t < 10; t += .1) sim.update(.1);
-  assert.equal(sim.reservations.size, 0); assert.equal(sim.seats.length, 0);
+  assert.equal(sim.reservations.size, 0); assert.equal(sim.seats.length, 2); // The fixed rug remains when furniture is stored.
 });
 test('undo and redo step through placements and storing, and end with editing', () => {
   const e = new LayoutEditor(); e.enter();

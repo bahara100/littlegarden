@@ -4,7 +4,7 @@ import { PixelGarden, type Selection } from './pixelGarden';
 import type { PhaserGarden } from './phaserGarden';
 import { PROFILES } from './friendProfiles';
 import { FRIENDS, activityLabel, clockLabel, dayPart, type AvatarId, type DayPart } from './simulation';
-import { CATALOG, HALF, type Layout, type ItemKind } from './layout';
+import { CATALOG, HALF, PICNIC_RUG_ID, type Layout, type ItemKind } from './layout';
 import { initialLayout } from './parkLayout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
 import { affinityLevel, nextUnlock, todayKey, unlockedFor } from './affinity';
@@ -62,10 +62,11 @@ function refresh() {
   el('friend-actions').hidden = !friend; el('equipment-actions').hidden = !!friend;
   el<HTMLButtonElement>('wave').disabled = using;
   el<HTMLButtonElement>('leave-seat').disabled = !using;
-  for (const equipment of ['bench', 'swing', 'seesaw', 'picnicTable'] as const) {
+  setText('leave-seat', life.seatOf(active)?.kind === 'picnicRug' ? '일어나기' : '내려오기');
+  for (const equipment of ['bench', 'swing', 'seesaw', 'picnicTable', 'picnicRug'] as const) {
     const slots = life.seats.filter(s => s.kind === equipment), free = slots.filter(s => !life.reservations.has(s.id)).length;
     el<HTMLButtonElement>(`request-${equipment}`).disabled = using || !free;
-    setText(`request-${equipment}`, `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : equipment === 'picnicTable' ? '테이블' : '그네'} 이용 · ${free}자리`);
+    setText(`request-${equipment}`, equipment === 'picnicRug' ? `돗자리 앉기 · ${free}자리` : `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : equipment === 'picnicTable' ? '테이블' : '그네'} 이용 · ${free}자리`);
   }
   if (friend) {
     el('model-review').hidden = false;
@@ -84,7 +85,7 @@ function refresh() {
     setText('selection-note', '부탁한 일을 마치면 다시 자유롭게 놀아요.');
   } else {
     el('selection-icon').removeAttribute('data-friend');
-    const equipment = life.layout.find(i => i.id === selected)?.kind ?? 'bench', slots = life.seats.filter(s => s.equipment === selected);
+    const equipment = selected === PICNIC_RUG_ID ? 'picnicRug' : life.layout.find(i => i.id === selected)?.kind ?? 'bench', slots = life.seats.filter(s => s.equipment === selected);
     setText('selection-kind', 'FURNITURE'); setText('selection-icon', equipment === 'bench' ? '▤' : '⋂');
     setText('selection-title', equipment === 'bench' ? '햇살 나무 벤치' : '산들바람 그네');
     setText('selection-subtitle', equipment === 'bench' ? 'GARDEN BENCH / 02 SEATS' : 'GARDEN SWING / 01 SEAT');
@@ -99,9 +100,14 @@ function refresh() {
       setText('selection-subtitle', 'PICNIC TABLE / 04 SEATS');
       setText('selection-description', '양쪽 벤치에 두 명씩 앉을 수 있어요. 친구와 마주 앉아 잠시 쉬어가요.');
     }
+    if (equipment === 'picnicRug') {
+      setText('selection-icon', '▧'); setText('selection-title', '피크닉 돗자리');
+      setText('selection-subtitle', '두 친구의 나들이 자리');
+      setText('selection-description', '돗자리 위에 마주 앉아 쉬어가요. 한 자리씩 이용하고, 쉬고 나면 바깥으로 걸어 나와요.');
+    }
     details(slots.map((s, i) => { const id = life.reservations.get(s.id), a = id && life.avatars.get(id); return [`자리 ${i + 1}`, a ? `${a.name} · ${a.phase === 'walking' ? '오는 중' : a.phase === 'leaving' ? '내려오는 중' : '이용 중'}` : '비어 있어요']; }));
     el<HTMLButtonElement>('use-equipment').disabled = using || slots.every(s => life.reservations.has(s.id) && life.reservations.get(s.id) !== active.id);
-    setText('use-equipment', `${active.name}에게 이용 부탁하기`);
+    setText('use-equipment', `${active.name}에게 ${equipment === 'picnicRug' ? '앉기' : '이용'} 부탁하기`);
     setText('selection-note', '친구 목록에서 지시할 대상을 바꿀 수 있어요.');
   }
   if (performance.now() > toastUntil) setText('announcer', '');
@@ -206,6 +212,7 @@ try {
   el('request-swing').onclick = () => garden?.commandKind('swing');
   el('request-seesaw').onclick = () => garden?.commandKind('seesaw');
   el('request-picnicTable').onclick = () => garden?.commandKind('picnicTable');
+  el('request-picnicRug').onclick = () => garden?.commandKind('picnicRug');
   el('use-equipment').onclick = () => garden?.commandUse(selected);
   el('edit-mode').onclick = () => {
     if (!garden) return;

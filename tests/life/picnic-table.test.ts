@@ -17,10 +17,10 @@ test('picnic tabletop long and short edges follow the grid, preserving the groun
 
 test('picnic tables have four reachable seats, separate approaches and inward facing on every rotation', () => {
   for (let turn = 0; turn < 4; turn++) {
-    const item = table(turn), nav = worldFrom([item]);
-    assert.equal(nav.seats.length, 4); assert.equal(new Set(nav.seats.map(s => s.id)).size, 4);
-    assert.equal(new Set(nav.seats.map(s => `${s.approach.x},${s.approach.z}`)).size, 4);
-    for (const s of nav.seats) {
+    const item = table(turn), nav = worldFrom([item]), seats = nav.seats.filter(s => s.kind === 'picnicTable');
+    assert.equal(seats.length, 4); assert.equal(new Set(seats.map(s => s.id)).size, 4);
+    assert.equal(new Set(seats.map(s => `${s.approach.x},${s.approach.z}`)).size, 4);
+    for (const s of seats) {
       assert.ok(findPath({ x: -.5, z: 2.5 }, s.approach, nav)); assert.ok(walkable(s.approach, nav));
       for (const v of [s.approach.x, s.approach.z]) assert.equal(v - Math.floor(v), .5);
       const dot = Math.sin(s.yaw) * (item.x - s.x) + Math.cos(s.yaw) * (item.z - s.z);
@@ -44,7 +44,7 @@ test('friends reserve different seats on both sides, sit, leave onto free tiles 
 
 test('independent tables keep independent seats and free friends can choose the picnic table', () => {
   const sim = new LifeSimulation(() => .1); sim.applyLayout([table(), { ...table(1, 'second'), x: -5, z: -3.5 }]);
-  assert.equal(sim.seats.length, 8);
+  assert.equal(sim.seats.filter(s => s.kind === 'picnicTable').length, 8);
   assert.equal(sim.use('peach', 'table'), null); assert.equal(sim.use('lilac', 'second'), null);
   until(sim, () => sim.avatars.get('character')!.seatId !== null);
   assert.equal(sim.seatOf(sim.avatars.get('character')!)!.kind, 'picnicTable');

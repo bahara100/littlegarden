@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { LayoutEditor } from './editor';
+import { PICNIC_RUG_ID, onPicnicRug } from './layout';
 import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
 import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
@@ -19,6 +20,7 @@ import { project, unproject } from './isometric';
 import { sceneOrder, walkerDepth } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
+import { friendRearSitArt, friendRearSitTexture } from './friendSittingArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
@@ -195,7 +197,7 @@ class GardenScene extends Phaser.Scene {
       this.load.image(`idle-${source}`, `${base}${art.idle}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
     }
-    for (const id of FRIEND_IDS) this.load.image(`seesaw-sit-${id}`, `${base}sprites/garden/seesaw-sit-v1/${id}-ne.png`);
+    for (const id of FRIEND_IDS) this.load.image(friendRearSitTexture(id), `${base}${friendRearSitArt(id)}`);
     for (const id of FRIEND_IDS) for (const source of ['se', 'ne'] as const) {
       const art = friendArt(id, source);
       this.load.image(friendTexture(id, 'idle', source), `${base}${art.idle}`);
@@ -205,7 +207,7 @@ class GardenScene extends Phaser.Scene {
   /** Bench and swing art only has front views: turns 0 and 3 face down-left (SW), turns 1 and 2 down-right (SE). */
   private seatFacing(seat: Seat): 'sw' | 'se' | 'nw' | 'ne' {
     const turn = this.g.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0;
-    if (seat.kind === 'seesaw' || seat.kind === 'picnicTable') return scarletDirection(seat.yaw);
+    if (seat.kind === 'seesaw' || seat.kind === 'picnicTable' || seat.kind === 'picnicRug') return scarletDirection(seat.yaw);
     return turn === 0 || turn === 3 ? 'sw' : 'se';
   }
 
@@ -489,7 +491,7 @@ class GardenScene extends Phaser.Scene {
   private rank(id: string) { return this.order.get(id) ?? 0; }
   private sortScene(items: PlacedItem[]) {
     const pending = this.g.editor.pending, editing = this.g.editor.active;
-    const walkers = editing ? [] : [...this.g.life.avatars.values()].filter(a => !this.g.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z }));
+    const walkers = editing ? [] : [...this.g.life.avatars.values()].filter(a => !this.g.life.riding(a) || this.g.life.seatOf(a)?.kind === 'picnicRug').map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z }));
     this.order = sceneOrder(pending ? [...items, pending] : items, walkers);
   }
   private placeAvatar(a: Avatar, still: boolean) {
@@ -502,14 +504,14 @@ class GardenScene extends Phaser.Scene {
     const facing = seat && seated ? this.seatFacing(seat) : null;
     const friendSit = a.id !== 'character' && !!facing && this.textures.exists('friends-sit');
     // While still standing at the start of sitting down (or end of getting up) the feet stay on the ground.
-    // New SD sitting art is not made yet. Keep its new idle instead of changing costume to the old sit sheet.
+    // Scarlet keeps her approved idle until her own sitting art is available; the two friends have seated poses.
     const drawnSit = friendSit;
     const standingOnSeat = drawnSit && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const lift = !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : standingOnSeat ? 0 : seated * SEAT_LIFT.drawn[seat!.kind];
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
-    const z = seat && seated ? this.rank(seat.equipment) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, this.items, this.order);
+    const z = seat && seated && seat.kind !== 'picnicRug' ? this.rank(seat.equipment) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, this.items, this.order);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.g.life.seesawTilt(seat.equipment), still)) * U * seated : 0;
     const x = p.x + swing.x, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
@@ -520,7 +522,7 @@ class GardenScene extends Phaser.Scene {
       else view.sprite.setTexture(`idle-${source}`);
       view.sprite.setFlipX(flipX).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
-      if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(`seesaw-sit-${a.id}`).setFlipX(facing === 'nw');
+      if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(friendRearSitTexture(a.id)).setFlipX(facing === 'nw');
       else view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
       view.sprite.setOrigin(.5, .97).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     } else {
@@ -569,6 +571,7 @@ class GardenScene extends Phaser.Scene {
   private pick(p: Phaser.Input.Pointer): string | undefined {
     const hit = (this.input.hitTestPointer(p) as Phaser.GameObjects.Image[]).filter(o => o.input?.enabled).sort((a, b) => b.depth - a.depth)[0];
     if (hit) return hit.getData('id');
+    if (!this.g.editor.active && onPicnicRug(this.ground(p))) return PICNIC_RUG_ID;
     // Floor items remain selectable in the editor even though they are drawn on the floor texture.
     if (this.g.editor.active) {
       const q = this.ground(p);

@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "status": "awaiting-user-review",
+  "frameSize": [
+    96,
+    96
+  ],
+  "directions": [
+    "NE",
+    "NW"
+  ],
+  "frameCountPerDirection": 1,
+  "mirror": "x -> 95 - x",
+  "method": "Built-in image_gen complete rear seated draft; Pixelorama uniform full-frame scaling, existing front-sit palette and lossless layer split",
+  "sourceImage": "source-sit-ai.png",
+  "sourceHeadWidth": 603,
+  "targetHeadWidth": 48,
+  "targetHeadTop": 5,
+  "layerSplitRow": 52,
+  "nativeLayers": [
+    "body",
+    "head"
+  ],
+  "visibleColors": 16,
+  "frontPoseReference": "garden-body-sit-friends-v1",
+  "rearStyleReference": "garden-body-walk-ne-v2/source-cycle.png",
+  "runtimeConnected": false,
+  "technicalChecks": {
+    "binaryAlpha": true,
+    "wholeSpriteConnected": true,
+    "layersRecomposeExactly": true,
+    "mirrorExact": true
+  },
+  "preservedReferences": {
+    "docs/art/pixel/garden-body-sit-friends-v1/sit-se.png": "8072fb8780a937bedfb48bd7e8a7be67f8af15fbc0017c808775dabc930b7ef3",
+    "docs/art/pixel/garden-body-sit-friends-v1/sit-sw.png": "9a1cf70a3f7c462c6ae5b9724aca388cadb799fbf5abaee4da5a7d9d7def860b",
+    "docs/art/pixel/garden-body-walk-ne-v8/walk.png": "06ff9beb071485c5a187fa0cbb5678f67e709c69ae24ac62476133069edc7bcd",
+    "docs/art/pixel/garden-body-walk-se-v20/walk.png": "d8372372c0cdefca55e41fba204a0c8e9ab4808a2e6265a46877abd7e0de12fe"
+  },
+  "assets": [
+    {
+      "file": "sit-ne.png",
+      "sha256": "ad1e11a899176bbc8438de9e7efa366b214ceefc10491873edd56650ca4e4c6d"
+    },
+    {
+      "file": "sit-nw.png",
+      "sha256": "363fc3600c16e40e01be305b1c2e81aba686369d65882f7d89ddf950e26a5041"
+    },
+    {
+      "file": "sit-head-ne.png",
+      "sha256": "b1dede6095c8e315b605ab4930b77e7bc81c0cd5a362c2efa570b820339afc0e"
+    },
+    {
+      "file": "sit-head-nw.png",
+      "sha256": "553d68ebb6c7453ef3c80ae3622dd056e48d3a6438101fc87a642b95a40feb18"
+    },
+    {
+      "file": "sit-body-ne.png",
+      "sha256": "a12e85acc8f67bb0016df9f24c48996eb9aad94fad6356b7110fcc845940780c"
+    },
+    {
+      "file": "sit-body-nw.png",
+      "sha256": "f64eeb1aaf14f923a90d626b1a6b4f76e18069a73cbfc918850af6334981496e"
+    },
+    {
+      "file": "sit-ne-preview-6x.png",
+      "sha256": "68c2364f4d3e2d4cb94d7b7d99aa5af0893cf6a484eaed2edd116e0b07ff0d06"
+    },
+    {
+      "file": "sit-nw-preview-6x.png",
+      "sha256": "b12748b20b53618e197a88ce5f9020d760945064aef4bebd273e6f2d3482baf3"
+    },
+    {
+      "file": "rear-pair-preview.png",
+      "sha256": "c7931614297afc89d6bc75be6be0954a93c4630198f7bdc7813ccc5464711480"
+    },
+    {
+      "file": "palette.json",
+      "sha256": "e009ff13115acdb4eccc10524a9d2e8d41ae63c24706c74172697e46df1a6b2e"
+    },
+    {
+      "file": "prompt.txt",
+      "sha256": "783ceac5620673e083bcc7c1861dc2511412e2ebd9628613d37ee65d705058eb"
+    },
+    {
+      "file": "garden-body-sit-ne-v1.pxo",
+      "sha256": "5b2b1957c222e705cfed177a48a975aba4de94ff701381832ac5120d5fc43a6a"
+    }
+  ],
+  "note": "Technical checks do not mean pose approval. No costume/seat-height/game changes."
+}

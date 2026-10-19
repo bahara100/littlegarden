@@ -1,5 +1,7 @@
 # 캐릭터 제작 시 유지할 사용자 결정
 
+- **피크닉 돗자리 2인 앉기 (2026-10-19)**: 사용자 요청으로 고정 `PICNIC` 돗자리에 두 자리를 연결했다. `PICNIC_RUG_ID='picnic-rug'`, 좌석 종류 `picnicRug`이며 배치 아이템/저장 스키마에 추가하지 않는다. `worldFrom()`은 가구가 없어도 고정 돗자리 두 좌석을 포함하므로 특정 기구의 좌석 수를 검사할 때 종류별로 필터한다. 직접 돗자리 클릭 또는 `request-picnicRug` 버튼으로 예약하고 서로 마주보며 쉬며, 일어나면 바깥 칸으로 나간 뒤 자리를 해제한다. 모모·루루의 기존 앞 앉기/새 뒤 앉기를 쓰고 바닥 높이 `SEAT_LIFT.drawn.picnicRug=-.62`로 낮춘다. 돗자리 이용자는 기구 rank가 아니라 본인 바닥 위치로 앞뒤 정렬한다. 저장 배치·그림·크기는 유지한다. `tests/life/picnic-rug.test.ts`, `tests/e2e/picnic-rug.spec.ts`, 확인 그림 `docs/design/picnic-rug-seating-2026-10-19/`.
+
 - **새 뒤 앉기 베이스 → 모모·루루 의상 V2 (2026-10-19, 사용자 검수 전)**: 사용자가 `body-sit-ne-v1`의 새 베이스를 모모·루루에게 적용하라고 했다. 원본은 `garden-body-sit-ne-v1/`(96×96 NE 한 컷·머리/몸, NW 정확한 반전). 의상 결과는 `garden-friends-sit-rear-v2/`, 각 캐릭터 NE 한 프레임 다리/의상/머리 3레이어 `.pxo`와 NW 반전 PNG다. 기존 V2 뒤 대기 머리 픽셀은 색·형태·크기를 보존해 **새 앉기에서만 x+4px, y변경 없이** 목 중심에 맞췄다. 새 베이스 다리/발 실루엣에 양말·갈색 신발을 입히고, 별도 AI 의상 초안으로 앉은 원피스·소매·등 리본을 맞췄다. `friendSittingArt.ts`의 `sprites/garden/friends-sit-rear-v2/`를 두 렌더러 뒤쪽 시소/테이블 좌석에 연결했다. **앞 앉기·게임 걷기 V2·수동 V8·좌석 높이는 유지**한다. 검수 `/friends-sit-rear-v2/index.html`, 재현 `build-garden-friends-sit-rear-v2.gd` / `package-garden-friends-sit-rear-v2.py`. 머리 보존·레이어 합성·발 실루엣·미러·실제 탑승 기술 검사를 작화 승인으로 취급하지 않는다.
 
 - **모모·루루 의상 걷기 V5 사용자 승인 (2026-10-18)**: 사용자가 V5를 보고 “좋아. 여기까진 오케이야.”라고 확정했다. `garden-friends-base-walk-v5/`의 팔 위치/굵기와 모모 밑창을 이후 작화 기준으로 유지한다. 게임 V2 선택은 별도 변경 요청 전까지 유지한다. 아래 V5의 검수 전 표기는 이 승인으로 대체된다.

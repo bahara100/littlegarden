@@ -5,6 +5,20 @@ import { createHash } from 'node:crypto';
 import { FRIEND_IDS, FRIEND_NAMES, FRIEND_BODY, FRIEND_DIRECTIONS, FRIEND_SPEED, FRIEND_FRAME_DISTANCE, FriendWalkCycle, friendArt } from '../../apps/client/src/friendBodyArt';
 import { scarletDirection } from '../../apps/client/src/scarletDirections';
 import { LifeSimulation } from '../../apps/client/src/simulation';
+import { FRIEND_REAR_SIT, friendRearSitArt } from '../../apps/client/src/friendSittingArt';
+
+test('rear seated game sprites are the exact newly tailored base poses, separate from approved walking V2', () => {
+  const folder = 'docs/art/pixel/garden-friends-sit-rear-v2';
+  const manifest = JSON.parse(readFileSync(`${folder}/manifest.json`, 'utf8'));
+  for (const id of FRIEND_IDS) {
+    const who = FRIEND_NAMES[id], bytes = readFileSync(`apps/client/public/${friendRearSitArt(id)}`);
+    assert.deepEqual(bytes, readFileSync(`${folder}/${who}/full-ne.png`));
+    assert.equal(bytes.readUInt32BE(16), FRIEND_REAR_SIT.frameSize);
+    assert.equal(bytes.readUInt32BE(20), FRIEND_REAR_SIT.frameSize);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.characters[who].assets['full-ne.png']);
+    assert.ok(friendArt(id, 'ne').walk.includes('base-walk-v2'));
+  }
+});
 
 test('both runtime wardrobes match reviewed sheets and approved base provenance', () => {
   const folder = 'docs/art/pixel/garden-friends-base-walk-v2';

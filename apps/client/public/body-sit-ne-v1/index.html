@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>공통 몸체 · 뒤쪽 앉기 V1</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f1e8;color:#514354;font:16px/1.65 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:28px}nav{display:flex;gap:12px 20px;flex-wrap:wrap}a{color:#795780}h1{font-size:27px;margin:24px 0 4px}h2{font-size:17px;margin:14px}p{margin:10px 0}.badge{display:inline-block;border-radius:20px;background:#e4e9d7;color:#61714f;padding:4px 12px;font-size:14px}.tools{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:20px 0}button{font:inherit;color:#66516b;background:#fffaf7;border:1px solid #cbbccc;border-radius:9px;padding:7px 14px;cursor:pointer}button[aria-pressed=true]{background:#e7dced}button:focus-visible,a:focus-visible{outline:3px solid #b195b5;outline-offset:3px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}article{background:#fffdf9;border:1px solid #ddd5de;border-radius:16px;overflow:hidden;text-align:center}.canvas{background:repeating-conic-gradient(#e9e3ec 0 25%,#faf7fb 0 50%) 0/24px 24px;position:relative;aspect-ratio:1}.canvas img{display:block;width:100%;height:auto;image-rendering:pixelated}.seat{display:none;position:absolute;left:37%;right:27%;top:75%;height:0;border-top:2px dashed #94865a;pointer-events:none}.guides .seat{display:block}.note{font-size:14px;color:#807080}.files{margin:24px 0}.native{width:96px;height:96px;image-rendering:pixelated}.originals{display:flex;gap:12px;align-items:center;margin-top:14px}.originals span{font-size:14px}footer{margin:24px 0;color:#807080;font-size:14px}@media(max-width:600px){main{padding:16px}.grid{gap:10px}h1{font-size:23px}h2{font-size:14px;margin:10px}}
+</style>
+<main>
+<nav><a href="../body-sit-friends-v1/index.html">기존 앞쪽 앉기</a><a href="../body-walk-ne-v8/index.html">수동 수정 뒤 걷기</a><a href="../">공원</a></nav>
+<h1>공통 몸체 · 뒤쪽 앉기 V1</h1>
+<span class="badge">96×96 · 방향당 정지 1컷 · 검토용</span>
+<p>등과 목덜미가 보이는 뒤쪽 앉기입니다. 무릎은 몸 앞쪽으로 모으고 두 발을 가까이 내려, 짧은 다리가 접힌 자세를 만들었습니다.</p>
+<div class="tools"><button id="body-only" aria-pressed="false">몸체만 보기</button><button id="guides" aria-pressed="false">앉는 높이 기준선</button><span class="note">확대 그림과 아래 원본은 같은 도트입니다.</span></div>
+<section class="grid">
+<article><h2>새 앉기 · 뒤오른쪽 NE ↗</h2><div class="canvas"><img src="sit-ne.png" data-full="sit-ne.png" data-body="sit-body-ne.png" alt="뒤오른쪽으로 앉은 베이스" width="96" height="96"><i class="seat"></i></div></article>
+<article><h2>좌우 반전 · 뒤왼쪽 NW ↖</h2><div class="canvas"><img src="sit-nw.png" data-full="sit-nw.png" data-body="sit-body-nw.png" alt="뒤왼쪽으로 앉은 베이스" width="96" height="96"><i class="seat"></i></div></article>
+<article><h2>기존 참고 · 앞오른쪽 SE ↘</h2><div class="canvas"><img src="reference-front-se.png" data-full="reference-front-se.png" data-body="reference-front-body-se.png" alt="기존 앞오른쪽 앉기" width="96" height="96"><i class="seat"></i></div></article>
+<article><h2>기존 참고 · 앞왼쪽 SW ↙</h2><div class="canvas"><img src="reference-front-sw.png" data-full="reference-front-sw.png" data-body="reference-front-body-sw.png" alt="기존 앞왼쪽 앉기" width="96" height="96"><i class="seat"></i></div></article>
+</section>
+<div class="originals"><span>96×96 원본</span><img class="native" src="sit-ne.png" alt="NE 원본"><img class="native" src="sit-nw.png" alt="NW 원본"></div>
+<p class="files"><a href="layers.zip">PNG·레이어·편집 원본 ZIP</a> · <a href="garden-body-sit-ne-v1.pxo">Pixelorama 원본</a> · <a href="manifest.json">제작 기록</a></p>
+<footer>머리·몸 레이어는 완성 전신을 손실 없이 분리했습니다. 기존 걷기·앞쪽 앉기는 보존했고, 새 시안의 의상 적용과 게임 연결은 아직 하지 않았습니다. 점선은 자세 비교를 위한 기준이며 기구의 실제 좌석 높이는 아닙니다.</footer>
+</main>
+<script>
+document.querySelector('#body-only').onclick=function(){const on=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',String(on));document.querySelectorAll('[data-full]').forEach(img=>img.src=on?img.dataset.body:img.dataset.full);this.textContent=on?'전신 보기':'몸체만 보기'};
+document.querySelector('#guides').onclick=function(){const on=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',String(on));document.body.classList.toggle('guides',on)};
+</script>
+</html>

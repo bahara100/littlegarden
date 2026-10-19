@@ -1,6 +1,8 @@
 import { LayoutEditor } from './editor';
+import { PICNIC_RUG_ID, onPicnicRug } from './layout';
 import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
 import { paintPicnicRug } from './picnicRug';
+import { friendRearSitArt } from './friendSittingArt';
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
 import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
 import { loadGroundMaterials } from './groundMaterials';
@@ -116,7 +118,7 @@ export class PixelGarden {
           }));
           return [id, new Map(sources)] as const;
         })),
-        Promise.all(FRIEND_IDS.map(async id => [id, await this.loadImage(`sprites/garden/seesaw-sit-v1/${id}-ne.png`)] as const)),
+        Promise.all(FRIEND_IDS.map(async id => [id, await this.loadImage(friendRearSitArt(id))] as const)),
       ]);
       if (this.disposed) return;
       approved.forEach(([source, art]) => this.approvedArt.set(source, art));
@@ -234,7 +236,7 @@ export class PixelGarden {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
-    const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
+    const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' || seat?.kind === 'picnicRug' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const drawnSit = a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat;
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
@@ -301,11 +303,11 @@ export class PixelGarden {
       this.drawGround(items);
       // Back to front by ground boxes (drawOrder.ts); a friend on a seat is drawn just after that seat.
       const friends = this.editor.active ? [] : [...this.life.avatars.values()];
-      const order = sceneOrder(items, friends.filter(a => !this.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
+      const order = sceneOrder(items, friends.filter(a => !this.life.riding(a) || this.life.seatOf(a)?.kind === 'picnicRug').map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
       const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
       for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .2, draw: () => this.drawPicnicTop(item) });
       for (const item of items) if (['pond', 'stream', 'bridge'].includes(item.kind)) layers.push({ depth: order.get(item.id)! + (item.kind === 'bridge' ? .2 : 0), draw: () => this.drawRaisedWater(item) });
-      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, items, order), draw: () => this.drawAvatar(a) }); }
+      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat && seat.kind !== 'picnicRug' ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, items, order), draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');
@@ -331,6 +333,7 @@ export class PixelGarden {
       }
       return hit.id;
     }
+    if (!this.editor.active && onPicnicRug(this.ground(x, y))) return PICNIC_RUG_ID;
     // Floor items remain selectable in the editor even though they are drawn first.
     if (this.editor.active) {
       const p = this.ground(x, y);

@@ -15,14 +15,14 @@ function setup(turn = 0) {
 
 test('all seesaw rotations have two reachable, distinct ends and tile-centred approaches', () => {
   for (let turn = 0; turn < 4; turn++) {
-    const nav = worldFrom([prop(turn)]); assert.equal(nav.seats.length, 2);
-    assert.notDeepEqual(nav.seats[0].approach, nav.seats[1].approach);
-    const [left, right] = nav.seats;
+    const nav = worldFrom([prop(turn)]), seats = nav.seats.filter(s => s.kind === 'seesaw'); assert.equal(seats.length, 2);
+    assert.notDeepEqual(seats[0].approach, seats[1].approach);
+    const [left, right] = seats;
     for (const [a, b] of [[left, right], [right, left]]) {
       const dx = b.x - a.x, dz = b.z - a.z, length = Math.hypot(dx, dz);
       assert.ok(Math.sin(a.yaw) * dx / length + Math.cos(a.yaw) * dz / length > .999, 'riders must face the opposite seat');
     }
-    for (const s of nav.seats) {
+    for (const s of seats) {
       assert.ok(walkable(s.approach, nav)); assert.ok(findPath({ x: -.5, z: 2.5 }, s.approach, nav));
       for (const v of [s.approach.x, s.approach.z]) assert.equal(v - Math.floor(v), .5);
     }

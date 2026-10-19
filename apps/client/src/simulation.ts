@@ -272,7 +272,7 @@ export class LifeSimulation {
     if (this.ponds.length && this.random() < LAKE.visit && !this.watchPond(a.id, null, false)) return;
     // Sit together: a free bench seat beside a friend who is sitting (or about to) is the first pick, most times.
     if (a.lastEquipment !== null && this.random() < REACTION.sitTogether) {
-      const beside = this.seats.find(s => (s.kind === 'bench' || s.kind === 'picnicTable') && s.equipment !== left && !this.reservations.has(s.id) &&
+      const beside = this.seats.find(s => (s.kind === 'bench' || s.kind === 'picnicTable' || s.kind === 'picnicRug') && s.equipment !== left && !this.reservations.has(s.id) &&
         this.seats.some(o => o.equipment === s.equipment && o.id !== s.id && this.reservations.has(o.id) && this.reservations.get(o.id) !== a.id));
       if (beside && !this.use(a.id, beside.equipment, false)) return;
     }
@@ -392,7 +392,7 @@ export class LifeSimulation {
         if (a.phase === 'boarding' && a.progress === 1) {
           a.phase = s.kind === 'swing' ? 'swinging' : 'seated'; a.seesaw = s.kind === 'seesaw' ? 'waiting' : null;
           a.lastEquipment = s.kind; this.moment(a, 'seat');
-          const duration = s.kind === 'seesaw' ? 25 : s.kind === 'picnicTable' ? (18 + this.random() * 6) * (this.night ? DAY.nightRest : 1) : (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1) * (PROFILES[a.id].rest ?? 1);
+          const duration = s.kind === 'seesaw' ? 25 : s.kind === 'picnicTable' || s.kind === 'picnicRug' ? (18 + this.random() * 6) * (this.night ? DAY.nightRest : 1) : (7 + this.random() * 5) * (this.night ? DAY.nightRest : 1) * (PROFILES[a.id].rest ?? 1);
           a.until = this.time + duration;
         }
         else if (a.phase === 'leaving' && a.progress === 0) { a.leftItem = s.equipment; this.settle(a, 2.5); }
@@ -418,6 +418,7 @@ export class LifeSimulation {
   }
 }
 export function activityLabel(a: Avatar) {
+  if (a.phase === 'seated' && a.lastEquipment === 'picnicRug') return '돗자리에서 쉬는 중';
   if (a.phase === 'seated' && a.lastEquipment === 'picnicTable') return '테이블에서 쉬는 중';
   if (a.phase === 'seated' && a.seesaw) return a.seesaw === 'playing' ? '시소 타는 중' : '시소에서 친구 기다리는 중';
   const labels: Record<Phase, string> = { idle: '잠깐 쉬는 중', walking: a.seatId ? '기구로 가는 중' : '산책하는 중', boarding: '자리에 앉는 중', seated: '벤치에서 쉬는 중', swinging: '그네 타는 중', leaving: '내려오는 중', waving: '인사하는 중', greeting: '친구와 인사하는 중', happy: '기분 좋은 중', watching: '호수 구경하는 중' };

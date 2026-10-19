@@ -1,0 +1,66 @@
+{
+  "version": 2,
+  "status": "awaiting-user-review",
+  "frameSize": [
+    96,
+    96
+  ],
+  "directions": [
+    "NE",
+    "NW"
+  ],
+  "base": "garden-body-sit-ne-v1",
+  "method": "AI tailored costume, exact common seated legs, original head translated +4px; Pixelorama 3 layers",
+  "runtimeConnected": true,
+  "walkingRuntime": "base-walk-v2 (unchanged)",
+  "characters": {
+    "momo": {
+      "headMatchesOriginal": true,
+      "headOffset": [
+        4,
+        0
+      ],
+      "baseFeetExact": true,
+      "layersRecomposeExactly": true,
+      "mirrorExact": true,
+      "visibleColors": 53,
+      "assets": {
+        "full-ne.png": "402f9a503b58fc3c6d313779b201cd10ce4e8d160351479392b76607d714d5bc",
+        "full-nw.png": "8f352feda964d8ec041b028c77fcab8213313a306ea840f9f2d1cd3085afc294",
+        "legs-ne.png": "56e08a24a065d4f0ba77b974f26b5a81aae590ab0633ccd584fae9c970e6922c",
+        "legs-nw.png": "d66f343ea8b227af08fbf3215d8f3f85ddfecad75bba8c8112018d17d2d1a6c0",
+        "costume-ne.png": "a6a2e1d2d866eda2ffd07af2c6f5c0601e81700878d1ea100d4d7b3d6e98a4eb",
+        "costume-nw.png": "306372ce71ed6dbfcaf0c9004e423681f4ed5289190aa452d42cfddc39df5d66",
+        "head-ne.png": "4ec262726d6d9209ca98479d0b86777fcb712ea9add12f7b4bc6192f5b6e5ec7",
+        "head-nw.png": "ec4ac3c08666cf2228e0b89569023d62c81d273f14acce42fded90d241ff990b",
+        "body-ne.png": "f35c3848dd6b3751170f620ed6c671c87ae7baadfad041e53a28f5c297c89ee1",
+        "body-nw.png": "aa24038fc5c0366838e28f15ee093850d7d55bb9100c5603d7e0a42db3b30048",
+        "momo-rear-sit-v2.pxo": "4e7785301f9dec8ca703c061c0df6ecdd7fa9d839192d335bf5fe9c58bc0c384"
+      }
+    },
+    "lulu": {
+      "headMatchesOriginal": true,
+      "headOffset": [
+        4,
+        0
+      ],
+      "baseFeetExact": true,
+      "layersRecomposeExactly": true,
+      "mirrorExact": true,
+      "visibleColors": 52,
+      "assets": {
+        "full-ne.png": "58975ea7f16d6011ad56a4332cb5c166f09a393bc4be30edda76c19360d83300",
+        "full-nw.png": "558d87c35d4680e536022b859f2d4657072ba18c6abc5406e137965ee7a4d931",
+        "legs-ne.png": "56e08a24a065d4f0ba77b974f26b5a81aae590ab0633ccd584fae9c970e6922c",
+        "legs-nw.png": "d66f343ea8b227af08fbf3215d8f3f85ddfecad75bba8c8112018d17d2d1a6c0",
+        "costume-ne.png": "0adb48f5ce56ad3bd5882fe6b6c40f2f8886d418405992ecf172f1cc644104da",
+        "costume-nw.png": "c359f14fe4eb1363fb14de66d152c2665095180edf04b607142350000cdad696",
+        "head-ne.png": "7524e1907799d9b1c095462080acd8d1b3983be640251fe2c52c6f8a15b1eb4b",
+        "head-nw.png": "29fef6413857706ae14c5df7e185caf85a3a1669fd71de40664d50670e5e8e09",
+        "body-ne.png": "79184d4c551c8f47ed8764764e533cfb0ee2d629dee6eb202bdad8231071d256",
+        "body-nw.png": "f310a7fd10b1a7ebc9a8522a9158f6d59fc1d265a35f8d7ab386104aa3cb3b69",
+        "lulu-rear-sit-v2.pxo": "6a8fb2192b714ee504ad2600d6ba2d2501a272162e39f8cfa657ec0d1619a5a4"
+      }
+    }
+  }
+}

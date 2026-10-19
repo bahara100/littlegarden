@@ -42,7 +42,7 @@ export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond' ||
 export const PROP_ART_BASE: Record<ItemKind, number> = { bench: .2, swing: 1.05, tree: .2, flower: .2, fence: .2, path: .2, pond: .2,
   picnicTable: 1.2, seesaw: 1, drinkingFountain: .4, fountain: 1.2, bridge: 1.5, stream: 1.5 };
 /** Screen lift (tiles) of a seated rider's feet above the seat's ground point; the swing seat hangs low in its art. */
-export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33, seesaw: .08, picnicTable: .3 }, standing: { bench: .75, swing: -.1, seesaw: .48, picnicTable: .8 } } as const;
+export const SEAT_LIFT = { drawn: { bench: .45, swing: -.33, seesaw: .08, picnicTable: .3, picnicRug: -.62 }, standing: { bench: .75, swing: -.1, seesaw: .48, picnicTable: .8, picnicRug: 0 } } as const;
 export function transform(local: Point, item: PlacedItem): Point {
   const angle = item.turn * Math.PI / 2, c = Math.round(Math.cos(angle)), s = Math.round(Math.sin(angle));
   return { x: item.x + local.x * c + local.z * s, z: item.z - local.x * s + local.z * c };
@@ -73,8 +73,10 @@ export function snapToTiles<T extends PlacedItem>(item: T): T {
 }
 /** The two fixed floor features, on whole tiles: a picnic rug and a garden sign. */
 export const PICNIC = { x: -3, z: 4, w: 2, d: 2 } as const;
+export const PICNIC_RUG_ID = 'picnic-rug';
+export const onPicnicRug = (p: Point) => Math.abs(p.x - PICNIC.x) <= PICNIC.w / 2 && Math.abs(p.z - PICNIC.z) <= PICNIC.d / 2;
 export const SIGN = { x: -.5, z: -HALF + 1.5, w: .4, d: .4 } as const;
-export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing' | 'seesaw' | 'picnicTable'; approach: Point; height: number; yaw: number; side?: -1 | 1; bench?: 'near' | 'far' }
+export interface Seat extends Point { id: string; equipment: string; kind: 'bench' | 'swing' | 'seesaw' | 'picnicTable' | 'picnicRug'; approach: Point; height: number; yaw: number; side?: -1 | 1; bench?: 'near' | 'far' }
 export interface NavigationWorld { rectangles: { x: number; z: number; w: number; d: number }[]; trunks: (Point & { r: number })[]; seats: Seat[] }
 type Rectangle = NavigationWorld['rectangles'][number];
 /** Remove the bridge deck from a water obstacle; ordinary furniture is never cut away. */
@@ -142,6 +144,11 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
     for (const deck of decks) pieces = pieces.flatMap(r => subtractWater(r, deck));
     rectangles.push(...pieces);
   }
+  // A fixed floor feature, not a placed item: existing saved layouts need no migration.
+  // Two offset positions leave room for the large heads; each faces toward the other.
+  for (const side of [-1, 1] as const) seats.push({ id: `${PICNIC_RUG_ID}-${side}`, equipment: PICNIC_RUG_ID, kind: 'picnicRug', side,
+    x: PICNIC.x + side * .6, z: PICNIC.z - side * .3,
+    approach: { x: PICNIC.x + side * .5, z: PICNIC.z - side * 1.5 }, height: 0, yaw: -side * Math.PI / 2 });
   // Friends walk tile centre to tile centre, so each seat's approach (where they step on and off) is the nearest
   // free tile centre to the art's approach point.
   const used: Point[] = [];

@@ -1,0 +1,23 @@
+<!doctype html><html lang="ko">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모모·루루 · 새 베이스 뒤쪽 앉기</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f1e8;color:#514354;font:16px/1.65 system-ui,sans-serif}main{max-width:1040px;margin:auto;padding:28px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#795780}h1{font-size:26px;margin:22px 0 6px}h2{font-size:17px;margin:13px}p{margin:10px 0}.badge{display:inline-block;border-radius:20px;background:#e4e9d7;color:#61714f;padding:4px 12px;font-size:14px}.tools{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:18px 0}button{font:inherit;color:#66516b;background:#fffaf7;border:1px solid #cbbccc;border-radius:9px;padding:7px 14px;cursor:pointer}button[aria-pressed=true]{background:#e7dced}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}article{background:#fffdf9;border:1px solid #ddd5de;border-radius:16px;overflow:hidden;text-align:center}.canvas{background:repeating-conic-gradient(#e9e3ec 0 25%,#faf7fb 0 50%) 0/24px 24px;aspect-ratio:1}.canvas img{display:block;width:100%;height:auto;image-rendering:pixelated}.note{font-size:14px;color:#807080}.base{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:22px 0}.base img{width:192px;height:192px;image-rendering:pixelated}.previous{display:flex;gap:20px;margin:16px 0}.previous img{width:192px;height:192px;image-rendering:pixelated}button:focus-visible,a:focus-visible{outline:3px solid #b195b5;outline-offset:3px}footer{margin:24px 0;color:#807080;font-size:14px}@media(max-width:600px){main{padding:16px}.grid{gap:8px}h1{font-size:22px}h2{font-size:14px}.base img,.previous img{width:144px;height:144px}}
+</style>
+<main><nav><a href="../body-sit-ne-v1/index.html">공통 뒤 앉기 베이스</a><a href="../friends-base-walk-v1/index.html">걷기 비교</a><a href="../">공원에서 보기</a></nav>
+<h1>모모·루루 · 새 베이스 뒤쪽 앉기</h1><span class="badge">의상 적용 · 96×96 · NE / NW</span>
+<p>같은 접힌 다리 자세에 각자의 원피스·소매·허리 리본을 맞췄습니다. 머리 도트는 기존 그림을 그대로 옮겼습니다.</p>
+<div class="tools"><button id="body-only" aria-pressed="false">머리 숨기기</button><span class="note">게임의 뒤를 보는 시소·테이블 좌석에도 연결했습니다.</span></div>
+<section class="grid">
+<article><h2>모모 · 뒤오른쪽 NE ↗</h2><div class="canvas"><img src="momo-full-ne.png" data-full="momo-full-ne.png" data-body="momo-body-ne.png" alt="모모 뒤오른쪽 앉기" width="96" height="96"></div></article>
+<article><h2>모모 · 뒤왼쪽 NW ↖</h2><div class="canvas"><img src="momo-full-nw.png" data-full="momo-full-nw.png" data-body="momo-body-nw.png" alt="모모 뒤왼쪽 앉기" width="96" height="96"></div></article>
+<article><h2>루루 · 뒤오른쪽 NE ↗</h2><div class="canvas"><img src="lulu-full-ne.png" data-full="lulu-full-ne.png" data-body="lulu-body-ne.png" alt="루루 뒤오른쪽 앉기" width="96" height="96"></div></article>
+<article><h2>루루 · 뒤왼쪽 NW ↖</h2><div class="canvas"><img src="lulu-full-nw.png" data-full="lulu-full-nw.png" data-body="lulu-body-nw.png" alt="루루 뒤왼쪽 앉기" width="96" height="96"></div></article>
+</section>
+<div class="base"><p>사용한 베이스<br><span class="note">발과 정강이의 모양을 유지하고<br>양말·갈색 신발을 입혔습니다.</span></p><img src="base-ne.png" alt="뒤오른쪽 공통 앉기 베이스"><img src="base-nw.png" alt="뒤왼쪽 공통 앉기 베이스"></div>
+<details><summary>이전 뒤쪽 좌석 그림과 비교</summary><div class="previous"><img src="momo-previous-ne.png" alt="이전 모모 뒤 좌석"><img src="lulu-previous-ne.png" alt="이전 루루 뒤 좌석"></div></details>
+<p><a href="layers.zip">PNG·3레이어 Pixelorama 원본 ZIP</a> · <a href="manifest.json">제작 기록</a> · <a href="prompt.txt">의상 초안 지시문</a></p>
+<footer>새 뒤쪽 앉기는 검토용 작화입니다. 앞쪽 앉기와 선택된 걷기 V2는 그대로 사용합니다. 오른쪽·왼쪽 반전은 전신 전체에 똑같이 적용됩니다.</footer>
+</main>
+<script>document.querySelector('#body-only').onclick=function(){const on=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',String(on));document.querySelectorAll('[data-full]').forEach(img=>img.src=on?img.dataset.body:img.dataset.full);this.textContent=on?'머리 보이기':'머리 숨기기'};</script>
+</html>

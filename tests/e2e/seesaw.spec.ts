@@ -4,6 +4,8 @@ import { SAVE_KEY, encodeSave, gardenSave } from '../../apps/client/src/persiste
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 import { PARK_PROPS } from '../../apps/client/src/parkProps.js';
+import { FRIEND_IDS } from '../../apps/client/src/friendBodyArt.js';
+import { friendRearSitArt } from '../../apps/client/src/friendSittingArt.js';
 
 test('seesaw art keeps the rest pose, fixed feet and unclipped ends through all motion frames', async ({ page }) => {
   await page.setViewportSize({ width: 1560, height: 620 }); await page.goto('/');
@@ -43,6 +45,8 @@ for (const renderer of ['phaser', 'canvas']) for (const turn of [0, 1]) {
   test(`${renderer} seesaw turn ${turn}: two friends board and play, then one leaves`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1000 });
     const problems: string[] = []; page.on('pageerror', e => problems.push(e.message));
+    const seatedArt = new Set<string>();
+    page.on('response', r => { for (const id of FRIEND_IDS) if (r.url().endsWith(friendRearSitArt(id)) && r.status() === 200) seatedArt.add(id); });
     const save = encodeSave(gardenSave({ items: [{ id: 'pair-seesaw', kind: 'seesaw', x: 0, z: -1.5, turn }], stored: [] }));
     await page.addInitScript(([key, value]) => { localStorage.setItem(key, value); Math.random = () => .99; }, [SAVE_KEY, save]);
     await page.goto(renderer === 'canvas' ? '/?renderer=canvas' : '/');
@@ -60,6 +64,7 @@ for (const renderer of ['phaser', 'canvas']) for (const turn of [0, 1]) {
     await page.click('#leave-seat');
     await expect(page.locator('#status-peach')).toHaveText('시소에서 친구 기다리는 중');
     await expect(page.locator('#status-lilac')).not.toHaveText('시소 타는 중');
+    expect([...seatedArt].sort()).toEqual([...FRIEND_IDS].sort());
     expect(problems).toEqual([]);
   });
 }
