@@ -1,4 +1,4 @@
-import { footprint, onFloor, type PlacedItem, type Point } from './layout';
+import { bridgeUnder, footprint, onFloor, type PlacedItem, type Point } from './layout';
 
 /**
  * Back-to-front drawing order for things standing on the ground (props and friends), shared by both renderers.
@@ -32,20 +32,26 @@ export function behind(a: GroundBox, b: GroundBox): boolean {
   return centre(a) <= centre(b);
 }
 /** Draw rank (0 = first) for each box. */
-export function drawRanks(boxes: readonly GroundBox[]): number[] {
+export function drawRanks(boxes: readonly GroundBox[], before: readonly [number, number][] = []): number[] {
   const n = boxes.length, next: number[][] = boxes.map(() => []), waiting = new Array<number>(n).fill(0);
+  const forced = new Set(before.map(([a, b]) => `${a},${b}`));
+  const hardPredecessors: number[][] = boxes.map(() => []);
+  for (const [a, b] of before) hardPredecessors[b].push(a);
   for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
     const a = boxes[i], b = boxes[j];
     // Sideways (screen x is x − z): boxes this far apart cannot cover each other.
     if (a.x0 - a.z1 > b.x1 - b.z0 + SIDE_REACH || b.x0 - b.z1 > a.x1 - a.z0 + SIDE_REACH) continue;
-    if (behind(a, b)) { next[i].push(j); waiting[j]++; } else { next[j].push(i); waiting[i]++; }
+    const aFirst = forced.has(`${i},${j}`) || (!forced.has(`${j},${i}`) && behind(a, b));
+    if (aFirst) { next[i].push(j); waiting[j]++; } else { next[j].push(i); waiting[i]++; }
   }
   const ranks = new Array<number>(n).fill(-1), depth = boxes.map(centre);
   for (let rank = 0; rank < n; rank++) {
-    // The ready box nearest the back goes next; if none is ready (a rare cycle), the one nearest the back anyway.
+    // Break a spatial cycle at the back, but never put a bridge below its own water bank.
     let pick = -1;
     for (let i = 0; i < n; i++) if (ranks[i] < 0 && waiting[i] === 0 && (pick < 0 || depth[i] < depth[pick])) pick = i;
-    if (pick < 0) for (let i = 0; i < n; i++) if (ranks[i] < 0 && (pick < 0 || depth[i] < depth[pick])) pick = i;
+    if (pick < 0) for (let i = 0; i < n; i++) if (ranks[i] < 0 && hardPredecessors[i].every(j => ranks[j] >= 0) && (pick < 0 || depth[i] < depth[pick])) pick = i;
+    // Defensive fallback for invalid mutually forced constraints supplied by a caller.
+    if (pick < 0) pick = ranks.findIndex(rank => rank < 0);
     ranks[pick] = rank;
     for (const j of next[pick]) waiting[j]--;
   }
@@ -54,13 +60,24 @@ export function drawRanks(boxes: readonly GroundBox[]): number[] {
 /** A friend's feet take about this much ground. */
 export const FOOT = .6;
 /**
- * Draw rank for every standing prop (by item id) and every walker (by the id given). Floor items (paths, ponds) are
- * painted with the ground and left out.
+ * Draw rank for standing props, raised water banks and walkers. Only path tiles have no raised pass.
  */
 export function sceneOrder(items: readonly PlacedItem[], walkers: readonly { id: string; x: number; z: number }[]): Map<string, number> {
   const ids: string[] = [], boxes: GroundBox[] = [];
-  for (const item of items) if (!onFloor(item.kind)) { const f = footprint(item); ids.push(item.id); boxes.push(boxAround(f, f.w, f.d)); }
+  const raised = items.filter(item => !onFloor(item.kind) || item.kind === 'pond' || item.kind === 'stream');
+  for (const item of raised) { const f = footprint(item); ids.push(item.id); boxes.push(boxAround(f, f.w, f.d)); }
   for (const w of walkers) { ids.push(w.id); boxes.push(boxAround(w, FOOT)); }
-  const ranks = drawRanks(boxes);
+  const before: [number, number][] = [];
+  raised.forEach((a, i) => { if (a.kind !== 'pond' && a.kind !== 'stream') return;
+    raised.forEach((b, j) => { if (b.kind !== 'bridge') return; const p = boxes[i], q = boxes[j];
+      if (p.x0 < q.x1 && p.x1 > q.x0 && p.z0 < q.z1 && p.z1 > q.z0) before.push([i, j]);
+    });
+  });
+  const ranks = drawRanks(boxes, before);
   return new Map(ids.map((id, i) => [id, ranks[i]]));
+}
+/** A bridge walker is above its deck / far rail, but below the separate near rail (+.2). */
+export function walkerDepth(p: Point & { id: string }, items: readonly PlacedItem[], order: Map<string, number>) {
+  const bridge = bridgeUnder(p, items);
+  return bridge ? (order.get(bridge.id) ?? 0) + .1 : order.get(p.id) ?? 0;
 }

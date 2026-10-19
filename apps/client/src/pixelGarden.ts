@@ -1,5 +1,6 @@
 import { LayoutEditor } from './editor';
-import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, PICNIC, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, ZOOM, PROP_ART_BASE, SEAT_LIFT, SIGN, bridgeLift, cloneLayout, footprint, onFloor, type ItemKind, type Layout, type PlacedItem, type Point } from './layout';
+import { paintPicnicRug } from './picnicRug';
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
 import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
 import { loadGroundMaterials } from './groundMaterials';
@@ -9,10 +10,11 @@ import { fountainFrames, fountainFrame } from './fountainWater';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar, type Seat } from './simulation';
 import { CharacterBubbles } from './characterBubbles';
 import { paintPond, type Point3 } from './pondArt';
-import { loadPondArt, paintPondSprite, paintPondFish } from './pondSprite';
+import { loadPondArt, paintPondSprite, paintPondFish, paintPondBanks } from './pondSprite';
+import { waterBankArt, bridgeFrontArt } from './raisedWaterArt';
 import { loadPixelAtlas } from './pixelAtlas';
 import { project, unproject } from './isometric';
-import { sceneOrder } from './drawOrder';
+import { sceneOrder, walkerDepth } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
@@ -48,6 +50,8 @@ export class PixelGarden {
   private seesawArt: HTMLCanvasElement[] = [];
   private picnicTop?: HTMLCanvasElement;
   private fountainArt: HTMLCanvasElement[] = [];
+  private streamBanks?: HTMLCanvasElement;
+  private bridgeFront?: HTMLCanvasElement;
   private hits: Hit[] = [];
   zoom = 1;
   private pan = { x: 0, y: 0 };
@@ -95,6 +99,8 @@ export class PixelGarden {
       park.forEach(([kind, art]) => this.parkProps.set(kind, art));
       this.seesawArt = seesawFrames(this.parkProps.get('seesaw')!.image);
       this.fountainArt = fountainFrames(this.parkProps.get('fountain')!.image);
+      this.streamBanks = waterBankArt(this.parkProps.get('stream')!.image);
+      this.bridgeFront = bridgeFrontArt(this.parkProps.get('bridge')!.image);
       const [friends, friendsSw, image, approved, dressed, rearSit] = await Promise.all([
         loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
@@ -177,8 +183,7 @@ export class PixelGarden {
     for (const item of items.filter(i => i.kind === 'pond')) this.paintLake(item);
     for (const item of items.filter(i => i.kind === 'stream')) this.drawItem(item);
     // Match the two fixed navigation obstacles: a picnic rug and a garden sign.
-    this.tile(PICNIC, PICNIC.w, PICNIC.d, '#e8b8a7', '#a97e7e');
-    for (let x = PICNIC.x - PICNIC.w / 2 + .2; x < PICNIC.x + PICNIC.w / 2; x += .4) for (let z = PICNIC.z - PICNIC.d / 2 + .2; z < PICNIC.z + PICNIC.d / 2; z += .4) this.tile({ x, z }, .2, .2, '#f7e7d1');
+    paintPicnicRug(c, p => this.screen(p), this.unit);
     const sign = this.screen(SIGN);
     c.fillStyle = '#766454'; c.fillRect(sign.x - 1, sign.y - 14, 2, 14); c.fillStyle = '#f8e8bd'; c.fillRect(sign.x - 9, sign.y - 20, 18, 9); c.fillStyle = '#b6b989'; c.fillRect(sign.x - 6, sign.y - 17, 10, 2);
   }
@@ -215,6 +220,14 @@ export class PixelGarden {
     c.save(); if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
     c.drawImage(this.picnicTop, x, y, size, size); c.restore();
     this.hits.push({ id: item.id, x, y, w: size, h: size, image: this.picnicTop, frame: flip ? -1 : undefined });
+  }
+  private drawRaisedWater(item: PlacedItem) {
+    if (item.kind === 'pond') { paintPondBanks(this.ctx, item, p => this.screen(p), this.unit); return; }
+    const kind = item.kind as 'bridge' | 'stream', art = this.parkProps.get(kind), source = kind === 'bridge' ? this.bridgeFront : this.streamBanks;
+    if (!art || !source) return;
+    const c = this.ctx, p = this.screen(item), size = Math.round(PARK_PROPS[kind].width * this.unit * 128 / art.width);
+    c.save(); if (item.turn % 2) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
+    c.drawImage(source, Math.round(p.x - size / 2), Math.round(p.y - size + this.unit * PROP_ART_BASE[kind]), size, size); c.restore();
   }
   private drawAvatar(a: Avatar) {
     const c = this.ctx, p = this.screen(a), u = this.unit, seat = this.life.seatOf(a);
@@ -291,7 +304,8 @@ export class PixelGarden {
       const order = sceneOrder(items, friends.filter(a => !this.life.riding(a)).map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
       const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
       for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .2, draw: () => this.drawPicnicTop(item) });
-      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : order.get(`avatar:${a.id}`)!, draw: () => this.drawAvatar(a) }); }
+      for (const item of items) if (['pond', 'stream', 'bridge'].includes(item.kind)) layers.push({ depth: order.get(item.id)! + (item.kind === 'bridge' ? .2 : 0), draw: () => this.drawRaisedWater(item) });
+      for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, items, order), draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());
       if (this.editor.pending) {
         if (this.editor.pending.kind === 'path') this.tile(this.editor.pending, 1, 1, this.editor.error ? '#d07880' : '#fff4bc', '#66547b');

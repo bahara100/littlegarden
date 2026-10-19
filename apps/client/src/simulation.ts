@@ -1,4 +1,4 @@
-import { DEFAULT_LAYOUT, HALF, HUB, cloneLayout, footprint, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
+import { DEFAULT_LAYOUT, HALF, HUB, POND_WATCH_GAP, cloneLayout, footprint, waterBounds, geometryError, worldFrom, type NavigationWorld, type PlacedItem, type Seat, type Point } from './layout';
 export type { Point, Seat } from './layout';
 import { AFFINITY_MAX, actionsToTry, affinityLevel, pickForMoment, type AffinityLevel, type Moment, type Unlock } from './affinity';
 import { UNLOCKS } from './unlocks';
@@ -169,7 +169,7 @@ export class LifeSimulation {
       candidates.sort((p, q) => Math.hypot(p.x - HUB.x, p.z - HUB.z) - Math.hypot(q.x - HUB.x, q.z - HUB.z));
       const safe = candidates.find(p => occupied.every(o => Math.hypot(p.x - o.x, p.z - o.z) > .8) && findPath(HUB, p, this.world));
       Object.assign(a, safe ?? HUB); occupied.push({ x: a.x, z: a.z });
-      a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
+      a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
     }
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
@@ -179,12 +179,12 @@ export class LifeSimulation {
   /** Ponds in the current layout. */
   get ponds() { return this.layout.filter(i => i.kind === 'pond'); }
   /** The pond a ground point is on, if any. */
-  pondAt(p: Point) { return this.ponds.find(i => { const f = footprint(i); return Math.abs(p.x - f.x) <= f.w / 2 && Math.abs(p.z - f.z) <= f.d / 2; }); }
-  /** Shore tiles around a pond that a friend can stand on (tile centres just outside its footprint), not taken by another watcher. */
+  pondAt(p: Point) { return this.ponds.find(i => { const f = waterBounds(i); return Math.abs(p.x - f.x) <= f.w / 2 && Math.abs(p.z - f.z) <= f.d / 2; }); }
+  /** Dry tile centres beyond the raised stone rim, not taken by another watcher. */
   shoreSpots(pond: PlacedItem, except?: AvatarId): Point[] {
     const f = footprint(pond), spots: Point[] = [];
-    for (let x = f.x - f.w / 2 + .5; x < f.x + f.w / 2; x++) spots.push({ x, z: f.z - f.d / 2 - .5 }, { x, z: f.z + f.d / 2 + .5 });
-    for (let z = f.z - f.d / 2 + .5; z < f.z + f.d / 2; z++) spots.push({ x: f.x - f.w / 2 - .5, z }, { x: f.x + f.w / 2 + .5, z });
+    for (let x = f.x - f.w / 2 + .5; x < f.x + f.w / 2; x++) spots.push({ x, z: f.z - f.d / 2 - POND_WATCH_GAP }, { x, z: f.z + f.d / 2 + POND_WATCH_GAP });
+    for (let z = f.z - f.d / 2 + .5; z < f.z + f.d / 2; z++) spots.push({ x: f.x - f.w / 2 - POND_WATCH_GAP, z }, { x: f.x + f.w / 2 + POND_WATCH_GAP, z });
     const taken = [...this.avatars.values()].filter(o => o.id !== except && o.watchSpot).map(o => o.watchSpot!);
     return spots.filter(p => walkable(p, this.world) && !taken.some(t => Math.hypot(t.x - p.x, t.z - p.z) < .5));
   }

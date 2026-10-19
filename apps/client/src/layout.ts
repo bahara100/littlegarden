@@ -32,7 +32,7 @@ export const CATALOG: Record<ItemKind, { name: string; icon: string; w: number; 
   bridge: { name: '작은 나무다리', icon: '⌒', w: 4, d: 2 },
   stream: { name: '시냇물', icon: '≋', w: 4, d: 2 },
 };
-/** Kinds drawn into the floor itself (no standing art): path tiles under everything, and ponds. */
+/** Base surfaces painted with the ground. Water banks are also copied into the raised occlusion pass. */
 export const onFloor = (kind: ItemKind) => kind === 'path' || kind === 'pond' || kind === 'stream';
 /**
  * How far below the item centre (in tiles of screen height) each prop's lowest art pixel is drawn. The swing's lowest
@@ -57,6 +57,13 @@ export const tileSpan = (size: number) => Math.max(1, Math.round(size));
 export function footprint(item: PlacedItem) {
   const asset = CATALOG[item.kind], w = item.w ?? asset.w, d = item.d ?? asset.d;
   return oriented(item, tileSpan(w), item.kind === 'fence' ? d : tileSpan(d));
+}
+/** Raised stone/grass banks extend past the flat water footprint. Navigation includes that rim. */
+export const WATER_BANK_CLEARANCE = { pond: .5, stream: .25 } as const;
+export const POND_WATCH_GAP = 1.5;
+export function waterBounds(item: PlacedItem) {
+  const f = footprint(item), rim = item.kind === 'pond' || item.kind === 'stream' ? WATER_BANK_CLEARANCE[item.kind] : 0;
+  return { ...f, w: f.w + rim * 2, d: f.d + rim * 2 };
 }
 /** Centre on a tile centre for an odd span and on a tile edge for an even one, so the footprint fills whole tiles. */
 const snapAxis = (v: number, span: number) => span % 2 ? Math.floor(v) + .5 : Math.round(v);
@@ -85,11 +92,16 @@ export function bridgeLift(p: Point, items: readonly PlacedItem[]): number {
   let height = 0;
   for (const item of items) if (item.kind === 'bridge') {
     const f = footprint(item), dx = p.x - item.x, dz = p.z - item.z;
-    if (Math.abs(dx) >= f.w / 2 || Math.abs(dz) >= f.d / 2) continue;
-    const along = item.turn % 2 ? dz : dx;
-    height = Math.max(height, .32 * Math.cos(along / 4 * Math.PI));
+    const odd = item.turn % 2, along = odd ? dz : dx, across = odd ? dx : dz;
+    const ramp = (odd ? f.d : f.w) / 2 + .75, halfAcross = (odd ? f.w : f.d) / 2;
+    if (Math.abs(along) >= ramp || Math.abs(across) >= halfAcross) continue;
+    // The authored deck is about a tile above ground at its crown, with short entry ramps.
+    height = Math.max(height, 1.05 * Math.cos(along / (ramp * 2) * Math.PI));
   }
   return height;
+}
+export function bridgeUnder(p: Point, items: readonly PlacedItem[]) {
+  return items.find(item => { if (item.kind !== 'bridge') return false; const f = footprint(item), odd = item.turn % 2; return Math.abs(p.x - f.x) < f.w / 2 + (odd ? 0 : .75) && Math.abs(p.z - f.z) < f.d / 2 + (odd ? .75 : 0); });
 }
 export function worldFrom(items: PlacedItem[]): NavigationWorld {
   const rectangles: NavigationWorld['rectangles'] = [{ ...PICNIC }, { ...SIGN }];
@@ -97,7 +109,7 @@ export function worldFrom(items: PlacedItem[]): NavigationWorld {
   const trunks: NavigationWorld['trunks'] = [], seats: Seat[] = [];
   for (const item of items) {
     if (item.kind === 'tree') trunks.push({ x: item.x, z: item.z, r: .67 });
-    else if (item.kind === 'pond' || item.kind === 'stream') waters.push(footprint(item));
+    else if (item.kind === 'pond' || item.kind === 'stream') waters.push(waterBounds(item));
     else if (item.kind !== 'path' && item.kind !== 'bridge') {
       const size = item.kind === 'bench' ? { w: 3.15 * B, d: 1.15 * B } : item.kind === 'swing' ? { w: 3.25 * S, d: 2.1 * S } : { w: item.w ?? CATALOG[item.kind].w, d: item.d ?? CATALOG[item.kind].d };
       rectangles.push(oriented(item, size.w, size.d));

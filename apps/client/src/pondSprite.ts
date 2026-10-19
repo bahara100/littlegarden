@@ -1,13 +1,16 @@
 import { footprint, type PlacedItem, type Point } from './layout';
 import { preparePondFish, pondFishArt } from './pondFish';
+import { waterBankArt } from './raisedWaterArt';
 
 let image: HTMLImageElement | undefined;
 let loading: Promise<void> | undefined;
+let banks: HTMLCanvasElement | undefined;
+export const pondBankArt = () => banks;
 /** A single shared sprite, loaded before either renderer draws its cached ground. */
 export function loadPondArt() {
   return loading ??= (async () => {
     const source = new Image(); source.src = `${import.meta.env.BASE_URL}sprites/garden/pond-v2/pond.png`;
-    await source.decode(); image = source; preparePondFish(source);
+    await source.decode(); image = source; preparePondFish(source); banks = waterBankArt(source, 256, 160);
   })();
 }
 
@@ -26,4 +29,7 @@ function paintPondLayer(c: CanvasRenderingContext2D, source: CanvasImageSource, 
 }
 export function paintPondFish(c: CanvasRenderingContext2D, item: PlacedItem, screen: (p: Point) => { x: number; y: number }, unit: number, seconds: number, still = false) {
   const fish = pondFishArt(seconds, still); if (fish) paintPondLayer(c, fish, item, screen, unit);
+}
+export function paintPondBanks(c: CanvasRenderingContext2D, item: PlacedItem, screen: (p: Point) => { x: number; y: number }, unit: number) {
+  if (banks) paintPondLayer(c, banks, item, screen, unit);
 }

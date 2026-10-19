@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { boxAround, drawRanks, sceneOrder } from '../../apps/client/src/drawOrder.js';
-import { DEFAULT_LAYOUT, footprint } from '../../apps/client/src/layout.js';
+import { boxAround, drawRanks, sceneOrder, walkerDepth } from '../../apps/client/src/drawOrder.js';
+import { DEFAULT_LAYOUT, footprint, type PlacedItem, type ItemKind } from '../../apps/client/src/layout.js';
+import { PARK_INITIAL_LAYOUT } from '../../apps/client/src/parkLayout.js';
 
 test('fences behind a corner tree are drawn before it, even when their centre sum is larger', () => {
   const order = sceneOrder(DEFAULT_LAYOUT.items, []);
@@ -30,6 +31,32 @@ test('a friend in front of a tree is drawn after it, and one behind it before it
 test('every box gets one rank, also when the pairwise order would loop', () => {
   const boxes = [boxAround({ x: 0, z: 0 }, 1), boxAround({ x: 1, z: 0 }, 1), boxAround({ x: 0, z: 1 }, 1), boxAround({ x: .3, z: .3 }, 1)];
   assert.deepEqual([...drawRanks(boxes)].sort(), [0, 1, 2, 3]);
+});
+
+test('raised water banks and every upright prop cover a rear walker and yield to a front walker on all turns', () => {
+  for (const kind of ['pond', 'stream', 'tree', 'fence', 'bench', 'swing', 'seesaw', 'picnicTable', 'drinkingFountain', 'fountain', 'bridge', 'flower'] as ItemKind[]) for (let turn = 0; turn < 4; turn++) {
+    const item = { id: 'prop', kind, x: 0, z: 0, turn }, f = footprint(item);
+    const order = sceneOrder([item], [{ id: 'back', x: 0, z: -f.d / 2 - 1.5 }, { id: 'front', x: 0, z: f.d / 2 + 1.5 }]);
+    assert.ok(order.get('back')! < order.get(item.id)!, `${kind} turn ${turn} rear`);
+    assert.ok(order.get(item.id)! < order.get('front')!, `${kind} turn ${turn} front`);
+  }
+});
+
+test('bridge decks stay above water banks regardless of item order and walkers stay between the two rails', () => {
+  for (let turn = 0; turn < 4; turn++) for (const reverse of [false, true]) {
+    const stream: PlacedItem = { id: 'water', kind: 'stream', x: 0, z: 0, turn }, bridge: PlacedItem = { ...stream, id: 'deck', kind: 'bridge', turn: (turn + 1) % 4 };
+    const items = reverse ? [bridge, stream] : [stream, bridge];
+    const walker = { id: 'walker', x: .2, z: -.2 }, order = sceneOrder(items, [walker]);
+    assert.ok(order.get(stream.id)! < order.get(bridge.id)!);
+    const depth = walkerDepth(walker, items, order);
+    assert.ok(order.get(bridge.id)! < depth && depth < order.get(bridge.id)! + .2);
+  }
+});
+test('the connected brook in the full park cannot cover the bridge when spatial ordering has a cycle', () => {
+  for (const items of [PARK_INITIAL_LAYOUT.items, [...PARK_INITIAL_LAYOUT.items].reverse()]) {
+    const order = sceneOrder(items, []);
+    assert.ok(order.get('park-brook-2')! < order.get('park-bridge')!);
+  }
 });
 test('a friend walking to a reserved seat is not yet drawn with the seat; one sitting down is', async () => {
   const { LifeSimulation } = await import('../../apps/client/src/simulation.js');

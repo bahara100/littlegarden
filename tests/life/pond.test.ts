@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_LAYOUT, CATALOG, footprint, snapToTiles, type PlacedItem } from '../../apps/client/src/layout.js';
+import { DEFAULT_LAYOUT, CATALOG, POND_WATCH_GAP, footprint, snapToTiles, waterBounds, worldFrom, type PlacedItem } from '../../apps/client/src/layout.js';
 import { LayoutEditor, layoutError } from '../../apps/client/src/editor.js';
 import { LAKE, LifeSimulation, activityLabel, reactionLabel, walkable } from '../../apps/client/src/simulation.js';
 import { decodeGarden, encodeSave } from '../../apps/client/src/persistence.js';
@@ -67,11 +67,39 @@ test('tapping a pond sends the friend to the shore, where they stand facing the 
   const f = footprint(POND);
   const outside = Math.abs(lulu.x - f.x) > f.w / 2 || Math.abs(lulu.z - f.z) > f.d / 2;
   assert.ok(outside, 'she stands on the shore, not in the water');
-  assert.ok(Math.abs(lulu.x - f.x) <= f.w / 2 + 1 && Math.abs(lulu.z - f.z) <= f.d / 2 + 1, 'right next to it');
+  const clearance = Math.max(Math.abs(lulu.x - f.x) - f.w / 2, Math.abs(lulu.z - f.z) - f.d / 2);
+  assert.equal(clearance, POND_WATCH_GAP, 'stand back from the raised rocks');
   const toPond = Math.atan2(f.x - lulu.x, f.z - lulu.z);
   assert.ok(Math.abs(Math.atan2(Math.sin(lulu.yaw - toPond), Math.cos(lulu.yaw - toPond))) < 1e-9, 'facing the pond');
   until(sim, () => lulu.phase !== 'watching', LAKE.watch + LAKE.extra + 1);
   assert.equal(lulu.lookAt, null);
+});
+
+test('moving or removing a watched lake clears the old shore target before friends resume', () => {
+  const sim = new LifeSimulation(() => .5); sim.applyLayout([POND]);
+  assert.equal(sim.watchPond('character', POND.id), null);
+  assert.ok(sim.avatars.get('character')!.watchSpot);
+  sim.applyLayout([]);
+  for (const a of sim.avatars.values()) {
+    assert.equal(a.watchSpot, null); assert.equal(a.lookAt, null);
+    assert.equal(a.phase, 'idle'); assert.ok(walkable(a, sim.world));
+  }
+});
+
+test('every lake rotation blocks its rim and only offers watching spots beyond the rocks', () => {
+  for (let turn = 0; turn < 4; turn++) {
+    const pond = snapToTiles({ ...POND, turn }), f = footprint(pond), bank = waterBounds(pond);
+    const sim = new LifeSimulation(() => .5); sim.applyLayout([pond]);
+    const nav = worldFrom([pond]), spots = sim.shoreSpots(pond, 'character');
+    assert.ok(spots.length >= 8);
+    for (const p of spots) {
+      assert.ok(walkable(p, nav));
+      assert.ok(Math.abs(p.x - bank.x) > bank.w / 2 + .34 || Math.abs(p.z - bank.z) > bank.d / 2 + .34);
+    }
+    for (const p of [{ x: f.x - f.w / 2 - .5, z: f.z }, { x: f.x + f.w / 2 + .5, z: f.z }, { x: f.x, z: f.z - f.d / 2 - .5 }, { x: f.x, z: f.z + f.d / 2 + .5 }]) {
+      assert.equal(walkable(p, nav), false, 'the previous half-tile watching ring is not walkable');
+    }
+  }
 });
 
 test('free friends sometimes visit the pond on their own, each at their own spot', () => {
