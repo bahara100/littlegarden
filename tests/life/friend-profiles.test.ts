@@ -28,20 +28,20 @@ test('twins always stop to greet each other; other friends only when the roll al
     for (const f of sim.avatars.values()) Object.assign(f, f.id === a ? { x: .5, z: 4.5 } : f.id === b ? { x: 1.5, z: 4.5 } : far, { until: 1e9 });
     sim.update(.05);
   };
-  const twinsSim = new LifeSimulation(() => .99);
+  const twinsSim = Object.assign(new LifeSimulation(() => .99), { greetFrom: 0 });
   place(twinsSim, 'peach', 'lilac');
   assert.equal(twinsSim.avatars.get('peach')!.phase, 'greeting'); assert.equal(twinsSim.avatars.get('lilac')!.partner, 'peach');
-  const othersSim = new LifeSimulation(() => .99);
+  const othersSim = Object.assign(new LifeSimulation(() => .99), { greetFrom: 0 });
   place(othersSim, 'character', 'peach');
   assert.equal(othersSim.avatars.get('character')!.phase, 'idle');
 });
 test("the twins' chosen lines: a greeting line only for the other twin", () => {
-  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  const sim = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
   for (const f of sim.avatars.values()) Object.assign(f, { x: 9.5, z: 9.5, until: 1e9 });
   Object.assign(momo, { x: .5, z: 4.5 }); Object.assign(lulu, { x: 1.5, z: 4.5 });
   sim.update(.05);
   assert.equal(momo.speech, '루루, 언니 따라와~'); assert.equal(lulu.speech, '언니, 같이 가!');
-  const other = new LifeSimulation(() => 0), scarlet = other.avatars.get('character')!, momo2 = other.avatars.get('peach')!;
+  const other = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), scarlet = other.avatars.get('character')!, momo2 = other.avatars.get('peach')!;
   for (const f of other.avatars.values()) Object.assign(f, { x: 9.5, z: 9.5, until: 1e9 });
   Object.assign(scarlet, { x: .5, z: 4.5 }); Object.assign(momo2, { x: 1.5, z: 4.5 });
   other.update(.05);
@@ -51,7 +51,7 @@ test("the twins' chosen lines: a greeting line only for the other twin", () => {
 test('after greeting, the same two friends pass each other without stopping for 3 minutes', async () => {
   const { REACTION } = await import('../../apps/client/src/simulation.js');
   assert.equal(REACTION.cooldown, 180);
-  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  const sim = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
   const meet = () => {
     for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: 9.5, until: 1e9, phase: 'idle', path: [] });
     Object.assign(momo, { x: 5.5, z: 4.5 }); sim.update(.05);   // apart: the meeting is over
@@ -63,4 +63,18 @@ test('after greeting, the same two friends pass each other without stopping for 
   Object.assign(lulu, { x: 9.5, z: 9.5 });  // apart while the rest of the 3 minutes passes
   for (let t = 0; t < 90; t += .1) sim.update(.1);
   meet(); assert.equal(momo.phase, 'greeting', 'more than 3 minutes later they greet again');
+});
+test('nobody greets in the first 10 seconds, when everyone starts side by side', async () => {
+  const { REACTION } = await import('../../apps/client/src/simulation.js');
+  assert.equal(REACTION.quietStart, 10);
+  const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: 9.5, until: 1e9, phase: 'idle', path: [] });
+  Object.assign(momo, { x: 5.5, z: 4.5 }); Object.assign(lulu, { x: 6.5, z: 4.5 });
+  for (let t = 0; t < 12; t += .05) sim.update(.05);
+  assert.equal(momo.phase, 'idle', 'the twins stood together from the start and did not greet');
+  Object.assign(lulu, { x: 9.5, z: 9.5 }); sim.update(.05);       // apart …
+  Object.assign(lulu, { x: 6.5, z: 4.5 }); sim.update(.05);       // … and together again after the quiet start
+  assert.equal(momo.phase, 'greeting');
+  sim.applyLayout(sim.layout);                                        // a layout change puts everyone back together
+  assert.ok(sim.greetFrom >= sim.time + 10 - 1e-9);
 });

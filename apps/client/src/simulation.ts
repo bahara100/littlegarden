@@ -173,6 +173,8 @@ export class LifeSimulation {
       Object.assign(a, safe ?? HUB); occupied.push({ x: a.x, z: a.z });
       a.phase = 'idle'; a.path = []; a.seatId = null; a.seesaw = null; a.watchSpot = null; a.lookAt = null; a.watchKind = null; a.progress = 0; a.directed = false; a.until = this.time + 1 + occupied.length * .5;
     }
+    // Everyone was just put back together in the middle: no greetings until they have spread out a little.
+    this.greetFrom = this.time + REACTION.quietStart;
   }
   seatOf(a: Avatar) { return this.seats.find(s => s.id === a.seatId); }
   /** On the seat itself (getting on, sitting, getting off), not just walking to a reserved one: drawn with the seat. */
@@ -350,13 +352,18 @@ export class LifeSimulation {
   /** Friends meeting: two free friends (not on a seat, not following an order) who come close stop, turn to each
    * other and greet. Each pair rolls once per meeting; once they have greeted, the pair's greeting is recorded and they
    * pass each other without stopping for REACTION.cooldown (3 minutes of play). */
+  /** Play time before which nobody greets: friends start (and come back after a layout change) side by side. */
+  greetFrom: number = REACTION.quietStart;
   private react() {
+    const quiet = this.time < this.greetFrom;
     const free = [...this.avatars.values()].filter(a => (a.phase === 'idle' || a.phase === 'walking') && !a.directed && !a.seatId);
     for (let i = 0; i < free.length; i++) for (let j = i + 1; j < free.length; j++) {
       const a = free[i], b = free[j], key = [a.id, b.id].sort().join('+'), d = Math.hypot(a.x - b.x, a.z - b.z);
       if (d > REACTION.leave) { this.met.delete(key); continue; }
       if (d > REACTION.meet || this.met.has(key) || this.time - (this.greetedAt.get(key) ?? -Infinity) < REACTION.cooldown) continue;
       this.met.add(key);
+      // In the quiet start a meeting is only noted: the pair greets after they part and meet again.
+      if (quiet) continue;
       if (!twins(a.id, b.id) && this.random() >= REACTION.greet) continue;  // twins always stop for each other
       this.greetedAt.set(key, this.time);
       for (const [p, q] of [[a, b], [b, a]] as const) {
@@ -457,7 +464,7 @@ export function activityLabel(a: Avatar) {
   return labels[a.phase];
 }
 /** How often friends react to each other (chances are per meeting or per choice; distances in tiles, times in s). */
-export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 180, duration: 3.6, sitTogether: .5, walkAlong: .3 } as const;
+export const REACTION = { meet: 1.3, leave: 2.2, greet: .7, cooldown: 180, quietStart: 10, duration: 3.6, sitTogether: .5, walkAlong: .3 } as const;
 /**
  * The symbol over a friend's head while waving or greeting ('' otherwise; seats add their own). A greeting starts with
  * a heart, then the pair take turns chatting (···) and humming (♪). When drawn greeting/waving art exists, the

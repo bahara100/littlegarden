@@ -83,7 +83,7 @@ test('passing friends do not deadlock and repeated resume does not leak reservat
   assert.ok([...sim.reservations.values()].every(id => id !== 'peach'));
 });
 test('free friends who meet stop, face each other and greet; orders are never interrupted', () => {
-  const sim = new LifeSimulation(() => 0), a = sim.avatars.get('peach')!, b = sim.avatars.get('lilac')!, c = sim.avatars.get('character')!;
+  const sim = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), a = sim.avatars.get('peach')!, b = sim.avatars.get('lilac')!, c = sim.avatars.get('character')!;
   sim.unlocks = [];  // the twins' greeting lines would cover the ! → 👋 → chat bubbles checked here
   for (const x of sim.avatars.values()) { x.until = Infinity; x.phase = 'idle'; }
   Object.assign(a, { x: 0.5, z: 6.5 }); Object.assign(b, { x: 1.5, z: 6.5 }); Object.assign(c, { x: 5.5, z: -3.5 });
@@ -98,7 +98,7 @@ test('free friends who meet stop, face each other and greet; orders are never in
   for (let t = GREET.hello + .2; t < REACTION.duration + .2; t += .05) sim.update(.05);  // the rest of the meeting
   assert.equal(a.phase, 'idle'); assert.equal(a.partner, null);
   // A friend walking on an order passes by without stopping.
-  const d = new LifeSimulation(() => 0), p = d.avatars.get('peach')!, q = d.avatars.get('lilac')!;
+  const d = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), p = d.avatars.get('peach')!, q = d.avatars.get('lilac')!;
   for (const x of d.avatars.values()) { x.until = Infinity; x.phase = 'idle'; }
   Object.assign(p, { x: -1.5, z: 6.5 }); Object.assign(q, { x: 0.5, z: 5.5 }); Object.assign(d.avatars.get('character')!, { x: 5.5, z: -3.5 });
   assert.equal(d.moveTo('peach', { x: 3.5, z: 6.5 }), null);

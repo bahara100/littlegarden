@@ -59,7 +59,7 @@ test('a pat shows an unlocked line in a bubble and an emotion; a new level says 
 });
 
 test('meeting a friend and sitting down are moments too; an unlocked action is chosen on its own', () => {
-  const sim = new LifeSimulation(() => .05); sim.unlocks = SAMPLE;
+  const sim = Object.assign(new LifeSimulation(() => .05), { greetFrom: 0 }); sim.unlocks = SAMPLE;
   const lulu = sim.avatars.get('lilac')!, momo = sim.avatars.get('peach')!;
   sim.affinity.lilac = 1;
   // Put the two free friends next to each other: they meet and greet (greet roll .05 < .7).
@@ -68,13 +68,13 @@ test('meeting a friend and sitting down are moments too; an unlocked action is c
   sim.update(.05);
   assert.equal(lulu.phase, 'greeting'); assert.equal(lulu.speech, '안녕!'); assert.equal(momo.speech, '', 'the greet line is only Lulu’s');
 
-  const sat = new LifeSimulation(() => .5); sat.unlocks = SAMPLE;
+  const sat = Object.assign(new LifeSimulation(() => .5), { greetFrom: 0 }); sat.unlocks = SAMPLE;
   const hong = sat.avatars.get('character')!;
   assert.equal(sat.use('character', 'bench'), null);
   for (let t = 0; t < 40 && hong.phase !== 'seated'; t += .05) sat.update(.05);
   assert.equal(hong.phase, 'seated'); assert.equal(hong.emote, '♪');
 
-  const waver = new LifeSimulation(() => .5); waver.unlocks = SAMPLE;
+  const waver = Object.assign(new LifeSimulation(() => .5), { greetFrom: 0 }); waver.unlocks = SAMPLE;
   const peach = waver.avatars.get('peach')!; waver.affinity.peach = 7; peach.until = 0;
   waver.update(.05);
   assert.equal(peach.phase, 'waving', 'from 7 points she sometimes waves on her own');
