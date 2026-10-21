@@ -384,6 +384,8 @@ el('season-list').replaceChildren(...SEASONS.map(s => {
 const audio = new Audio();
 audio.preload = 'metadata'; audio.volume = settings.volume; audio.muted = settings.muted;
 let track: Track | null = TRACKS.find(t => t.id === settings.track) ?? null, savedAt = 0;
+// No song yet (a first visit) and the player never pressed stop: the first song starts by itself.
+if (!track && !settings.musicOff && TRACKS.length) { track = TRACKS[0]; rememberMusic({ track: track.id, trackTime: 0, playing: true }); }
 if (track) {
   audio.src = track.src;
   const at = settings.trackTime;
@@ -423,6 +425,7 @@ function play(next: Track | null) {
   track = next;
   if (!next) { audio.pause(); audio.removeAttribute('src'); audio.load(); rememberMusic({ track: null, trackTime: 0, playing: false }); showMusic(); return; }
   if (next.id !== settings.track) { savedAt = 0; rememberMusic({ track: next.id, trackTime: 0 }); }
+  if (settings.musicOff) rememberMusic({ musicOff: false });
   if (!audio.src.endsWith(next.src)) audio.src = next.src;
   audio.play().catch(() => notice('노래를 재생하지 못했어요.'));
   showMusic();
@@ -431,7 +434,7 @@ audio.addEventListener('ended', () => play(nextTrack(TRACKS, track?.id ?? null))
 audio.addEventListener('play', () => { rememberMusic({ playing: true }); showMusic(); });
 audio.addEventListener('pause', () => { if (track) rememberMusic({ playing: false, trackTime: audio.currentTime }); showMusic(); });
 audio.addEventListener('error', () => { if (track) notice(`'${track.title}'을(를) 불러오지 못했어요.`); });
-el('music-stop').onclick = () => play(null);
+el('music-stop').onclick = () => { rememberMusic({ musicOff: true }); play(null); };
 showMusic();
 const editKeys = (event: KeyboardEvent) => {
   if (!garden?.editor.active || ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName ?? '')) return;

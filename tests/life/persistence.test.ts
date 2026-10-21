@@ -118,7 +118,7 @@ test('a pat raises affinity once a day; levels are named', () => {
 test('view and song settings are validated and remembered', () => {
   const storage = memory();
   assert.deepEqual(loadSettings(storage), DEFAULT_SETTINGS);
-  const chosen = { ...DEFAULT_SETTINGS, grid: true, zoom: 99, selected: 'lilac' as const, dayCycle: false, fps: true, region: 'onsen' as const, season: 'winter' as const, volume: .3, muted: true, track: 'evening', trackTime: 42.5, playing: true };
+  const chosen = { ...DEFAULT_SETTINGS, grid: true, zoom: 99, selected: 'lilac' as const, dayCycle: false, fps: true, region: 'onsen' as const, season: 'winter' as const, volume: .3, muted: true, track: 'evening', trackTime: 42.5, playing: true, musicOff: true };
   saveSettings(storage, chosen);
   assert.deepEqual(loadSettings(storage), { ...chosen, zoom: ZOOM.max });
   storage.setItem(SETTINGS_KEY, JSON.stringify({ zoom: 99, selected: 'nobody', grid: 'yes', volume: 4, trackTime: -1, track: 7 }));

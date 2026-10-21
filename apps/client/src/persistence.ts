@@ -120,9 +120,11 @@ export function saveGarden(storage: SaveStorage, save: GardenSave) { storage.set
 export const SETTINGS_KEY = 'little-garden.settings.v1';
 export interface Settings { grid: boolean; zoom: number; selected: AvatarId; dayCycle: boolean; fps: boolean; region: RegionId; season: SeasonId;
   /** The song player: loudness 0..1, muted, the song last heard and where in it, and whether it was playing. */
-  volume: number; muted: boolean; track: string | null; trackTime: number; playing: boolean }
+  volume: number; muted: boolean; track: string | null; trackTime: number; playing: boolean;
+  /** The player pressed stop: no song starts by itself until they pick one again. */
+  musicOff: boolean }
 export const DEFAULT_SETTINGS: Settings = { grid: false, zoom: 1, selected: 'character', dayCycle: true, fps: false, region: DEFAULT_REGION, season: DEFAULT_SEASON,
-  volume: .6, muted: false, track: null, trackTime: 0, playing: false };
+  volume: .6, muted: false, track: null, trackTime: 0, playing: false, musicOff: false };
 export function loadSettings(storage: SaveStorage): Settings {
   try {
     const v = JSON.parse(storage.getItem(SETTINGS_KEY) ?? '{}') as Partial<Settings>, out = { ...DEFAULT_SETTINGS };
@@ -138,6 +140,7 @@ export function loadSettings(storage: SaveStorage): Settings {
     if (typeof v.track === 'string' && v.track.length <= 100) out.track = v.track;
     if (typeof v.trackTime === 'number' && Number.isFinite(v.trackTime) && v.trackTime >= 0) out.trackTime = v.trackTime;
     if (typeof v.playing === 'boolean') out.playing = v.playing;
+    if (typeof v.musicOff === 'boolean') out.musicOff = v.musicOff;
     return out;
   } catch { return { ...DEFAULT_SETTINGS }; }
 }
