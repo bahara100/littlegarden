@@ -66,4 +66,19 @@ function findOxipng(): string | null {
   return process.platform === 'win32' && existsSync(links) ? links : null;
 }
 
-export default defineConfig({ base: './', plugins: [gameFilesOnly()], build: { chunkSizeWarningLimit: 1500 /* the Phaser chunk is ~1.4 MB and loads after the page */, rollupOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)) } } } });
+/** The test site (VITE_PREVIEW=1, published under /preview/): kept out of search results and marked on screen. */
+function previewMark(): Plugin {
+  return {
+    name: 'preview-mark',
+    transformIndexHtml(html) {
+      if (!process.env.VITE_PREVIEW) return html;
+      return html
+        .replace('<title>', '<meta name="robots" content="noindex,nofollow"><title>[미리보기] ')
+        .replace('</body>', '<div id="preview-banner" role="note" style="position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:50;'
+          + 'padding:7px 14px;border-radius:999px;background:#5c7950;color:#fffef2;font-size:12px;box-shadow:0 4px 14px #2a3a2440;pointer-events:none">'
+          + '미리보기 · 공개 전 확인용이에요. 저장은 실제 게임과 따로예요.</div></body>');
+    },
+  };
+}
+
+export default defineConfig({ base: './', plugins: [gameFilesOnly(), previewMark()], build: { chunkSizeWarningLimit: 1500 /* the Phaser chunk is ~1.4 MB and loads after the page */, rollupOptions: { input: { main: fileURLToPath(new URL('./index.html', import.meta.url)) } } } });

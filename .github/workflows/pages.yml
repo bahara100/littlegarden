@@ -1,14 +1,20 @@
 name: Publish game to Pages
-# Deploys only after Verify (type check, rule tests, build, screen tests) has passed for a push to main, so a broken
-# game never reaches the public site. Run it by hand (workflow_dispatch) to redeploy the current main.
+# Publishes two sites from one Pages deployment, each from the newest commit whose Verify run (type check, rule tests,
+# build, screen tests) passed, so a broken game never reaches either:
+#   https://bahara100.github.io/littlegarden/          the real game, from main
+#   https://bahara100.github.io/littlegarden/preview/  the test site, from the `preview` branch (VITE_PREVIEW=1: own
+#                                                     saves, a "미리보기" badge, kept out of search results)
+# Push a commit to `preview` first (git push origin main:preview --force) to look at it before it goes to main.
+# Run it by hand (workflow_dispatch) to redeploy both.
 on:
   workflow_run:
     workflows: [Verify]
     types: [completed]
-    branches: [main]
+    branches: [main, preview]
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 concurrency:
@@ -24,37 +30,48 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-      # A check that finishes late for an older commit must not replace a newer one already on the site.
-      - name: Still the newest commit on main?
-        id: newest
+          fetch-depth: 0
+      # The newest commit of each branch that passed Verify (a branch that no longer exists is left out).
+      - name: Pick the checked commits
+        id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          latest=$(git ls-remote origin refs/heads/main | cut -f1)
-          if [ "$latest" = "$(git rev-parse HEAD)" ]; then echo "deploy=true" >> "$GITHUB_OUTPUT"; else echo "A newer commit ($latest) will deploy instead."; fi
+          for branch in main preview; do
+            git ls-remote --exit-code origin "refs/heads/$branch" > /dev/null || continue
+            sha=$(gh run list -R "$GITHUB_REPOSITORY" --workflow Verify --branch "$branch" --event push --status success --limit 1 --json headSha -q '.[0].headSha')
+            echo "$branch: ${sha:-none}"
+            echo "$branch=$sha" >> "$GITHUB_OUTPUT"
+          done
       - uses: actions/setup-node@v7
-        if: steps.newest.outputs.deploy == 'true'
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-        if: steps.newest.outputs.deploy == 'true'
       # oxipng recompresses the built PNGs losslessly (vite.config.ts). Pinned release, checked against its published hash.
       - name: Install oxipng
-        if: steps.newest.outputs.deploy == 'true'
         run: |
           curl -fsSL -o /tmp/oxipng.tgz https://github.com/shssoichiro/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-musl.tar.gz
           echo "1813750ef592c5350ca79c88f98b2c0876d05c826dc7156245256d4255c1ad17  /tmp/oxipng.tgz" | sha256sum -c -
           tar -xzf /tmp/oxipng.tgz -C /tmp
           sudo install /tmp/oxipng-10.2.1-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
-      - run: npm run build -w apps/client
-        if: steps.newest.outputs.deploy == 'true'
+      - name: Build the game (main)
+        run: |
+          test -n "${{ steps.pick.outputs.main }}" || { echo "main has no checked commit yet"; exit 1; }
+          git checkout --force "${{ steps.pick.outputs.main }}"
+          npm ci
+          npm run build -w apps/client
+          mv apps/client/dist /tmp/site
+      - name: Build the test site (preview)
+        if: steps.pick.outputs.preview != ''
+        run: |
+          git checkout --force "${{ steps.pick.outputs.preview }}"
+          npm ci
+          VITE_PREVIEW=1 npm run build -w apps/client
+          mv apps/client/dist /tmp/site/preview
       - uses: actions/configure-pages@v6
-        if: steps.newest.outputs.deploy == 'true'
       - uses: actions/upload-pages-artifact@v5
-        if: steps.newest.outputs.deploy == 'true'
         with:
-          path: apps/client/dist
+          path: /tmp/site
       - name: Deploy
         id: deployment
-        if: steps.newest.outputs.deploy == 'true'
         uses: actions/deploy-pages@v5

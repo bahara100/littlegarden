@@ -5,7 +5,12 @@ import { DEFAULT_REGION, REGIONS, isRegionId, type RegionId } from './regions';
 import { AFFINITY_MAX } from './affinity';
 import { DEFAULT_SEASON, isSeasonId, type SeasonId } from './seasons';
 
-export const SAVE_KEY = 'little-garden.layout.v1';
+/**
+ * The test site (built with VITE_PREVIEW=1 and published under /preview/) keeps its own saves and settings, so
+ * trying out something new never touches the real garden (both live on the same github.io address).
+ */
+const STORE = import.meta.env?.VITE_PREVIEW ? 'little-garden.preview' : 'little-garden';
+export const SAVE_KEY = `${STORE}.layout.v1`;
 export const MAX_SAVE_BYTES = 200_000;
 /** Current save format. Older saves are upgraded step by step by MIGRATIONS; newer ones are refused. */
 export const SAVE_VERSION = 4;
@@ -117,7 +122,7 @@ export function loadGarden(storage: SaveStorage): GardenSave | null { const text
 export function saveGarden(storage: SaveStorage, save: GardenSave) { storage.setItem(SAVE_KEY, encodeSave(save)); }
 
 /** View settings remembered per browser (not part of the garden backup). */
-export const SETTINGS_KEY = 'little-garden.settings.v1';
+export const SETTINGS_KEY = `${STORE}.settings.v1`;
 export interface Settings { grid: boolean; zoom: number; selected: AvatarId; dayCycle: boolean; fps: boolean; region: RegionId; season: SeasonId;
   /** The song player: loudness 0..1, muted, the song last heard and where in it, and whether it was playing. */
   volume: number; muted: boolean; track: string | null; trackTime: number; playing: boolean;
