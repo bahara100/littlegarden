@@ -8,7 +8,7 @@ import { CATALOG, HALF, PICNIC_RUG_ID, type Layout, type ItemKind } from './layo
 import { initialLayout } from './parkLayout';
 import { loadGarden, saveGarden, encodeSave, decodeGarden, loadSettings, saveSettings, MAX_SAVE_BYTES, type GardenSave } from './persistence';
 import { affinityLevel, nextUnlock, todayKey, unlockedFor } from './affinity';
-import { SCARLET_SD } from './scarletApproved';
+import { SCARLET2 as SCARLET_SD } from './scarlet2';
 import { REGIONS, region, type RegionId } from './regions';
 import { SEASONS, season, seasonGround, type SeasonId } from './seasons';
 import { TRACKS, nextTrack, trackLabel, type Track } from './music';
@@ -70,7 +70,7 @@ function refresh() {
   }
   if (friend) {
     el('model-review').hidden = false;
-    setText('model-review', friend.id === 'character' ? '홍련 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
+    setText('model-review', friend.id === 'character' ? '홍련2 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
     el('selection-icon').dataset.friend = friend.id;
     const profile = PROFILES[friend.id];
@@ -194,6 +194,7 @@ try {
   const created = usePhaser ? import('./phaserGarden').then(m => new m.PhaserGarden(el('game'), callbacks)) : Promise.resolve(new PixelGarden(el('game'), callbacks));
   created.then(created => {
     garden = created;
+    if (import.meta.env.DEV) Object.assign(window, { garden });
     try {
       const saved = loadGarden(window.localStorage);
       if (saved) {

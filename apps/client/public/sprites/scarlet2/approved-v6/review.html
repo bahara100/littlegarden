@@ -1,0 +1,16 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>홍련2 · 맵에 적용된 그림</title><style>
+*{box-sizing:border-box}body{margin:0;padding:32px 16px;font:15px/1.7 system-ui;background:#eeede3;color:#474f43}main{max-width:760px;margin:auto}h1{font-size:25px}p{color:#727c68}button,a{font:inherit;background:#fffdf5;color:#526549;border:1px solid #cdd6c3;border-radius:12px;padding:8px 13px;cursor:pointer;text-decoration:none}button[aria-pressed=true]{background:#738869;color:white}nav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.stage{background:#e4e9d8;border-radius:20px;display:flex;justify-content:center;padding:20px}canvas{width:256px;height:256px;image-rendering:pixelated}.status{text-align:center}a{display:inline-block;margin-top:18px}
+</style><main><h1>홍련2 · 맵에 적용된 그림</h1><p>서 있을 때는 정지 V2, 걸을 때는 최종 걷기 V6를 사용해요.</p>
+<nav aria-label="방향"><button data-dir="se" aria-pressed="true">앞오른쪽 ↘</button><button data-dir="sw">앞왼쪽 ↙</button><button data-dir="ne">뒤오른쪽 ↗</button><button data-dir="nw">뒤왼쪽 ↖</button></nav>
+<nav aria-label="자세"><button data-pose="walk" aria-pressed="true">걷기</button><button data-pose="idle">서 있기</button><button id="play" aria-pressed="true">일시정지</button></nav>
+<div class="stage"><canvas width="256" height="256" aria-label="실제 맵의 홍련2 그림"></canvas></div><p class="status" id="status"></p><a href="../../../">공원으로 돌아가기</a></main>
+<script type="module">
+const assets={};for(const d of ['se','ne']){assets[d]={};for(const pose of ['idle','walk']){const im=new Image;im.src=`${pose}-${d}.png`;await im.decode();assets[d][pose]=im}}
+let dir='se',pose='walk',frame=0,playing=true,last=0;const c=document.querySelector('canvas').getContext('2d');c.imageSmoothingEnabled=false;
+function paint(){const flip=dir==='sw'||dir==='nw',source=dir==='se'||dir==='sw'?'se':'ne';c.clearRect(0,0,256,256);c.save();if(flip){c.translate(256,0);c.scale(-1,1)}c.drawImage(assets[source][pose],pose==='walk'?frame*128:0,0,128,128,0,0,256,256);c.restore();document.querySelector('#status').textContent=pose==='idle'?'정지 V2':`걷기 V6 · ${frame+1} / 4 · 6 FPS`}
+for(const b of document.querySelectorAll('[data-dir]'))b.onclick=()=>{dir=b.dataset.dir;document.querySelectorAll('[data-dir]').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));paint()};
+for(const b of document.querySelectorAll('[data-pose]'))b.onclick=()=>{pose=b.dataset.pose;frame=0;document.querySelectorAll('[data-pose]').forEach(el=>el.setAttribute('aria-pressed',String(el===b)));paint()};
+document.querySelector('#play').onclick=e=>{playing=!playing;e.currentTarget.textContent=playing?'일시정지':'재생';e.currentTarget.setAttribute('aria-pressed',String(playing))};
+function tick(t){if(playing&&t-last>=1000/6){last=t;frame=(frame+1)%4;paint()}requestAnimationFrame(tick)}paint();requestAnimationFrame(tick);
+</script></html>

@@ -1,0 +1,562 @@
+{
+  "purpose": "Fill only transparent arm/body seam and existing scabbard root pixels requested in screenshots; no original opaque pixel changes.",
+  "direction": "se",
+  "mirror": "sw",
+  "armPixels": [
+    9,
+    5,
+    3,
+    8
+  ],
+  "scabbardPixels": [
+    20,
+    17,
+    13,
+    20
+  ],
+  "frames": {
+    "1": [
+      {
+        "x": 55,
+        "y": 81,
+        "color": "#eeb499"
+      },
+      {
+        "x": 56,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 56,
+        "y": 82,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 82,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 57,
+        "y": 83,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 55,
+        "y": 86,
+        "color": "#7e758a"
+      },
+      {
+        "x": 55,
+        "y": 87,
+        "color": "#7e758a"
+      },
+      {
+        "x": 54,
+        "y": 88,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 79,
+        "y": 89,
+        "color": "#463447"
+      },
+      {
+        "x": 80,
+        "y": 89,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 81,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 79,
+        "y": 90,
+        "color": "#7e758a"
+      },
+      {
+        "x": 80,
+        "y": 90,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 81,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 82,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 91,
+        "color": "#7e758a"
+      },
+      {
+        "x": 80,
+        "y": 91,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 81,
+        "y": 91,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 91,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 92,
+        "color": "#352438"
+      },
+      {
+        "x": 80,
+        "y": 92,
+        "color": "#7e758a"
+      },
+      {
+        "x": 81,
+        "y": 92,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 82,
+        "y": 92,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 79,
+        "y": 95,
+        "color": "#352438"
+      },
+      {
+        "x": 85,
+        "y": 95,
+        "color": "#7e758a"
+      },
+      {
+        "x": 86,
+        "y": 95,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 87,
+        "y": 95,
+        "color": "#d9d1e2"
+      }
+    ],
+    "2": [
+      {
+        "x": 55,
+        "y": 80,
+        "color": "#eeb499"
+      },
+      {
+        "x": 56,
+        "y": 80,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 80,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 56,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 80,
+        "y": 88,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 81,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 80,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 81,
+        "y": 89,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 82,
+        "y": 89,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 90,
+        "color": "#7e758a"
+      },
+      {
+        "x": 80,
+        "y": 90,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 81,
+        "y": 90,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 91,
+        "color": "#352438"
+      },
+      {
+        "x": 80,
+        "y": 91,
+        "color": "#7e758a"
+      },
+      {
+        "x": 81,
+        "y": 91,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 82,
+        "y": 91,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 85,
+        "y": 94,
+        "color": "#7e758a"
+      },
+      {
+        "x": 86,
+        "y": 94,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 87,
+        "y": 94,
+        "color": "#d9d1e2"
+      }
+    ],
+    "3": [
+      {
+        "x": 57,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 57,
+        "y": 82,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 57,
+        "y": 83,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 81,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 81,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 82,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 81,
+        "y": 91,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 91,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 80,
+        "y": 92,
+        "color": "#7e758a"
+      },
+      {
+        "x": 81,
+        "y": 92,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 82,
+        "y": 92,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 79,
+        "y": 95,
+        "color": "#352438"
+      },
+      {
+        "x": 85,
+        "y": 95,
+        "color": "#7e758a"
+      },
+      {
+        "x": 86,
+        "y": 95,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 87,
+        "y": 95,
+        "color": "#d9d1e2"
+      }
+    ],
+    "4": [
+      {
+        "x": 54,
+        "y": 80,
+        "color": "#eeb499"
+      },
+      {
+        "x": 55,
+        "y": 80,
+        "color": "#eeb499"
+      },
+      {
+        "x": 56,
+        "y": 80,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 80,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 55,
+        "y": 81,
+        "color": "#eeb499"
+      },
+      {
+        "x": 56,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 57,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 57,
+        "y": 82,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 79,
+        "y": 88,
+        "color": "#463447"
+      },
+      {
+        "x": 80,
+        "y": 88,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 81,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 79,
+        "y": 89,
+        "color": "#7e758a"
+      },
+      {
+        "x": 80,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 81,
+        "y": 89,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 82,
+        "y": 89,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 90,
+        "color": "#7e758a"
+      },
+      {
+        "x": 80,
+        "y": 90,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 81,
+        "y": 90,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 82,
+        "y": 90,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 79,
+        "y": 91,
+        "color": "#352438"
+      },
+      {
+        "x": 80,
+        "y": 91,
+        "color": "#7e758a"
+      },
+      {
+        "x": 81,
+        "y": 91,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 82,
+        "y": 91,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 79,
+        "y": 94,
+        "color": "#352438"
+      },
+      {
+        "x": 85,
+        "y": 94,
+        "color": "#7e758a"
+      },
+      {
+        "x": 86,
+        "y": 94,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 87,
+        "y": 94,
+        "color": "#d9d1e2"
+      }
+    ]
+  },
+  "baselineSha256": {
+    "scarlet2-walk-se-v6.pxo": "dca7e4e480c6b2ff2a6f8c31627b71a2e84e30ebbad595e4c31902c8660b1c7e",
+    "manifest.json": "8b109878efec7f4008a892a840c3ce2a8f2e35cc3fe8cb0f93e651dcf3d73ce5",
+    "frame-se-1.png": "6951b872ead35d9cc9890bfb8b08b1ec7d6939d20cbb458e29a3d54dd5ed1480",
+    "frame-se-2.png": "804c14e73088541e08e8e56a92f32c6f807b5c6159519bf6ff1e1d1da861b19d",
+    "frame-se-3.png": "a3cd5b32c30050c328d208ecd50892a3b33441e1c10b82eeddc8da6e30093623",
+    "frame-se-4.png": "ba72c7bfb0200dde5794bcbc02e2443ca8023cc8926cc010382f632fd5842892",
+    "frame-sw-1.png": "0df58d5a2632b0346aec4a2dce706aa77f2eab10b61035f0e4cedecc6ca965cc",
+    "frame-sw-2.png": "f8c01d70b78750c21b7fd82e6df414adbdfc35cc77c928bb9c63dd08a5dc08fe",
+    "frame-sw-3.png": "3f9bb38e9b0327405d9bdee5c0d4249966ddf3bf1fcb0f1b2887c9cadfad3b04",
+    "frame-sw-4.png": "2d5b55530233534bbdb3f2a17ad3834574728fa73b1592a5c79b1b3e6af8bdf9",
+    "frame-ne-1.png": "4c9780348986c6c97aa3bcaf7c9d80d208ddada0d1d466894cd7ac1985c05e64",
+    "frame-ne-2.png": "98b3b4feca93f787068714de3be252de070faf99ce0750fa3283dee358911a55",
+    "frame-ne-3.png": "f2a62602896231e174314c58778c27049cc64a5aa4d6bb3865f7b5bef07c258c",
+    "frame-ne-4.png": "33bb943d03985f21f8907e3408022d45b6d292e5b4efdb908fe96fdbfe2634a3",
+    "frame-nw-1.png": "bc46d7f7b00332b9f94efb608fd698f1734df3518b6dff77c7b1e49799b63baf",
+    "frame-nw-2.png": "801fe334af2492d28372711b5d3decb08758f3c8e761f168e924da6a70272ca0",
+    "frame-nw-3.png": "fb275ae7e1bd89c4754f5cc2debd6d88ef5ade33002b760e2b8e2a4bc446bd76",
+    "frame-nw-4.png": "689575a4d427ac5aa4ae305ae3a01b4407a5ecff230509d016069d748be115cc",
+    "core-se-1.png": "5941c7f19eeefcc64fc4c6f3c9aa76ec92bdbde886beb02cd9fc62a551656b79",
+    "core-se-2.png": "63165e78ecb5074f30620e6af66e65830fd3e74da380606b08b66d3d24a66213",
+    "core-se-3.png": "5941c7f19eeefcc64fc4c6f3c9aa76ec92bdbde886beb02cd9fc62a551656b79",
+    "core-se-4.png": "63165e78ecb5074f30620e6af66e65830fd3e74da380606b08b66d3d24a66213",
+    "core-ne-1.png": "476d1c77eab2aa08726fd6eee7a7befbe08e1e894df6f853b301e5dcd651fb28",
+    "core-ne-2.png": "0c077eb7fbde738e43cb23c77a9497c0ec05e7e10a8638f6c75c5ce3e8b49d3c",
+    "core-ne-3.png": "476d1c77eab2aa08726fd6eee7a7befbe08e1e894df6f853b301e5dcd651fb28",
+    "core-ne-4.png": "0c077eb7fbde738e43cb23c77a9497c0ec05e7e10a8638f6c75c5ce3e8b49d3c",
+    "legs-se-1.png": "15763ad95c897048f2d8727cfd9790c55b4b2285a48ee0068254453410cd5ef8",
+    "legs-se-2.png": "1fa0d3b54bd1aaf9d78bdeef23d5d9f9542b8be88a4d75648531e4d66fd2302c",
+    "legs-se-3.png": "1ffd6a922dc4d70a26ff1611862c6575e197e3f62e7550b1868ac36360f3d8ae",
+    "legs-se-4.png": "6f42b732dfda78c8e1c445c72c0259e0ddae0d00939b6908fb72341d6803c463",
+    "legs-ne-1.png": "7d11e24dcab12bbf0fb1278c3d14c24a1a042a231e056632e0969162cfa8d416",
+    "legs-ne-2.png": "31eb4ed7cf73964dbf222ad8d8f84b523b0f385cd54075bce38d6c5900e749a5",
+    "legs-ne-3.png": "beefdc861c067747f51f6908dd275a6c2b2988341d9831cb8206ec2230ef4f3c",
+    "legs-ne-4.png": "8bbea6133848a125998a037357e7d1c4c89d2ea298195655c0405caf60eb84a2",
+    "cap-se-1.png": "0fe9ae0aa97748860f8f1af9f4bdbcc8872a3770537bffce21e62b645d7ac6e4",
+    "cap-se-2.png": "4664fe95a3e40cf6b6b43ef0853910f968d1c3579f21214400c0010cfb84a088",
+    "cap-se-3.png": "0fe9ae0aa97748860f8f1af9f4bdbcc8872a3770537bffce21e62b645d7ac6e4",
+    "cap-se-4.png": "4664fe95a3e40cf6b6b43ef0853910f968d1c3579f21214400c0010cfb84a088",
+    "cap-ne-1.png": "59c37acabf383040f53c6c4b07bd3c6c54b109a520174c68236a477c497397b2",
+    "cap-ne-2.png": "46a35f0a0e0c92afd53a2d86e568681fba4fad5f14579eeea172ea92e8e5faa5",
+    "cap-ne-3.png": "59c37acabf383040f53c6c4b07bd3c6c54b109a520174c68236a477c497397b2",
+    "cap-ne-4.png": "46a35f0a0e0c92afd53a2d86e568681fba4fad5f14579eeea172ea92e8e5faa5",
+    "near-se-1.png": "3be896b598f4ee178f14c3c3974d3358a284eca3a962e97d43735f296866827e",
+    "near-se-2.png": "df154486cb142c95f5ed88403df1c6b1229e1caba27ee431f6a20d3192e97da4",
+    "near-se-3.png": "e8ba21938fc42bd8346cf4c75e2cc9867373829bd1db98089befc0df56ebb27f",
+    "near-se-4.png": "a79a45ba3249616c2e6f6742a7b3976038aafd44af0da30ced793328ced91d9f",
+    "near-ne-1.png": "c1770796779f2e02889111a8838f875ee9fc06d42b4d17ee82493c52a9c372b1",
+    "near-ne-2.png": "7a9fb71f3a565c97a9da2f8c6bf175204b6dbc3104489b7d6710906f979d0a21",
+    "near-ne-3.png": "e9ff2e6e0d393dcbc3df2f4deea9940e6bf0b6cbe933391ba124a1ab8da205ba",
+    "near-ne-4.png": "099dda047ad2d1b1fa47ed5abe1fa0c33c7a790ab28bf90f20772e20de368e41",
+    "far-se-1.png": "878371c3fb3892e7527285804a93baa8376649643936dcf06de0a899a9caf669",
+    "far-se-2.png": "2a2c925cb8ce51f410828ccbac339bf363e713ccd5410aacdd2f594dc8351d1b",
+    "far-se-3.png": "bc0d9f7e5fcef33a40963eb157a4fe4ff343a1e060037c84e74a7e0fbd07120b",
+    "far-se-4.png": "b812e3bfe440f69e333967ce312386904e1ef5c2c916743d295b9da6d0f307c6",
+    "far-ne-1.png": "e18009a2ac6004b1a7b6c4ee1a223f8d2b0c14fa2118687726269bbdad0fea1d",
+    "far-ne-2.png": "ab8e68b6a754e2029a252c6825573c1a14387882d317e0f257f6ab2615d58393",
+    "far-ne-3.png": "16f4ce873d27b28c7e28640e0b66a16dbb3b2a18d504b95ffdb26878a7c8b8f7",
+    "far-ne-4.png": "399ac7c4e427b8cb719e0b7396177df621423b4a286349d648c56168ce049cd4"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "name": "홍련2",
+  "version": 2,
+  "pose": "basic chair sitting",
+  "status": "User art review pending",
+  "standingV2Approved": true,
+  "standingV2Unchanged": true,
+  "runtimeConnected": false,
+  "newImageGeneration": false,
+  "frameSize": 128,
+  "paletteLimit": 64,
+  "protectedFiles": 70,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "headOffsets": {
+    "se": [
+      0,
+      0
+    ],
+    "ne": [
+      -3,
+      0
+    ]
+  },
+  "separateLegSplice": false,
+  "method": "Existing full seated wardrobe draft refitted as one continuous neck-to-boots block; approved standingV2 head and64-color palette reused.",
+  "baseReferences": {
+    "se": "garden-body-sit-friends-v1/sit-se.png",
+    "ne": "garden-body-sit-ne-v1/sit-ne.png"
+  },
+  "baseOffset": [
+    16,
+    24
+  ],
+  "bodyFits": {
+    "se": [
+      76,
+      42,
+      38
+    ],
+    "ne": [
+      76,
+      38,
+      35
+    ]
+  },
+  "directions": {
+    "se": {
+      "sha256": "39d5ee29beb35d4907ddb0c8ecbeb25f46a054075b143bd293fe55644de4b922",
+      "headPixelsPreserved": true,
+      "layerCompositeExact": true,
+      "bodySilhouetteMatchesContinuousSource": true,
+      "footHeightMatchesBase": true,
+      "footBottom": 113,
+      "visibleColors": 62,
+      "shoeDetail": {
+        "changedPixels": 115,
+        "allowedRectangle": [
+          56,
+          103,
+          19,
+          11
+        ],
+        "outsidePixelsUnchanged": true,
+        "allAlphaUnchanged": true
+      }
+    },
+    "ne": {
+      "sha256": "b4bc6987efd3bef78cc81bcf90d2dcfa93151ad78ab9450b5a4aa1b095b8a4b0",
+      "headPixelsPreserved": true,
+      "layerCompositeExact": true,
+      "bodySilhouetteMatchesContinuousSource": true,
+      "footHeightMatchesBase": true,
+      "footBottom": 110,
+      "visibleColors": 56,
+      "shoeDetail": {
+        "changedPixels": 83,
+        "allowedRectangle": [
+          65,
+          101,
+          18,
+          10
+        ],
+        "outsidePixelsUnchanged": true,
+        "allAlphaUnchanged": true
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "docs/art/pixel/garden-body-base-v2/base-idle-se.png": "e26fe1c74c6222332115c1369e0e7d98a63ebd544e27787a5ab0f30c8cf4f14d",
+  "docs/art/pixel/garden-body-walk-se-v20/walk.png": "d8372372c0cdefca55e41fba204a0c8e9ab4808a2e6265a46877abd7e0de12fe",
+  "docs/art/pixel/garden-body-walk-ne-v8/walk.png": "06ff9beb071485c5a187fa0cbb5678f67e709c69ae24ac62476133069edc7bcd",
+  "apps/client/src/scarletApproved.ts": "3a9c8bb17b1f262ef100d9efb813b16bd03b8e18c20952ee294f2b57ceb3f35e",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/idle-ne.png": "5b0794d36b08b181544a7606b465f7cdc73f8bfb1aa0aabaf0112f87e3d08136",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/idle-se.png": "2b3ca4174ce3283d766e9dbfcbc73fefb0cdf541be245b8a69a5015e76d0a9f6",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/manifest.json": "fec9e774ddad6bd3d531a91148c6624b827012a58b4dc488081c66b99cb3a3f0",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/preview-ne.gif": "a3fad144f724da8126a083e88ffaa74a7ae113582a57bab748af54919cf127e7",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/preview-ne.png": "3d3639d4ea87b97827758ecb2773cd2b20c03b9c0212500153f841d2e71f3e04",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/preview-se.gif": "5c56332f35e4e49b0facdd3b2d78b3a40c0d694aca14e36f23606c9b86696ca9",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/preview-se.png": "90089e7fafcec37fd19cc63814441344ff242a793d2b10b846b95586da509106",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/review.html": "63841800ea63d0c314fc1f5934b1707cebcdf3d73d37fa6205a64ef78e5d2dbc",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/walk-ne.png": "4a7145baa85e96cc704f15ca9cc62167b0d30d18d4ff181221e5b333944bc9ee",
+  "apps/client/public/sprites/scarlet/ingame-approved-v1/walk-se.png": "87d805f852f689fcbbc25553cf415304c8a110691c506351dcaa8a33d4f8b077"
+}

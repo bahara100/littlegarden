@@ -1,0 +1,140 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 3,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": false,
+  "protectedSources": 325,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "Approved standing V2 head, shoulders, chest, waist and scabbard form a single native core shared across four poses. Existing approved arms pivot at shoulders. V2 leg poses overlap underneath hip garments. No new generation.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "a26abe5bba221eba35753f2b7b2eb39545b6b572fcd1081c1178e71969fc3a29",
+        "c8cf50d5b5734ee08e0fa37c2a0e3f9f3e2476d628bfedceccc2a81bb0119aca",
+        "40b6ecf7fdcf875e9b0d15d268d367825bcffe594a1864a8f0d45a15c2fee33a",
+        "5ab6d53b444f4c98c3b6b2a1c5b4bef5ff2f1ddd698a1f51a275ed3025f90db5"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "1245d92f0d6fd1cd240e70a24d4f3ff620943b4c16f72abbee45ff906474a681",
+        "de41d8f2f31a33ed70878f576230dde6357c636003eaa7611678ca0b669cc54a",
+        "af5175573a6b27ef21be48918781c8ad2fc1f2619b94dedebb83c3e70b598041",
+        "b52fb8729517545acbcd28d634fc2ce0c12ff70d55549e608bec3c7164c10e30"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "5dad09366a590c8c8497ea3f2531c691ca2725b59fb8f2ff201a2ce590962e1d",
+        "f68f2ccce20309c9665ff3ef0e1a3c7fe447cc0094a66588d50a21e8ddf49916",
+        "c8b87c9da830f060c7d19f8f05b01bf578b83845e1c451ff1af9bec3339a1608",
+        "4b5a02cba742424d2fcdde2deb5001aae51b034c9601b9e4e3c1608749612121"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        58,
+        57,
+        56
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "2297a140986046434be079e28662a95aa3c1924de423aee311d89278277577b3",
+        "b7068a437ba7b712f8d718a160b5ee4570bf067407a709607b44d353485bed48",
+        "7f7fe1bddeb0d226bf039939271eea06383d5551843606e7d20d4566c905b945",
+        "8643a65f5b4359fbd1635883382cb6cf696897020a6b7e695578e8cd12ef8bd3"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        58,
+        57,
+        56
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    }
+  },
+  "alignment": {
+    "method": "One approved full upper-body artwork from hat through waist, including shoulder-neck overlap; arm pivots at shoulders; V2 legs overlap behind hip garments. No independently generated torso in the cycle.",
+    "sharedCoreBobY": [
+      0,
+      -1,
+      0,
+      -1
+    ],
+    "armAnglesDegrees": [
+      -12,
+      -5,
+      12,
+      5
+    ],
+    "masterPixelColoursUnchanged": true
+  },
+  "visibleArmChanges": {
+    "se": [
+      132,
+      89
+    ],
+    "ne": [
+      102,
+      56
+    ]
+  }
+}

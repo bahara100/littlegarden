@@ -1,0 +1,73 @@
+{
+  "name": "홍련2",
+  "version": 2,
+  "pose": "basic chair sitting",
+  "status": "User art review pending",
+  "standingV2Approved": true,
+  "standingV2Unchanged": true,
+  "runtimeConnected": false,
+  "newImageGeneration": false,
+  "frameSize": 128,
+  "paletteLimit": 64,
+  "protectedFiles": 70,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "headOffsets": {
+    "se": [
+      0,
+      0
+    ],
+    "ne": [
+      -3,
+      0
+    ]
+  },
+  "separateLegSplice": false,
+  "method": "Existing full seated wardrobe draft refitted as one continuous neck-to-boots block; approved standingV2 head and64-color palette reused.",
+  "baseReferences": {
+    "se": "garden-body-sit-friends-v1/sit-se.png",
+    "ne": "garden-body-sit-ne-v1/sit-ne.png"
+  },
+  "baseOffset": [
+    16,
+    24
+  ],
+  "bodyFits": {
+    "se": [
+      76,
+      42,
+      38
+    ],
+    "ne": [
+      76,
+      38,
+      35
+    ]
+  },
+  "directions": {
+    "se": {
+      "sha256": "c5cec7c663327a9e23aafd7323a7c6941ee3efb2ff02bcb6d9ed690e86648bb0",
+      "headPixelsPreserved": true,
+      "layerCompositeExact": true,
+      "bodySilhouetteMatchesContinuousSource": true,
+      "footHeightMatchesBase": true,
+      "footBottom": 113,
+      "visibleColors": 62
+    },
+    "ne": {
+      "sha256": "08c93dd69f5989a23a2ccef89ffadcb1cac287b59d825b276f3ffadab86ee918",
+      "headPixelsPreserved": true,
+      "layerCompositeExact": true,
+      "bodySilhouetteMatchesContinuousSource": true,
+      "footHeightMatchesBase": true,
+      "footBottom": 110,
+      "visibleColors": 56
+    }
+  }
+}

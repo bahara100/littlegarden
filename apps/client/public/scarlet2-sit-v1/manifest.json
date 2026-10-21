@@ -1,0 +1,53 @@
+{
+  "name": "홍련2",
+  "pose": "sitting",
+  "status": "User art review pending",
+  "standingApproved": true,
+  "standingUnchanged": true,
+  "runtimeConnected": false,
+  "canvas": [
+    128,
+    128
+  ],
+  "sourceDirections": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "paletteLimit": 48,
+  "baseOffset": [
+    16,
+    24
+  ],
+  "headOffsetsFromStanding": {
+    "se": [
+      0,
+      0
+    ],
+    "ne": [
+      -3,
+      0
+    ]
+  },
+  "headsPreserved": true,
+  "baseFeetAlphaExactFromRow": 103,
+  "directions": {
+    "se": {
+      "sha256": "3e9a7a6028b329ed672f069e94ae438b62808e383fd1857462d98790c7837103",
+      "visibleColors": 48,
+      "footBottom": 113,
+      "layerCompositeExact": true,
+      "feetMatchBase": true
+    },
+    "ne": {
+      "sha256": "fc0745e1e4ca53bc112ba06c31cbab9133dfac4b949551e8354f824b5f481370",
+      "visibleColors": 47,
+      "footBottom": 110,
+      "layerCompositeExact": true,
+      "feetMatchBase": true
+    }
+  }
+}

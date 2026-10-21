@@ -1,0 +1,141 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 4,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": false,
+  "protectedSources": 401,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "Approved standing V2 head, shoulders, chest, waist and scabbard form a single native core shared across four poses. Existing approved arms have independent shoulder and elbow motion with the near arm over the torso and the far arm behind it. V2 leg poses overlap underneath hip garments. No new generation.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "3f13693eba6c8711c0bfd3350cfd304785005f52c6a128ddb4ed268f0be46672",
+        "7dba8309de67145a2a5321b41b1206bb0b11c529af037877a14be163eebba549",
+        "2743c47b7f9800965968cecc729eabc3596ca12c4ba69a00bb9b5bbef28976df",
+        "88b8763992f2bcd854ff91dcb975248e1db07af3ab3ba7f2abddcf7044bf46e7"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "17998bea8296fe9af34ac10005c997eccfe2464c81b45d6710b9f3366a4ea7da",
+        "7bed6a1f9a7a40dba7ac8027f2a29faabf8240a0268dc133d8c166896efcfde0",
+        "0a9e2ef387a9af0155d08a83e7af5360d1f81d6ddba73dd1848dded3bb5c6ad8",
+        "03969a836a68ed004733f32376a6b075125a23011d6a46aeee43cfd6db698c26"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "87c9c1a3ad9acce9680102e232d724ec3709e7473a051ff92f7c50cc501efa65",
+        "06bfa8751eedba78ed9bdc0beae27a53d7a6c4ebefe09a6c785d1672e3e0078a",
+        "bd2da740dfa4b42087cf60397256134cf98b1839ec282d41b864633156da4fa8",
+        "6665d089ed10932f7bc6705c86dd5260bc65d716f82d44593a9460eb0eee0808"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        58,
+        58,
+        56
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "b6e8f41beac5253a0d02fd514d4c3a270ce940980203aaf50c97e3c4dc7e26de",
+        "4068ebcb9396993d701808ff7308246fc01ea8ab72dc9be8f27a03ebc264f25b",
+        "84e9e1fb9cfb790ae40977de7f397cf613256b78b289c0b138bcb2fc2a0c164b",
+        "0d4847d827835cf076770766db5493580f7a8e4d8cf7e4bac8208a886bc2da86"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        58,
+        58,
+        56
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    }
+  },
+  "alignment": {
+    "method": "One approved full upper-body artwork from hat through waist, including shoulder-neck overlap; shoulder/elbow articulation and front/back arm ordering; V2 legs overlap behind hip garments. No independently generated torso in the cycle.",
+    "sharedCoreBobY": [
+      0,
+      -1,
+      0,
+      -1
+    ],
+    "layerOrder": [
+      "legs",
+      "far arm",
+      "coherent torso",
+      "near arm"
+    ],
+    "articulation": "separate upper-arm and forearm rotations; full native hand preserved without scaling",
+    "masterPixelColoursUnchanged": true
+  },
+  "visibleArmChanges": {
+    "se": [
+      183,
+      100
+    ],
+    "ne": [
+      173,
+      71
+    ]
+  }
+}

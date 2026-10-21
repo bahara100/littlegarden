@@ -1,0 +1,212 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 6,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": true,
+  "protectedSources": 650,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "Approved standing V2 head, shoulders, chest, waist and scabbard form a single native core shared across four poses. Actual SE V20 / manually edited NE V8 arm drawings are recoloured with Scarlet skin/guards while retaining every source skin pixel and the directly adjacent source outline; excludes distant shirt/torso fragments, using integer shoulder offsets only. V2 leg poses overlap underneath hip garments. No new generation.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "075cca0c68d8ea0d4ed861432cff0ea541d69b2a8b50bb384495de41f29e52b1",
+        "271bafecc302391fcfd51fa62579af4f65b48001d77830f0aba38d98bcbd7f75",
+        "e08ff4846bb2c99138b706717b0cd263dd7a37b934150868d23db3114fc7f1d6",
+        "902c2b668e780508ce5625995188e642f840d1ee1b9f3167b0a0c498a1836a79"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "3466554a1a8abb732b71132934e92b13d97d7fef6e7bd5e09a7cd5d7a37fed13",
+        "4e72a2b45272ba8da7e0e0aee2df0f813fef1608b0752176e84a966122c98e78",
+        "6bdf5dff0fb839da13c91e2ff567619ea5aa04719f37846996080ebcf3194d28",
+        "f997d772cb0f97ea31317763edc91991dc36a4ee19f03a95b1d19696a4962d50"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "0258a81161085563d881c7b2ef0d1b4b8a25a1c33ccf1c40e552f31cb636ad66",
+        "91a0554e4468ad51add770ab9c0e8c3b893ed1390d727d8cd4194c03cf1be218",
+        "303ac25080abd07d7519db13bbe6854b29c80e3b1d0ef5a42fc557b86b5e59bb",
+        "fd733585cf26b42c2f3abca310496d854f935c9629efec7c4f2276f81088ff68"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        59,
+        58,
+        57
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "2b8482fd96516f0822108ae4306e562d316a2431084d2ff10b18f2885fc7b20e",
+        "aca8cb47eaa32d83cb0ca517d1b30ee84c55e89967b2db1440f54f84815a16e8",
+        "dbda778565a61dddad53a6941e2ca62631cee094ce8bf7e5ac7734cad9c1833d",
+        "edbd978ec0e8a3defa278cdf81f7dcd9d6d05ebcab98106ebacf332f7d6e3ca7"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        59,
+        58,
+        57
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    }
+  },
+  "jointFill": {
+    "armSePixels": [
+      9,
+      5,
+      3,
+      8
+    ],
+    "scabbardSePixels": [
+      20,
+      17,
+      13,
+      20
+    ],
+    "sw": "exact mirror",
+    "otherPixelsUnchanged": true,
+    "layers": {
+      "se": 6,
+      "ne": 6
+    },
+    "armNePixels": [
+      8,
+      12,
+      13,
+      13
+    ],
+    "scabbardNePixels": [
+      18,
+      3,
+      1,
+      8
+    ]
+  },
+  "alignment": {
+    "method": "One approved full upper-body artwork from hat through waist, including shoulder-neck overlap; source-base pose pixels and front/back arm ordering; V2 legs overlap behind hip garments. No independently generated torso in the cycle.",
+    "sharedCoreBobY": [
+      0,
+      -1,
+      0,
+      -1
+    ],
+    "layerOrder": [
+      "legs",
+      "far arm",
+      "coherent torso",
+      "near arm",
+      "head occlusion",
+      "arm/scabbard joint fill (transparent holes only)"
+    ],
+    "articulation": "Actual approved-base four-pose arm pixels, source skin and hand sizes retained; one-pixel adjacent source outline with integer translations only. No rotation, scale or limb interpolation.",
+    "extractedArmAlphaExact": true,
+    "sourceSkinPreserved": true,
+    "outlineNeighbourhood": 1,
+    "sourceOffsets": {
+      "se": {
+        "near": [
+          -3,
+          2
+        ],
+        "far": [
+          -3,
+          2
+        ]
+      },
+      "ne": {
+        "near": [
+          3,
+          5
+        ],
+        "far": [
+          0,
+          5
+        ]
+      }
+    },
+    "masterPixelColoursUnchanged": true
+  },
+  "scabbardOutline": {
+    "insideExistingAlpha": "rear; front straight contour adjusted",
+    "thickness": 1,
+    "nonScabbardPixelsPreserved": true,
+    "layers": 7
+  },
+  "frontScabbardStanding": {
+    "source": "scarlet2-base-v2/idle-se.png",
+    "visibleReferencePixelsExact": true,
+    "rearUnchanged": true,
+    "goldTipUnchanged": true
+  },
+  "visibleArmChanges": {
+    "se": [
+      149,
+      98
+    ],
+    "ne": [
+      193,
+      67
+    ]
+  }
+}

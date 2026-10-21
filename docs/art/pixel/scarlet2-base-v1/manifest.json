@@ -1,0 +1,57 @@
+{
+  "name": "홍련2",
+  "version": 1,
+  "status": "Four standing directions; front approved, rear awaiting art review",
+  "builtInImageGen": true,
+  "runtimeConnected": false,
+  "originalScarletPreserved": true,
+  "canvas": [
+    128,
+    128
+  ],
+  "baseCanvas": [
+    96,
+    96
+  ],
+  "baseOffset": [
+    16,
+    24
+  ],
+  "baseSource": "garden-body-base-v2/base-idle-se.png",
+  "feetBaseline": 114,
+  "sourceDirections": [
+    "se",
+    "ne"
+  ],
+  "mirroredDirections": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "paletteColors": 48,
+  "binaryAlpha": true,
+  "baseLegAlphaExactFromRow": 99,
+  "layersRecomposeExactly": true,
+  "method": "AI head and tailored upper outfit aligned to the body; actual base lower-leg/foot geometry retained and reclothed in Pixelorama. Upper body is a draft, not a proven interchangeable animation rig.",
+  "pending": [
+    "Rear art approval",
+    "Apply SE V20 / user-edited NE V8 walk poses",
+    "Sitting",
+    "Game connection"
+  ],
+  "preservedSourceCount": 14,
+  "frontApproved": true,
+  "frontUnchanged": true,
+  "rearBaseSource": "garden-friends-base-walk-v2/base-idle-ne.png",
+  "rearBaseOffset": [
+    16,
+    26
+  ],
+  "rearBaseLegAlphaExactFromRow": 99,
+  "rearVisibleFeetAlphaExactFromRow": 103,
+  "assets": {
+    "idle-se.png": "ce6f1f7ed4b32ca250b97dfa0589004ebcf102fbf077e1347a796b7a8d45fdd9",
+    "idle-sw.png": "edec4843aef98c8735c8c50f8d2e9ccb25b8e41f2e3fe57eb706e879c8d26011",
+    "idle-ne.png": "3cfc49c406f36f7867ada0a91853312a85ffc7cd57cef0dae43ca9d33e463b5d",
+    "idle-nw.png": "4e050697975d1ea8af00f2e66953c4e4a2f8d2cd039f5d38188c662b9bc7aa8e"
+  }
+}

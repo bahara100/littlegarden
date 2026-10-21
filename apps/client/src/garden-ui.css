@@ -187,7 +187,7 @@ aside { gap: 12px; }
 .friend-roster button:hover { background: #f7f8ef; }
 .friend-roster button[aria-pressed=true] { background: #fffdf7; border-color: #c9d4b9; color: #3d593a; box-shadow: 0 2px 4px #5668470a; }
 .friend-roster i { width: 37px; height: 34px; border-radius: 8px; background-color: transparent !important; background-repeat: no-repeat; image-rendering: pixelated; background-size: 56px 56px; background-position: center -1px; }
-#friend-character i { background-image: url('/sprites/scarlet/ingame-approved-v1/idle-se.png') !important; background-size: 43px 43px; }
+#friend-character i { background-image: url('/sprites/scarlet2/approved-v6/idle-se.png') !important; background-size: 43px 43px; }
 #friend-peach i { background-image: url('/sprites/garden/base-walk-v2/momo/idle-se.png') !important; }
 #friend-lilac i { background-image: url('/sprites/garden/base-walk-v2/lulu/idle-se.png') !important; }
 .friend-roster strong { font-size: 12px; font-weight: 600; }
@@ -198,7 +198,7 @@ aside { gap: 12px; }
 .selected-heading > div > span { font-size: 8px; color: #7b876e; letter-spacing: .2px; }
 .object-icon { width: 42px; height: 42px; border-radius: 13px; background: #eef1e4; color: #758c63; font-size: 26px; flex-shrink: 0; }
 .object-icon[data-friend] { color: transparent; background-repeat: no-repeat; background-size: 65px 65px; background-position: center top; image-rendering: pixelated; }
-.object-icon[data-friend=character] { background-image: url('/sprites/scarlet/ingame-approved-v1/idle-se.png'); background-size: 49px 49px; }
+.object-icon[data-friend=character] { background-image: url('/sprites/scarlet2/approved-v6/idle-se.png'); background-size: 49px 49px; }
 .object-icon[data-friend=peach] { background-image: url('/sprites/garden/base-walk-v2/momo/idle-se.png'); }
 .object-icon[data-friend=lilac] { background-image: url('/sprites/garden/base-walk-v2/lulu/idle-se.png'); }
 .selection-panel > p { min-height: 0; font-size: 11px; line-height: 1.8; }

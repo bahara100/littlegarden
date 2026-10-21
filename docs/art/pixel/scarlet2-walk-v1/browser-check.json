@@ -1,0 +1,14 @@
+{
+  "oneBrowser": true,
+  "playedFrames": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "directions": 4,
+  "frameSelections": 16,
+  "canvasMatchesActualPng": true,
+  "mobileOverflow": false,
+  "errors": []
+}

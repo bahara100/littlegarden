@@ -20,7 +20,7 @@ import { project, unproject } from './isometric';
 import { sceneOrder, walkerDepth } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
-import { SCARLET_SD, SCARLET_SD_DIRECTIONS, SCARLET_SD_SPEED, ScarletWalkCycle } from './scarletApproved';
+import { SCARLET2 as SCARLET_SD, SCARLET2_DIRECTIONS as SCARLET_SD_DIRECTIONS, SCARLET2_SPEED as SCARLET_SD_SPEED, Scarlet2WalkCycle as ScarletWalkCycle } from './scarlet2';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
 import { DEFAULT_SEASON, seasonGround, type SeasonId } from './seasons';
 
@@ -253,7 +253,7 @@ export class PixelGarden {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[scarletDirection(a.yaw)];
       const art = this.approvedArt.get(source)!;
       c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
-      if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * 96, 0, 96, 96, 0, 0, size, size);
+      if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
     } else if (drawnSit && a.id !== 'character') {

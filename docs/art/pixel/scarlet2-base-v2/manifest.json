@@ -1,0 +1,55 @@
+{
+  "name": "홍련2",
+  "version": 2,
+  "status": "User art review pending",
+  "runtimeConnected": false,
+  "newImageGeneration": false,
+  "frameSize": 128,
+  "paletteLimit": 64,
+  "method": "Re-map continuous original full-frame art to reserved material ramps. No horizontal leg replacement or separated hip/shin anatomy.",
+  "sourceDirections": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "sourceExtraOffset": {
+    "se": [
+      0,
+      0
+    ],
+    "ne": [
+      0,
+      1
+    ]
+  },
+  "exactBaseFootReplacement": false,
+  "preservedPreviousFiles": 92,
+  "directions": {
+    "se": {
+      "sha256": "b830c6f980198764bae7eaf467c59cbab7d9b750995c447d1e305da09722da09",
+      "sourceSilhouetteExact": true,
+      "layerCompositeExact": true,
+      "visibleColors": 63
+    },
+    "ne": {
+      "sha256": "578d3d122091483a476fb04d481c0180b15d3080c76244d0ac157119d64302e9",
+      "sourceSilhouetteExact": true,
+      "layerCompositeExact": true,
+      "visibleColors": 57
+    }
+  },
+  "materialInspection": {
+    "before": {
+      "warmBrownIrisPixels": 5,
+      "violetHipGearPixels": 2
+    },
+    "after": {
+      "warmBrownIrisPixels": 25,
+      "violetHipGearPixels": 48
+    },
+    "note": "Local hue checks, not user art approval."
+  }
+}

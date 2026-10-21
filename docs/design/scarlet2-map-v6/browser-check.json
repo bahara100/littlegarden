@@ -1,0 +1,92 @@
+[
+  {
+    "renderer": "phaser",
+    "directions": [
+      {
+        "direction": "se",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "sw",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "ne",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "nw",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "standingV2": true,
+    "walkingV6": true,
+    "frameSize": 128,
+    "errors": []
+  },
+  {
+    "renderer": "canvas",
+    "directions": [
+      {
+        "direction": "se",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "sw",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "ne",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "direction": "nw",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "standingV2": true,
+    "walkingV6": true,
+    "frameSize": 128,
+    "errors": []
+  }
+]

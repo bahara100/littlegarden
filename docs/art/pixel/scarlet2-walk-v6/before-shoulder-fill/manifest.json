@@ -1,0 +1,167 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 6,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": false,
+  "protectedSources": 650,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "Approved standing V2 head, shoulders, chest, waist and scabbard form a single native core shared across four poses. Actual SE V20 / manually edited NE V8 arm drawings are recoloured with Scarlet skin/guards while retaining every source skin pixel and the directly adjacent source outline; excludes distant shirt/torso fragments, using integer shoulder offsets only. V2 leg poses overlap underneath hip garments. No new generation.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "6951b872ead35d9cc9890bfb8b08b1ec7d6939d20cbb458e29a3d54dd5ed1480",
+        "804c14e73088541e08e8e56a92f32c6f807b5c6159519bf6ff1e1d1da861b19d",
+        "a3cd5b32c30050c328d208ecd50892a3b33441e1c10b82eeddc8da6e30093623",
+        "ba72c7bfb0200dde5794bcbc02e2443ca8023cc8926cc010382f632fd5842892"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "0df58d5a2632b0346aec4a2dce706aa77f2eab10b61035f0e4cedecc6ca965cc",
+        "f8c01d70b78750c21b7fd82e6df414adbdfc35cc77c928bb9c63dd08a5dc08fe",
+        "3f9bb38e9b0327405d9bdee5c0d4249966ddf3bf1fcb0f1b2887c9cadfad3b04",
+        "2d5b55530233534bbdb3f2a17ad3834574728fa73b1592a5c79b1b3e6af8bdf9"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        63,
+        63,
+        63
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "4c9780348986c6c97aa3bcaf7c9d80d208ddada0d1d466894cd7ac1985c05e64",
+        "98b3b4feca93f787068714de3be252de070faf99ce0750fa3283dee358911a55",
+        "f2a62602896231e174314c58778c27049cc64a5aa4d6bb3865f7b5bef07c258c",
+        "33bb943d03985f21f8907e3408022d45b6d292e5b4efdb908fe96fdbfe2634a3"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        59,
+        58,
+        57
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "bc46d7f7b00332b9f94efb608fd698f1734df3518b6dff77c7b1e49799b63baf",
+        "801fe334af2492d28372711b5d3decb08758f3c8e761f168e924da6a70272ca0",
+        "fb275ae7e1bd89c4754f5cc2debd6d88ef5ade33002b760e2b8e2a4bc446bd76",
+        "689575a4d427ac5aa4ae305ae3a01b4407a5ecff230509d016069d748be115cc"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        57,
+        59,
+        58,
+        57
+      ],
+      "wholeTorsoShared": true,
+      "editorCompositeExact": true
+    }
+  },
+  "alignment": {
+    "method": "One approved full upper-body artwork from hat through waist, including shoulder-neck overlap; source-base pose pixels and front/back arm ordering; V2 legs overlap behind hip garments. No independently generated torso in the cycle.",
+    "sharedCoreBobY": [
+      0,
+      -1,
+      0,
+      -1
+    ],
+    "layerOrder": [
+      "legs",
+      "far arm",
+      "coherent torso",
+      "near arm",
+      "head occlusion"
+    ],
+    "articulation": "Actual approved-base four-pose arm pixels, source skin and hand sizes retained; one-pixel adjacent source outline with integer translations only. No rotation, scale or limb interpolation.",
+    "extractedArmAlphaExact": true,
+    "sourceSkinPreserved": true,
+    "outlineNeighbourhood": 1,
+    "sourceOffsets": {
+      "se": {
+        "near": [
+          -3,
+          2
+        ],
+        "far": [
+          -3,
+          2
+        ]
+      },
+      "ne": {
+        "near": [
+          3,
+          5
+        ],
+        "far": [
+          0,
+          5
+        ]
+      }
+    },
+    "masterPixelColoursUnchanged": true
+  },
+  "visibleArmChanges": {
+    "se": [
+      158,
+      101
+    ],
+    "ne": [
+      192,
+      67
+    ]
+  }
+}

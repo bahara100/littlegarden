@@ -1,0 +1,158 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 2,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": false,
+  "protectedSources": 249,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "V1 wardrobe retained; bodice centre registered to the neck axis and waist height normalized by two continuous segments. Head uses exactly the same 0/-1px bob as the torso neck. No new generation or costume recolouring.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "7949aec4a7999d857cfbd73590ef962bb487af10519fb5857dd0541e468718af",
+        "36def9acfcd9ccdb46303a809b06a7e4e5b30a8e56746b966b907993c03a149d",
+        "dea3784271e0f4dc30335c34f66cae97808b50041efe2d73e0472086c70257b2",
+        "7966575852bfe1b041afeed4cd9fe064a500830666604d21374a45b902a6b8ad"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        61,
+        64,
+        63
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "97bc27c74d1d30bcc85d3ca9ff40b81ab0cfb8be9de7dd452883f4c70c7b7e64",
+        "41bb939d154e26151c0b99902bec10ab753881cc4564e1a03654da37b7be73a3",
+        "c879518d14201fb833d6a68a5bca5c9016d33c587491b3803a3ee4c5b9c5cbec",
+        "d3a68f141395b749fc674ef871d099576e3048b396f485221d807b7eba6c0d23"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        61,
+        64,
+        63
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "621bcd672f819f056c692c28bc53cdc9f5348c321607e2ded98493c9a4f9bbaa",
+        "fdf88981028e6a63bcd285c8b52c3268aa69a31100b371fd4ef0c802aae691c4",
+        "21e1b8d0b9c39fc10ecbe40ccb50cf90bb63662d7dc41edf9f3ffb88d8f4f825",
+        "663289799838fa369b28528f4654a3a70555cac9cc7be84c60fe5d77d71c16f3"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        58,
+        59,
+        59,
+        59
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "9439906f6213a361d757b911250e4b33fc1dc8cc5b9f081ba9b5074c82e1a5d0",
+        "c489c653219d50c242bf486fc60833682aeaecbfc3d3472b513cb04c76ff94a5",
+        "9716ef481ae38e2b59efda70e17774763771556660a95af645b3b90c57276afb",
+        "17a3728e7b7274400c9fae674a4a326149ed3627e13047e51e90bdd9574a796b"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        58,
+        59,
+        59,
+        59
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    }
+  },
+  "alignment": {
+    "neckX": {
+      "se": 62,
+      "ne": 66
+    },
+    "bodyShiftX": {
+      "se": [
+        -3,
+        3,
+        -1,
+        2
+      ],
+      "ne": [
+        2,
+        5,
+        1,
+        5
+      ]
+    },
+    "sourceWaistY": {
+      "se": [
+        89,
+        86,
+        86,
+        85
+      ],
+      "ne": [
+        86,
+        85,
+        85,
+        84
+      ]
+    },
+    "targetWaistY": {
+      "se": 88,
+      "ne": 85
+    },
+    "sharedHeadNeckWaistBobY": [
+      0,
+      -1,
+      0,
+      -1
+    ]
+  }
+}

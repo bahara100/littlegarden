@@ -1,0 +1,114 @@
+{
+  "character": "홍련2",
+  "pose": "walk",
+  "version": 1,
+  "status": "user art review pending",
+  "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
+  "runtimeConnected": false,
+  "protectedSources": 152,
+  "sources": [
+    "se",
+    "ne"
+  ],
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "baseReferences": {
+    "se": "garden-body-walk-se-v20",
+    "ne": "garden-body-walk-ne-v8, latest user manual edit"
+  },
+  "method": "AI full-pose costume drawings referenced to common body; approved V2 upper head reused without resizing; continuous neck-to-boots fit and native boot-material repairs. Base silhouette is a guide, not a pixel-identical costume mask.",
+  "directions": {
+    "se": {
+      "frameSha256": [
+        "4f9f5b80c6fae66eb3056ef29e4403f8e74c845e236d71d6cc35fcc0d61e3427",
+        "b6d090cc87f6e254d3c03265b39017382bf1c6741251dd239b2238eb5e7fa70b",
+        "5ba2212f4d7864ef412dc4abd3a4a0e24dc81abf95dd70c4dcd80a0d712cfdcc",
+        "68ea2aaa857f2bb8973df57e74d0567fb8249b964cc217cc956e9dbc76aa36aa"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        61,
+        64,
+        63
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "sw": {
+      "frameSha256": [
+        "07e583d13d8f298770f835b3c67fcfca9069800b3cf7e50c1e2fb5eefb80f3b2",
+        "782abf720a620e063ad8e6fc8efb4ffa049ac27808c8acb78a19a013bb6f3fc8",
+        "0e57ec088baaf265f9d2f6a4634ce4a2ff0989ba8ae325be167a4feeba72ac7f",
+        "8fe16781729172c051775ca57b42e9cb55d7fd550ffdb291acc9dbc8694c9a0b"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        63,
+        61,
+        64,
+        63
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "ne": {
+      "frameSha256": [
+        "d064fbbbe1f33387c2c9be93441423248250ffeb23b087971a1bfb6a9b988f8d",
+        "dde50f14908f8b927e3689e8c5b592737974ac21a4993e0ee25df0209cb18ea9",
+        "35231050c5f64a1d18d013f8744dc05784261f8b8b9f36d1b60472e7a7e246ac",
+        "22bb4157894f05df89926d592d79230f9ba1ebe977bbab6b0cccc3ce7bea408b"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        58,
+        59,
+        59,
+        59
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    },
+    "nw": {
+      "frameSha256": [
+        "d75ccad341aae090e3d65d377fb3fdc8e010806efce0ae9c367a93b2f203ad5d",
+        "d55fa936793f5bc979fb85caa9f32a93db2553584effd0a8d487fd2cadf392a0",
+        "6bd4270c4ef9bb2efcceca4edcb4e9b831086ddfde96cff44d7f60e04eb07b03",
+        "b00c93e2cfee230c2a7e189f5850f4d7b00d916adaa51d31eaf71300d23133ec"
+      ],
+      "footBottoms": [
+        114,
+        111,
+        114,
+        113
+      ],
+      "visibleColors": [
+        58,
+        59,
+        59,
+        59
+      ],
+      "headReused": true,
+      "editorCompositeExact": true
+    }
+  }
+}

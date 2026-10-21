@@ -1,0 +1,418 @@
+{
+  "direction": "ne",
+  "mirror": "nw",
+  "purpose": "Fill rear arm/body seams and existing scabbard root only; retain all original opaque pixels and corrected front.",
+  "armPixels": [
+    8,
+    12,
+    13,
+    13
+  ],
+  "scabbardPixels": [
+    18,
+    3,
+    1,
+    8
+  ],
+  "frames": {
+    "1": [
+      {
+        "x": 71,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 82,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 82,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 83,
+        "color": "#7e758a"
+      },
+      {
+        "x": 71,
+        "y": 84,
+        "color": "#4c465c"
+      },
+      {
+        "x": 71,
+        "y": 85,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 71,
+        "y": 91,
+        "color": "#663c8c"
+      },
+      {
+        "x": 55,
+        "y": 86,
+        "color": "#463447"
+      },
+      {
+        "x": 56,
+        "y": 86,
+        "color": "#55475c"
+      },
+      {
+        "x": 53,
+        "y": 87,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 54,
+        "y": 87,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 51,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 52,
+        "y": 88,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 53,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 54,
+        "y": 88,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 49,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 50,
+        "y": 89,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 51,
+        "y": 89,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 52,
+        "y": 89,
+        "color": "#d9d1e2"
+      },
+      {
+        "x": 53,
+        "y": 89,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 54,
+        "y": 89,
+        "color": "#7e758a"
+      },
+      {
+        "x": 50,
+        "y": 90,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 51,
+        "y": 90,
+        "color": "#7e758a"
+      },
+      {
+        "x": 52,
+        "y": 90,
+        "color": "#55475c"
+      },
+      {
+        "x": 53,
+        "y": 90,
+        "color": "#352438"
+      }
+    ],
+    "2": [
+      {
+        "x": 71,
+        "y": 80,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 80,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 82,
+        "color": "#7e758a"
+      },
+      {
+        "x": 72,
+        "y": 82,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 71,
+        "y": 83,
+        "color": "#4c465c"
+      },
+      {
+        "x": 72,
+        "y": 83,
+        "color": "#7e758a"
+      },
+      {
+        "x": 71,
+        "y": 84,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 72,
+        "y": 84,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 60,
+        "y": 80,
+        "color": "#8250ac"
+      },
+      {
+        "x": 71,
+        "y": 90,
+        "color": "#663c8c"
+      },
+      {
+        "x": 49,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 50,
+        "y": 89,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 48,
+        "y": 92,
+        "color": "#352438"
+      }
+    ],
+    "3": [
+      {
+        "x": 71,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 73,
+        "y": 81,
+        "color": "#eeb499"
+      },
+      {
+        "x": 71,
+        "y": 82,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 82,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 83,
+        "color": "#7e758a"
+      },
+      {
+        "x": 72,
+        "y": 83,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 71,
+        "y": 84,
+        "color": "#4c465c"
+      },
+      {
+        "x": 72,
+        "y": 84,
+        "color": "#7e758a"
+      },
+      {
+        "x": 71,
+        "y": 85,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 72,
+        "y": 85,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 60,
+        "y": 81,
+        "color": "#8250ac"
+      },
+      {
+        "x": 71,
+        "y": 91,
+        "color": "#663c8c"
+      },
+      {
+        "x": 48,
+        "y": 93,
+        "color": "#352438"
+      }
+    ],
+    "4": [
+      {
+        "x": 71,
+        "y": 80,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 80,
+        "color": "#da9b80"
+      },
+      {
+        "x": 73,
+        "y": 80,
+        "color": "#eeb499"
+      },
+      {
+        "x": 71,
+        "y": 81,
+        "color": "#ba7d69"
+      },
+      {
+        "x": 72,
+        "y": 81,
+        "color": "#da9b80"
+      },
+      {
+        "x": 71,
+        "y": 82,
+        "color": "#7e758a"
+      },
+      {
+        "x": 72,
+        "y": 82,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 71,
+        "y": 83,
+        "color": "#4c465c"
+      },
+      {
+        "x": 72,
+        "y": 83,
+        "color": "#7e758a"
+      },
+      {
+        "x": 71,
+        "y": 84,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 72,
+        "y": 84,
+        "color": "#4e2c66"
+      },
+      {
+        "x": 60,
+        "y": 80,
+        "color": "#8250ac"
+      },
+      {
+        "x": 71,
+        "y": 90,
+        "color": "#663c8c"
+      },
+      {
+        "x": 49,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 50,
+        "y": 88,
+        "color": "#fffdf9"
+      },
+      {
+        "x": 51,
+        "y": 88,
+        "color": "#efeaf4"
+      },
+      {
+        "x": 50,
+        "y": 89,
+        "color": "#beb5ca"
+      },
+      {
+        "x": 51,
+        "y": 89,
+        "color": "#7e758a"
+      },
+      {
+        "x": 52,
+        "y": 89,
+        "color": "#55475c"
+      },
+      {
+        "x": 53,
+        "y": 89,
+        "color": "#352438"
+      },
+      {
+        "x": 48,
+        "y": 92,
+        "color": "#352438"
+      }
+    ]
+  },
+  "preservedFrontSha256": {
+    "frame-se-1.png": "0c4c10970c25b6778ab439a0329ba8bef440dfa246db43cc46ef8ed20107d40b",
+    "frame-se-2.png": "ffd18c07dfbe8e5a4592288f03af17418b515fb22b992f65d6503e84b3fd646a",
+    "frame-se-3.png": "feb4428a16a25b5d7e572478698f4c122263a0e3fe86663e364968f6f3e10c6a",
+    "frame-se-4.png": "63e711ace8034681525f6ccd23964279f773aead257b58feac25675dfae040db",
+    "frame-sw-1.png": "79c7b047add6ded8e66d266ec3fe60fcddcacc5d037d615b2579864d8e793645",
+    "frame-sw-2.png": "cc9127d886826604a87aa5e2386105d3acb7b82d9ef636cd0da3712787c659d0",
+    "frame-sw-3.png": "116119f0c2bf26ae4aec769452b9c6ee0e83cb61bfd90a6d1a0caa680507da9f",
+    "frame-sw-4.png": "3d2e60cfe45e1832d08249da5d20afcc23d466b2d1dc7f7e5b2099d7eb7c6739",
+    "scarlet2-walk-se-v6.pxo": "381f2fb0fbfa4376ab53db469d01c22fcb6f4223c9f1c845a4533a24a3930da4"
+  }
+}

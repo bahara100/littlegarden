@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>홍련2 · 정지 4방향</title>
+<style>
+:root{font:15px/1.7 system-ui,sans-serif;color:#4f4b48;background:#eeede3}*{box-sizing:border-box}body{margin:0;padding:32px 24px}main{max-width:1160px;margin:auto}h1{font-size:26px;margin:0}p{margin:10px 0 20px;color:#757268}.eyebrow{color:#718462;font-size:12px;letter-spacing:.15em}header{margin-bottom:22px}.tag{display:inline-block;padding:3px 12px;background:#dde6d4;border-radius:20px;font-size:12px;margin-top:10px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}button,a.download{background:#fffdf5;border:1px solid #cdd5c2;border-radius:12px;color:#526549;padding:9px 15px;font:inherit;cursor:pointer;text-decoration:none}button[aria-pressed=true]{background:#718766;color:white;border-color:#718766}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}article{background:#fffdf6;border:1px solid #dfdfce;border-radius:22px;padding:18px;min-width:0}h2{font-size:17px;margin:0 0 10px}.stage{height:384px;display:flex;justify-content:center;align-items:flex-end;background:#e4e9d8;border-radius:14px;overflow:hidden}.stage img{width:384px;height:384px;max-width:none;image-rendering:pixelated;flex-shrink:0}article p{font-size:13px;min-height:42px;margin:12px 0 0}.note{font-size:13px;max-width:900px}footer{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}details{font-size:13px;margin-top:20px}summary{cursor:pointer;color:#526549}pre{white-space:pre-wrap;background:#fffdf6;border-radius:16px;padding:18px;font-size:12px;max-height:300px;overflow:auto}body.grid .stage{background-color:#e4e9d8;background-image:conic-gradient(#d2dbc8 25%,transparent 0 50%,#d2dbc8 0 75%,transparent 0);background-size:16px 16px}@media(max-width:900px){.cards{grid-template-columns:1fr}.stage{height:384px}}
+</style>
+<style>.all-directions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}.all-directions figure{margin:0;padding:12px;background:#fffdf6;border:1px solid #dfdfce;border-radius:18px}.all-directions .stage{height:256px}.all-directions img{width:256px;height:256px}.all-directions figcaption{font-size:13px;margin-top:10px;text-align:center}h2.section-title{margin-top:32px;font-size:20px}@media(max-width:900px){.all-directions{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:540px){.all-directions{grid-template-columns:1fr}}</style>
+<main>
+<p><a class="download" href="../scarlet2-base-v2/index.html">색상·허리 연결을 보완한 V2 보기 →</a></p>
+<header><div class="eyebrow">LITTLE GARDEN · CHARACTER STUDY</div><h1>홍련2 · 정지 4방향</h1><span class="tag">앞쪽 승인 · 뒤쪽 새 시안</span><p>공통 베이스 위에 홍련의 머리와 의상을 맞춘 새 버전. 같은 픽셀 배율과 발 높이로 비교해요.</p></header>
+<div class="toolbar"><button data-dir="se" aria-pressed="false">앞오른쪽 ↘</button><button data-dir="sw" aria-pressed="false">앞왼쪽 ↙ · 반전</button><button data-dir="ne" aria-pressed="true">뒤오른쪽 ↗</button><button data-dir="nw" aria-pressed="false">뒤왼쪽 ↖ · 반전</button><button id="grid" aria-pressed="false">투명 배경 확인</button></div>
+<section class="cards">
+<article><h2>공통 베이스</h2><div class="stage"><img id="base" src="base-ne.png" alt="공통 정지 베이스 뒤오른쪽"></div><p>96px 몸체를 확대하지 않고 바깥 여백만 추가했어요.</p></article>
+<article><h2>기존 홍련</h2><div class="stage"><img id="previous" src="previous-ne.png" alt="유지하는 기존 홍련 뒤오른쪽"></div><p>게임에서 사용하는 기존 홍련은 그대로 유지해요.</p></article>
+<article><h2>홍련2</h2><div class="stage"><img id="new" src="idle-ne.png" alt="홍련2 뒤오른쪽 정지 시안"></div><p>베이스의 실제 다리·발 실루엣을 유지하고, 흰 의상과 부츠를 입혔어요.</p></article>
+</section>
+<h2 class="section-title">정지 자세 모아보기</h2>
+<section class="all-directions" aria-label="홍련2 정지 네 방향">
+<figure><div class="stage"><img src="idle-se.png" alt="홍련2 앞오른쪽"></div><figcaption>앞오른쪽 ↘</figcaption></figure>
+<figure><div class="stage"><img src="idle-sw.png" alt="홍련2 앞왼쪽"></div><figcaption>앞왼쪽 ↙</figcaption></figure>
+<figure><div class="stage"><img src="idle-ne.png" alt="홍련2 뒤오른쪽"></div><figcaption>뒤오른쪽 ↗</figcaption></figure>
+<figure><div class="stage"><img src="idle-nw.png" alt="홍련2 뒤왼쪽"></div><figcaption>뒤왼쪽 ↖</figcaption></figure>
+</section>
+<p class="note">확인한 앞쪽 외형은 그대로 두고, 같은 팔레트와 발 높이로 뒤쪽 자세를 추가했어요. 왼쪽 방향은 각각 전체 좌우 반전이에요. 갓과 칼의 여백을 포함한 캔버스는 128×128이며, 현재는 정지 4방향만 준비했어요. 걷기·앉기·게임 연결은 다음 단계예요.</p>
+<footer><a class="download" href="../scarlet2-sit-v1/index.html">앉은 자세 보기</a><a class="download" href="scarlet2-authoring.zip" download>정지 4방향 편집 자료 ZIP</a><a class="download" href="scarlet2-base-idle-se-v1.pxo" download>앞쪽 Pixelorama 원본</a><a class="download" href="scarlet2-base-idle-ne-v1.pxo" download>뒤쪽 Pixelorama 원본</a><a class="download" href="idle-four.png" download>4방향 시트 PNG</a><a class="download" href="../">공원으로</a></footer>
+<details><summary>생성 프롬프트</summary><pre id="prompt">불러오는 중…</pre></details>
+</main>
+<script>
+const labels={se:'앞오른쪽',sw:'앞왼쪽',ne:'뒤오른쪽',nw:'뒤왼쪽'};
+document.querySelectorAll('[data-dir]').forEach(button=>button.onclick=()=>{const d=button.dataset.dir;document.querySelector('#new').src=`idle-${d}.png`;document.querySelector('#new').alt=`홍련2 ${labels[d]} 정지 시안`;document.querySelector('#base').src=`base-${d}.png`;document.querySelector('#base').alt=`공통 정지 베이스 ${labels[d]}`;document.querySelector('#previous').src=`previous-${d}.png`;document.querySelector('#previous').alt=`유지하는 기존 홍련 ${labels[d]}`;document.querySelectorAll('[data-dir]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)))});
+document.querySelector('#grid').onclick=e=>{const on=document.body.classList.toggle('grid');e.currentTarget.setAttribute('aria-pressed',String(on))};
+Promise.all(['prompt.txt','prompt-ne.txt'].map(file=>fetch(file).then(r=>r.text()))).then(text=>document.querySelector('#prompt').textContent='앞쪽\n'+text[0]+'\n\n뒤쪽\n'+text[1]);
+</script>
+</html>
