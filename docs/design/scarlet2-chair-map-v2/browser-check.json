@@ -1,0 +1,200 @@
+[
+  {
+    "renderer": "phaser",
+    "kind": "bench",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "bench",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "swing",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "swing",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "seesaw",
+    "turn": 0,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "seesaw",
+    "turn": 0,
+    "fill": 1,
+    "direction": "nw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "picnicTable",
+    "turn": 0,
+    "fill": 0,
+    "direction": "ne",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "picnicTable",
+    "turn": 0,
+    "fill": 2,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "picnicTable",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "picnicTable",
+    "turn": 1,
+    "fill": 2,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "phaser",
+    "kind": "picnicRug",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "idle",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "bench",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "bench",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "swing",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "swing",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "seesaw",
+    "turn": 0,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "seesaw",
+    "turn": 0,
+    "fill": 1,
+    "direction": "nw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "picnicTable",
+    "turn": 0,
+    "fill": 0,
+    "direction": "ne",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "picnicTable",
+    "turn": 0,
+    "fill": 2,
+    "direction": "sw",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "picnicTable",
+    "turn": 1,
+    "fill": 0,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "picnicTable",
+    "turn": 1,
+    "fill": 2,
+    "direction": "se",
+    "pose": "sit",
+    "stoodUp": true
+  },
+  {
+    "renderer": "canvas",
+    "kind": "picnicRug",
+    "turn": 0,
+    "fill": 0,
+    "direction": "sw",
+    "pose": "idle",
+    "stoodUp": true
+  }
+]

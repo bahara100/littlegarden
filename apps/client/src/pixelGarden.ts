@@ -21,6 +21,7 @@ import { sceneOrder, walkerDepth } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET2 as SCARLET_SD, SCARLET2_DIRECTIONS as SCARLET_SD_DIRECTIONS, SCARLET2_SPEED as SCARLET_SD_SPEED, Scarlet2WalkCycle as ScarletWalkCycle } from './scarlet2';
+import { SCARLET2_SIT, scarlet2Sitting } from './scarlet2';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
 import { DEFAULT_SEASON, seasonGround, type SeasonId } from './seasons';
 
@@ -45,7 +46,7 @@ export class PixelGarden {
   private walkCycle = new ScarletWalkCycle();
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private friendArt = new Map<FriendId, Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>>();
-  private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>();
+  private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement; sit: HTMLImageElement }>();
   private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private friendsSitRear = new Map<FriendId, HTMLImageElement>();
   private props: Sprite[] = [];
@@ -110,8 +111,8 @@ export class PixelGarden {
         loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
-          const [idle, walk] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk)]);
-          return [source, { idle, walk }] as const;
+          const [idle, walk, sit] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk), this.loadImage(art.sit)]);
+          return [source, { idle, walk, sit }] as const;
         })),
         Promise.all(FRIEND_IDS.map(async id => {
           const sources = await Promise.all((['se', 'ne'] as const).map(async source => {
@@ -242,18 +243,21 @@ export class PixelGarden {
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
     const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' || seat?.kind === 'picnicRug' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
-    const drawnSit = a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat;
+    const scarletSit = a.id === 'character' && scarlet2Sitting(seat?.kind, seated, a.phase);
+    const drawnSit = scarletSit || (a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat);
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
-    const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : a.id !== 'character' && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
+    const chairTransition = a.id === 'character' && !!seat && seat.kind !== 'picnicRug';
+    const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : (a.id !== 'character' || chairTransition) && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.life.seesawTilt(seat.equipment), still)) * u * seated : 0;
     const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + sway + seesaw;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
-    const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
+    const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? scarletSit ? SCARLET2_SIT.originY : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (a.id === 'character' && this.approvedArt.size) {
-      const { source, flipX } = SCARLET_SD_DIRECTIONS[scarletDirection(a.yaw)];
+      const { source, flipX } = SCARLET_SD_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
       const art = this.approvedArt.get(source)!;
       c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
-      if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
+      if (scarletSit) c.drawImage(art.sit, 0, 0, size, size);
+      else if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
     } else if (drawnSit && a.id !== 'character') {

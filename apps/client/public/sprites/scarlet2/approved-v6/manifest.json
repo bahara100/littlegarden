@@ -2,6 +2,7 @@
   "character": "홍련2",
   "standingVersion": 2,
   "walkingVersion": 6,
+  "sittingVersion": 2,
   "frameSize": 128,
   "frames": 4,
   "fps": 6,
@@ -18,6 +19,10 @@
       "source": "docs/art/pixel/scarlet2-walk-v6/walk-se.png",
       "sha256": "743394129877e68256d15f1948456ca9b960f6f120c474ec6a2742d273fd8c27"
     },
+    "sit-se.png": {
+      "source": "docs/art/pixel/scarlet2-sit-v2/sit-se.png",
+      "sha256": "39d5ee29beb35d4907ddb0c8ecbeb25f46a054075b143bd293fe55644de4b922"
+    },
     "idle-ne.png": {
       "source": "docs/art/pixel/scarlet2-base-v2/idle-ne.png",
       "sha256": "578d3d122091483a476fb04d481c0180b15d3080c76244d0ac157119d64302e9"
@@ -25,6 +30,10 @@
     "walk-ne.png": {
       "source": "docs/art/pixel/scarlet2-walk-v6/walk-ne.png",
       "sha256": "683a01d355b28e85fcd41aa32608bb00ef7245a151422154bc9b917303730813"
+    },
+    "sit-ne.png": {
+      "source": "docs/art/pixel/scarlet2-sit-v2/sit-ne.png",
+      "sha256": "b4bc6987efd3bef78cc81bcf90d2dcfa93151ad78ab9450b5a4aa1b095b8a4b0"
     }
   }
 }

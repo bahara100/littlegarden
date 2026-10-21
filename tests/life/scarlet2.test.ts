@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { SCARLET2, SCARLET2_DIRECTIONS, SCARLET2_SPEED, SCARLET2_FRAME_DISTANCE, Scarlet2WalkCycle } from '../../apps/client/src/scarlet2';
 import { FRIEND_BODY } from '../../apps/client/src/friendBodyArt';
+import { SCARLET2_SIT, scarlet2Sitting } from '../../apps/client/src/scarlet2';
 
 test('map Scarlet2 uses exact final walking V6 and standing V2 without altering original Scarlet', () => {
   for (const d of ['se', 'ne'] as const) {
@@ -17,6 +18,22 @@ test('map Scarlet2 uses exact final walking V6 and standing V2 without altering 
   assert.deepEqual(SCARLET2_DIRECTIONS.nw, { source: 'ne', flipX: true });
   assert.equal(SCARLET2.worldSize / SCARLET2.frameSize, FRIEND_BODY.worldSize / FRIEND_BODY.frameSize);
   assert.equal(SCARLET2.originY * SCARLET2.frameSize, 115);
+});
+
+test('chair sitting V2 keeps original art, correct padded anchor and safe posture transitions', () => {
+  for (const d of ['se','ne'] as const) assert.deepEqual(readFileSync(`apps/client/public/${SCARLET2.sources[d].sit}`), readFileSync(`docs/art/pixel/scarlet2-sit-v2/sit-${d}.png`));
+  assert.equal(SCARLET2_SIT.originY * 128 - 24, .97 * 96);
+  for (const kind of ['bench','swing','seesaw','picnicTable'] as const) {
+    assert.equal(scarlet2Sitting(kind,.2,'boarding'),false);
+    assert.equal(scarlet2Sitting(kind,.45,'boarding'),true);
+    assert.equal(scarlet2Sitting(kind,1,'seated'),true);
+    assert.equal(scarlet2Sitting(kind,1,'swinging'),true);
+    assert.equal(scarlet2Sitting(kind,.6,'leaving'),true);
+    assert.equal(scarlet2Sitting(kind,.2,'leaving'),false);
+    assert.equal(scarlet2Sitting(kind,1,'walking'),false);
+  }
+  assert.equal(scarlet2Sitting('picnicRug',1,'seated'),false);
+  assert.equal(scarlet2Sitting(undefined,1,'seated'),false);
 });
 
 test('Scarlet2 walks 1–2–3–4 at six FPS, freezes when blocked and returns to idle', () => {

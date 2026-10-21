@@ -23,6 +23,7 @@ import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
 import { friendRearSitArt, friendRearSitTexture } from './friendSittingArt';
 import { SCARLET2 as SCARLET_SD, SCARLET2_DIRECTIONS as SCARLET_SD_DIRECTIONS, SCARLET2_SPEED as SCARLET_SD_SPEED, Scarlet2WalkCycle as ScarletWalkCycle } from './scarlet2';
+import { SCARLET2_SIT, scarlet2Sitting } from './scarlet2';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
@@ -196,6 +197,7 @@ class GardenScene extends Phaser.Scene {
     this.load.image('swing-parts', `${base}sprites/garden/playground-swing-v1.png`);
     for (const [source, art] of Object.entries(SCARLET_SD.sources)) {
       this.load.image(`idle-${source}`, `${base}${art.idle}`);
+      this.load.image(`sit-${source}`, `${base}${art.sit}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
     }
     for (const id of FRIEND_IDS) this.load.image(friendRearSitTexture(id), `${base}${friendRearSitArt(id)}`);
@@ -507,10 +509,11 @@ class GardenScene extends Phaser.Scene {
     const facing = seat && seated ? this.seatFacing(seat) : null;
     const friendSit = a.id !== 'character' && !!facing && this.textures.exists('friends-sit');
     // While still standing at the start of sitting down (or end of getting up) the feet stay on the ground.
-    // Scarlet keeps her approved idle until her own sitting art is available; the two friends have seated poses.
-    const drawnSit = friendSit;
-    const standingOnSeat = drawnSit && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
-    const lift = !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : standingOnSeat ? 0 : seated * SEAT_LIFT.drawn[seat!.kind];
+    const scarletSit = a.id === 'character' && scarlet2Sitting(seat?.kind, seated, a.phase);
+    const drawnSit = friendSit || scarletSit;
+    const chairTransition = a.id === 'character' && !!seat && seat.kind !== 'picnicRug';
+    const standingOnSeat = (drawnSit || chairTransition) && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
+    const lift = standingOnSeat ? 0 : !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : seated * SEAT_LIFT.drawn[seat!.kind];
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
@@ -521,9 +524,10 @@ class GardenScene extends Phaser.Scene {
     view.sprite.setPosition(x, base).setDepth(z);
     if (a.id === 'character') {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)];
-      if (moving) view.sprite.setTexture(`walk-${source}`, this.walkCycle.frame);
+      if (scarletSit) view.sprite.setTexture(`sit-${source}`);
+      else if (moving) view.sprite.setTexture(`walk-${source}`, this.walkCycle.frame);
       else view.sprite.setTexture(`idle-${source}`);
-      view.sprite.setFlipX(flipX).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
+      view.sprite.setFlipX(flipX).setOrigin(.5, scarletSit ? SCARLET2_SIT.originY : SCARLET_SD.originY).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
       if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(friendRearSitTexture(a.id)).setFlipX(facing === 'nw');
       else view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);

@@ -2,7 +2,7 @@ import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {writeFile,readFile} from 'node:fs/promises';
 const out='C:/nikke-playground/docs/design/scarlet2-map-v6/';
-for(const name of ['idle-se.png','idle-ne.png','walk-se.png','walk-ne.png','review.html'])assert((await readFile(`C:/nikke-playground/apps/client/dist/sprites/scarlet2/approved-v6/${name}`)).length>0,`Build pruned ${name}`);
+for(const name of ['idle-se.png','idle-ne.png','walk-se.png','walk-ne.png','sit-se.png','sit-ne.png','review.html'])assert((await readFile(`C:/nikke-playground/apps/client/dist/sprites/scarlet2/approved-v6/${name}`)).length>0,`Build pruned ${name}`);
 const browser=await chromium.launch({headless:true});const results=[];
 try{
  for(const renderer of ['phaser','canvas']){
@@ -17,10 +17,10 @@ try{
   await page.waitForFunction(()=>window.garden?.scarletModel==='ready');
   await page.evaluate(()=>{const g=window.garden;g.life.dayCycle=false;for(const a of g.life.avatars.values()){a.phase='idle';a.until=Infinity;a.path=[];a.directed=true}});
   await page.waitForTimeout(150);await page.screenshot({path:out+`${renderer}-park.png`});
-  assert.deepEqual([...loaded].sort(),['idle-ne.png','idle-se.png','walk-ne.png','walk-se.png']);
+  assert.deepEqual([...loaded].sort(),['idle-ne.png','idle-se.png','sit-ne.png','sit-se.png','walk-ne.png','walk-se.png']);
   if(renderer==='phaser')assert(await page.evaluate(async()=>{
    const scene=window.garden.game.scene.getScene('garden');
-   for(const source of ['se','ne'])for(const pose of ['idle','walk']){
+   for(const source of ['se','ne'])for(const pose of ['idle','walk','sit']){
     const original=new Image;original.src=`sprites/scarlet2/approved-v6/${pose}-${source}.png`;await original.decode();
     const make=im=>{const c=document.createElement('canvas');c.width=original.naturalWidth;c.height=128;c.getContext('2d').drawImage(im,0,0);return c.toDataURL()};
     if(make(original)!==make(scene.textures.get(`${pose}-${source}`).getSourceImage()))return false;
