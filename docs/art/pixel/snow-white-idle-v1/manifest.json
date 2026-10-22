@@ -1,0 +1,56 @@
+{
+  "name": "스노우화이트",
+  "status": "사용자 작화 검수 전",
+  "runtimeConnected": false,
+  "frameSize": 128,
+  "framesPerDirection": 1,
+  "paletteLimit": 48,
+  "tool": "Built-in ImageGen + native Pixelorama GDScript",
+  "method": "Base-referenced coherent full-body drawing, then whole-sprite alignment. No base limb replacement.",
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "directions": {
+    "se": {
+      "sha256": "4f897d725d77c50787dd09aeb9a11416acd134930e82db71af9d51a327a82a21",
+      "bounds": [
+        29,
+        13,
+        87,
+        115
+      ],
+      "visibleColors": 46
+    },
+    "sw": {
+      "sha256": "cc5f0587b5a07e21169c33c6d8aa727ac99f93fb4357b44f3452cd46ae9ac37e",
+      "bounds": [
+        41,
+        13,
+        99,
+        115
+      ],
+      "visibleColors": 46
+    },
+    "ne": {
+      "sha256": "315ad385ee80bebae6b2fbcb234a64e4ed273113e130f4e15f2144cd492bfbf4",
+      "bounds": [
+        33,
+        15,
+        89,
+        115
+      ],
+      "visibleColors": 46
+    },
+    "nw": {
+      "sha256": "84ffece57d08d28590f38097e4eb2f271cc79829d38d7b2cbf7b05cb033c5c2f",
+      "bounds": [
+        39,
+        15,
+        95,
+        115
+      ],
+      "visibleColors": 46
+    }
+  }
+}

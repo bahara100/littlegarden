@@ -1,0 +1,56 @@
+{
+  "name": "스노우화이트 앉기 V1",
+  "status": "사용자 검수 전",
+  "frameSize": 128,
+  "framesPerDirection": 1,
+  "runtimeConnected": false,
+  "paletteLimit": 48,
+  "preservedSourceFiles": 62,
+  "tool": "Built-in ImageGen + native Pixelorama",
+  "headRowsIdenticalToStanding": [
+    0,
+    67
+  ],
+  "method": "Coherent seated body from shoulders through feet; common base posture reference; no leg silhouette replacement.",
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "directions": {
+    "se": {
+      "sha256": "d1dfc3df10ec71dc7d40cb6c94a2a265659d1bc460f9fe3d5d3c6bd72d74430b",
+      "bounds": [
+        30,
+        13,
+        87,
+        114
+      ],
+      "bootShadingPixels": 38,
+      "headPreserved": true,
+      "editorPngMatches": true
+    },
+    "ne": {
+      "sha256": "29c17f71e628b5fb8efda0849010322a7693a8fb2df949e379723628b0e0a7a1",
+      "bounds": [
+        33,
+        15,
+        89,
+        110
+      ],
+      "bootShadingPixels": 48,
+      "headPreserved": true,
+      "editorPngMatches": true
+    }
+  },
+  "rearCoverage": {
+    "changedPixels": 83,
+    "bounds": [
+      52,
+      86,
+      80,
+      94
+    ],
+    "bootsIdentical": true,
+    "alphaIdentical": true
+  }
+}
