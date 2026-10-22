@@ -1,0 +1,222 @@
+{
+  "character": "스노우화이트",
+  "pose": "걷기 V1",
+  "status": "사용자 검수 전",
+  "runtimeConnected": false,
+  "frameSize": 128,
+  "framesPerDirection": 4,
+  "fps": 6,
+  "paletteLimit": 48,
+  "protectedFiles": 129,
+  "baseReferences": {
+    "se": "SE V20",
+    "ne": "NE V8 latest user manual edits"
+  },
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "method": "AI dressing of four base poses, approved standing head and hair reused, native corrections. Pose reference does not imply identical base silhouette.",
+  "bandageOwnership": "Anatomical right thigh; SE2 partially occluded behind supporting left leg. NE4 duplicate band on supporting left leg removed.",
+  "rearArms": "NE3/4 far arm reuses actual flexed SE3 gauntlet pixels, mirrored and integer moved; no rotation/resizing of the reused arm.",
+  "directions": {
+    "se": [
+      {
+        "number": 1,
+        "sha256": "125fe0de1c7e402f63da9c116a16b7b88293dca180b744a913d89ae0ea24b1a1",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "6c0fd7d8e2c0a9c91f0580a727e2e1530bc6a628192b5b3736fa0d533e45fb35",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "da875c1be7a95c48e74611f02320f8a9a42a6e3165da52580533e66c654c8517",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "45bd7b6f198fc11cca4a2ed877ee9ac7bef3a274915525280525dbe301559d8f",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      }
+    ],
+    "sw": [
+      {
+        "number": 1,
+        "sha256": "3c0286e7953f1287e4f22f5a39943fd7390d61a3646efedd6614e81a3b402370",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "d18045a596613ab8ecaad14b10604cd2bd77ec1d7953372f8cffcc6c3aa08d39",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "b5a941a35509196fb395838c62a703a8d8d2083a32a1db06fe10453d48423be3",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "196a5bdfe771b57034ec463d3920ff07f8b039b5ee40ba579e16a8ee077a3caf",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      }
+    ],
+    "ne": [
+      {
+        "number": 1,
+        "sha256": "cf7c9882c0d58e96cf1313002a35ad05875818bf21cd4f86a659ab125b42a6fc",
+        "bounds": [
+          33,
+          15,
+          89,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "78fe8438643c5f3ebfc90db4fbeb10967fd4284b061587c17d707f2636efe25e",
+        "bounds": [
+          33,
+          14,
+          89,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "4ad14edaa31897cf61bbd24b61a8eb382d79e96123a5458f1187ca703f1e0b9f",
+        "bounds": [
+          33,
+          15,
+          89,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "1373addfa08e27a4a688d152b87433158ce73e57f07613637751bb140dd128ca",
+        "bounds": [
+          33,
+          14,
+          89,
+          114
+        ]
+      }
+    ],
+    "nw": [
+      {
+        "number": 1,
+        "sha256": "0d129c7f771695cb8777ec80c93f573d5b5ee5feec92e31c5c71efd1c5180916",
+        "bounds": [
+          39,
+          15,
+          95,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "6421534c0c1eb7573e3a7317669634eec53ff2ea70ed925b705ef9a58d0bcf99",
+        "bounds": [
+          39,
+          14,
+          95,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "ec4777e83a8fd1a5c32d6ef6d0b395977b23eea2510688cad81eb44a33d633a5",
+        "bounds": [
+          39,
+          15,
+          95,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "5b5c1b2c711ea7a37c087e821f8739639190cb1dfa0f75e540bb9043fd2a4900",
+        "bounds": [
+          39,
+          14,
+          95,
+          114
+        ]
+      }
+    ]
+  },
+  "frontHairRestoration": [
+    {
+      "frame": 1,
+      "restoredHeadPixels": 19,
+      "visibleChanges": 19,
+      "existingHeadUnchanged": true,
+      "bodyAndRearUnchanged": true
+    },
+    {
+      "frame": 2,
+      "restoredHeadPixels": 19,
+      "visibleChanges": 17,
+      "existingHeadUnchanged": true,
+      "bodyAndRearUnchanged": true
+    },
+    {
+      "frame": 3,
+      "restoredHeadPixels": 19,
+      "visibleChanges": 12,
+      "existingHeadUnchanged": true,
+      "bodyAndRearUnchanged": true
+    },
+    {
+      "frame": 4,
+      "restoredHeadPixels": 19,
+      "visibleChanges": 19,
+      "existingHeadUnchanged": true,
+      "bodyAndRearUnchanged": true
+    }
+  ]
+}

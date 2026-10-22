@@ -1,0 +1,192 @@
+{
+  "character": "스노우화이트",
+  "pose": "걷기 V1",
+  "status": "사용자 검수 전",
+  "runtimeConnected": false,
+  "frameSize": 128,
+  "framesPerDirection": 4,
+  "fps": 6,
+  "paletteLimit": 48,
+  "protectedFiles": 129,
+  "baseReferences": {
+    "se": "SE V20",
+    "ne": "NE V8 latest user manual edits"
+  },
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "method": "AI dressing of four base poses, approved standing head and hair reused, native corrections. Pose reference does not imply identical base silhouette.",
+  "bandageOwnership": "Anatomical right thigh; SE2 partially occluded behind supporting left leg. NE4 duplicate band on supporting left leg removed.",
+  "rearArms": "NE3/4 far arm reuses actual flexed SE3 gauntlet pixels, mirrored and integer moved; no rotation/resizing of the reused arm.",
+  "directions": {
+    "se": [
+      {
+        "number": 1,
+        "sha256": "b125297cbe72cbfebc36575ba92d5df0e9a601fab09f7cbd70baeaf2683b795f",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "691607a1a616118bc8242ee5dd99b62e1a68e124047eb12c23120db58511cc15",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "2341a4575744659814f53dec9377e60c07db082336852263ccf7f4a989637b67",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "acc8f461b1a17c42a79a565ded4a5394976173f02f58b0642f0112170852f8c7",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      }
+    ],
+    "sw": [
+      {
+        "number": 1,
+        "sha256": "fea561fb6757fd951fea868fd6e73df4fdec5962810171368df53c73a6eeccc8",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "ca3eeb269b22a7b1a55a117bd8389c6427f2422889faff02727aa838c078f7ed",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "0c6d5670124c1474b52ba7f240fd7d4fc258e2a09434a88919b5387633425ec1",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "05301929d3a108a9ea252d74ffa3788a1b4bbbd31c741931d0a7efce46012dee",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      }
+    ],
+    "ne": [
+      {
+        "number": 1,
+        "sha256": "cf7c9882c0d58e96cf1313002a35ad05875818bf21cd4f86a659ab125b42a6fc",
+        "bounds": [
+          33,
+          15,
+          89,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "78fe8438643c5f3ebfc90db4fbeb10967fd4284b061587c17d707f2636efe25e",
+        "bounds": [
+          33,
+          14,
+          89,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "4ad14edaa31897cf61bbd24b61a8eb382d79e96123a5458f1187ca703f1e0b9f",
+        "bounds": [
+          33,
+          15,
+          89,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "1373addfa08e27a4a688d152b87433158ce73e57f07613637751bb140dd128ca",
+        "bounds": [
+          33,
+          14,
+          89,
+          114
+        ]
+      }
+    ],
+    "nw": [
+      {
+        "number": 1,
+        "sha256": "0d129c7f771695cb8777ec80c93f573d5b5ee5feec92e31c5c71efd1c5180916",
+        "bounds": [
+          39,
+          15,
+          95,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "6421534c0c1eb7573e3a7317669634eec53ff2ea70ed925b705ef9a58d0bcf99",
+        "bounds": [
+          39,
+          14,
+          95,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "ec4777e83a8fd1a5c32d6ef6d0b395977b23eea2510688cad81eb44a33d633a5",
+        "bounds": [
+          39,
+          15,
+          95,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "5b5c1b2c711ea7a37c087e821f8739639190cb1dfa0f75e540bb9043fd2a4900",
+        "bounds": [
+          39,
+          14,
+          95,
+          114
+        ]
+      }
+    ]
+  }
+}

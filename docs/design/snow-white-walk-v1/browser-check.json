@@ -1,0 +1,258 @@
+[
+  {
+    "viewport": "desktop",
+    "direction": "se",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "se",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "se",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "se",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "sw",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "sw",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "sw",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "sw",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "ne",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "ne",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "ne",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "ne",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "nw",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "nw",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "nw",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "desktop",
+    "direction": "nw",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "se",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "se",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "se",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "se",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "sw",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "sw",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "sw",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "sw",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "ne",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "ne",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "ne",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "ne",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "nw",
+    "frame": 1,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "nw",
+    "frame": 2,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "nw",
+    "frame": 3,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  },
+  {
+    "viewport": "mobile",
+    "direction": "nw",
+    "frame": 4,
+    "actualPngExact": true,
+    "baseSynchronized": true,
+    "neckComparisonExact": true
+  }
+]

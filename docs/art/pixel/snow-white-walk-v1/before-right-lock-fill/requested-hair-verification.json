@@ -1,0 +1,22 @@
+{
+  "userScreenshot": "codex-clipboard-f463a5a9-4a49-48fe-ba8c-e5a3b02fbcb9.png",
+  "matchedOldFrame": 4,
+  "screenshotCropAt2x": [
+    101,
+    78,
+    110,
+    98
+  ],
+  "oldCropPixelError": 0,
+  "standingReference": "idle-se.png",
+  "restoredSourceRegion": [
+    51,
+    68,
+    61,
+    73
+  ],
+  "restoredHairPixelsEachFrame": 36,
+  "frame4VisibleChanges": 35,
+  "currentFrame4Sha256": "c04efd64f31008d5c1e4734bb2c7adfc00cd208ea905e9edd15bdf97335f60a6",
+  "note": "This screenshot matches old frame4 exactly; current restored frame4 differs in the requested lock. R3 changes review file names to make the filled artwork unmistakable, without redrawing approved/body pixels."
+}

@@ -1,0 +1,344 @@
+{
+  "character": "스노우화이트",
+  "pose": "걷기 V1",
+  "status": "사용자 검수 전",
+  "runtimeConnected": false,
+  "frameSize": 128,
+  "framesPerDirection": 4,
+  "fps": 6,
+  "paletteLimit": 48,
+  "protectedFiles": 129,
+  "baseReferences": {
+    "se": "SE V20",
+    "ne": "NE V8 latest user manual edits"
+  },
+  "mirrors": {
+    "sw": "se",
+    "nw": "ne"
+  },
+  "method": "AI dressing of four base poses, approved standing head and hair reused, native corrections. Pose reference does not imply identical base silhouette.",
+  "bandageOwnership": "Anatomical right thigh; SE2 partially occluded behind supporting left leg. NE4 duplicate band on supporting left leg removed.",
+  "rearArms": "NE3/4 far arm reuses actual flexed SE3 gauntlet pixels. R6 moves frame3 elbow/gauntlet 2px inward and 2px down, preserving the shoulder root. No rotation/resizing.",
+  "directions": {
+    "se": [
+      {
+        "number": 1,
+        "sha256": "8e52b6b5775dcccd605a8ae6cf36edecf54b4e24cd04260070b584f3277d8fcf",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "e47052d20647bc50ad93f0c903a7aa11983176b3a8e1a63195fa7c6969093426",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "826b4d2d56c80afe0b0f86cefea7dc43057f2a6f2f0995b9ecdba42c5a8621fd",
+        "bounds": [
+          29,
+          13,
+          87,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "51becd862c600a63cff6150b1721bc0c051187c02aa334ff9e7bc55775f95b8c",
+        "bounds": [
+          29,
+          12,
+          87,
+          115
+        ]
+      }
+    ],
+    "sw": [
+      {
+        "number": 1,
+        "sha256": "995fc0bdda724f1995ba8a8f4d090ad8f9f2f0fb3db3c7eac8379256bee41e53",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "bbf2e06780b388b6dee871d5d55ab65d07f8d026c3c690f78c28f28c3273bb2b",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "d12db6d6027466c1edd2ba9403a76693160ab24976ef610dc02dfd0e5bbd77ce",
+        "bounds": [
+          41,
+          13,
+          99,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "a4194c5a6be38c6bf5361ae228a546cddb2a27daf4ca30a7a4a046d63c687dfe",
+        "bounds": [
+          41,
+          12,
+          99,
+          115
+        ]
+      }
+    ],
+    "ne": [
+      {
+        "number": 1,
+        "sha256": "cf7c9882c0d58e96cf1313002a35ad05875818bf21cd4f86a659ab125b42a6fc",
+        "bounds": [
+          33,
+          15,
+          89,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "78fe8438643c5f3ebfc90db4fbeb10967fd4284b061587c17d707f2636efe25e",
+        "bounds": [
+          33,
+          14,
+          89,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "7f4df011ec2a60520064b7acc1232df6ba8e56d4e321f632952680b2a8e02c7b",
+        "bounds": [
+          33,
+          15,
+          89,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "1373addfa08e27a4a688d152b87433158ce73e57f07613637751bb140dd128ca",
+        "bounds": [
+          33,
+          14,
+          89,
+          114
+        ]
+      }
+    ],
+    "nw": [
+      {
+        "number": 1,
+        "sha256": "0d129c7f771695cb8777ec80c93f573d5b5ee5feec92e31c5c71efd1c5180916",
+        "bounds": [
+          39,
+          15,
+          95,
+          114
+        ]
+      },
+      {
+        "number": 2,
+        "sha256": "6421534c0c1eb7573e3a7317669634eec53ff2ea70ed925b705ef9a58d0bcf99",
+        "bounds": [
+          39,
+          14,
+          95,
+          113
+        ]
+      },
+      {
+        "number": 3,
+        "sha256": "c4f6916f28195085958ecaa514064bfef81c1d238335f6f63fbc30808449b182",
+        "bounds": [
+          39,
+          15,
+          95,
+          115
+        ]
+      },
+      {
+        "number": 4,
+        "sha256": "5b5c1b2c711ea7a37c087e821f8739639190cb1dfa0f75e540bb9043fd2a4900",
+        "bounds": [
+          39,
+          14,
+          95,
+          114
+        ]
+      }
+    ]
+  },
+  "frontNeckCore": [
+    {
+      "frame": 1,
+      "source": "approved idle-se.png",
+      "rect": [
+        60,
+        68,
+        16,
+        13
+      ],
+      "bodyPixelsChanged": 185,
+      "hairArmsLegsRearPreserved": true
+    },
+    {
+      "frame": 2,
+      "source": "approved idle-se.png",
+      "rect": [
+        60,
+        67,
+        16,
+        13
+      ],
+      "bodyPixelsChanged": 173,
+      "hairArmsLegsRearPreserved": true
+    },
+    {
+      "frame": 3,
+      "source": "approved idle-se.png",
+      "rect": [
+        60,
+        68,
+        16,
+        13
+      ],
+      "bodyPixelsChanged": 195,
+      "hairArmsLegsRearPreserved": true
+    },
+    {
+      "frame": 4,
+      "source": "approved idle-se.png",
+      "rect": [
+        60,
+        67,
+        16,
+        13
+      ],
+      "bodyPixelsChanged": 180,
+      "hairArmsLegsRearPreserved": true
+    }
+  ],
+  "frontHairRestoration": [
+    {
+      "frame": 1,
+      "restoredHeadPixels": 128,
+      "visibleHairChanges": 122,
+      "existingHeadUnchanged": true,
+      "armsLegsAndRearUnchanged": true
+    },
+    {
+      "frame": 2,
+      "restoredHeadPixels": 128,
+      "visibleHairChanges": 124,
+      "existingHeadUnchanged": true,
+      "armsLegsAndRearUnchanged": true
+    },
+    {
+      "frame": 3,
+      "restoredHeadPixels": 128,
+      "visibleHairChanges": 119,
+      "existingHeadUnchanged": true,
+      "armsLegsAndRearUnchanged": true
+    },
+    {
+      "frame": 4,
+      "restoredHeadPixels": 128,
+      "visibleHairChanges": 127,
+      "existingHeadUnchanged": true,
+      "armsLegsAndRearUnchanged": true
+    }
+  ],
+  "cheekSideLockRestoration": [
+    {
+      "frame": 1,
+      "addedHeadPixels": 36,
+      "visibleChanges": 31,
+      "source": "approved idle-se actual pixels",
+      "revision": "side-lock-r2"
+    },
+    {
+      "frame": 2,
+      "addedHeadPixels": 36,
+      "visibleChanges": 34,
+      "source": "approved idle-se actual pixels",
+      "revision": "side-lock-r2"
+    },
+    {
+      "frame": 3,
+      "addedHeadPixels": 36,
+      "visibleChanges": 34,
+      "source": "approved idle-se actual pixels",
+      "revision": "side-lock-r2"
+    },
+    {
+      "frame": 4,
+      "addedHeadPixels": 36,
+      "visibleChanges": 35,
+      "source": "approved idle-se actual pixels",
+      "revision": "side-lock-r2"
+    }
+  ],
+  "redBoxRightHairRestoration": [
+    {
+      "frame": 1,
+      "rightHairPixels": 73,
+      "visibleChanges": 72,
+      "source": "approved idle-se.png screen-right lock",
+      "revision": "right-lock-r4"
+    },
+    {
+      "frame": 2,
+      "rightHairPixels": 73,
+      "visibleChanges": 73,
+      "source": "approved idle-se.png screen-right lock",
+      "revision": "right-lock-r4"
+    },
+    {
+      "frame": 3,
+      "rightHairPixels": 73,
+      "visibleChanges": 73,
+      "source": "approved idle-se.png screen-right lock",
+      "revision": "right-lock-r4"
+    },
+    {
+      "frame": 4,
+      "rightHairPixels": 73,
+      "visibleChanges": 73,
+      "source": "approved idle-se.png screen-right lock",
+      "revision": "right-lock-r4"
+    }
+  ],
+  "rearFrame3Arm": {
+    "delta": [
+      -2,
+      2
+    ],
+    "innerShoulderRootPreserved": true,
+    "upperOverhangTrimmedPixels": 10,
+    "bodyPixelsChanged": 111,
+    "handsNotResized": true,
+    "headTorsoLegsAndOtherFramesPreserved": true
+  },
+  "reviewAssetRevision": "arm-edge-r7"
+}
