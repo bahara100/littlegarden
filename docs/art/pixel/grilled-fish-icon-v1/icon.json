@@ -1,0 +1,31 @@
+{
+  "palette": {
+    "o": "#70452f",
+    "f": "#dda250",
+    "h": "#ffe3a0",
+    "s": "#b67a3d",
+    "m": "#8d4e29",
+    "k": "#3e302d",
+    "p": "#fff7e5",
+    "c": "#a7b5b0",
+    "t": "#c5beb0"
+  },
+  "grid": [
+    "......t...t.....",
+    ".....t...t......",
+    "......t...t.....",
+    "................",
+    ".......ooo......",
+    "......ossso.....",
+    ".oo..ohhmfhho...",
+    ".osoohhmffmfko..",
+    "..ooofmffmfmffo.",
+    ".osoosssmsmsso..",
+    ".oo..osssssso...",
+    "......oooooo....",
+    "..cccccccccccc..",
+    "...cppppppppc...",
+    ".....cccccc.....",
+    "................"
+  ]
+}

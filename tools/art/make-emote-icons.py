@@ -73,6 +73,28 @@ def fishing():
     return [''.join(row) for row in grid]
 
 
+def grilled_fish():
+    """Golden whole fish with three diagonal grill marks on a small ivory plate."""
+    grid = [['.'] * 16 for _ in range(16)]
+    def dots(ch, points):
+        for x,y in points: grid[y][x] = ch
+    dots('t', [(6,0),(5,1),(6,2),(10,0),(9,1),(10,2)])
+    # Dorsal fin and forked tail, kept distinct from the oval cooked body.
+    dots('o', [(7,4),(8,4),(9,4),(6,5),(10,5),(1,6),(2,6),(1,7),(3,7),(2,8),(3,8),(1,9),(3,9),(1,10),(2,10)])
+    dots('s', [(7,5),(8,5),(9,5),(2,7),(2,9)])
+    for y,lo,hi in [(6,5,12),(7,4,13),(8,4,14),(9,4,13),(10,5,12)]:
+        grid[y][lo]=grid[y][hi]='o'
+        for x in range(lo+1,hi):grid[y][x]='s' if y>=9 else 'f'
+    dots('o', [(x,11) for x in range(6,12)])
+    dots('h', [(6,6),(7,6),(10,6),(11,6),(5,7),(6,7)])
+    dots('m', [(8,6),(7,7),(6,8),(10,7),(9,8),(8,9),(11,8),(10,9)])
+    dots('k', [(12,7)])
+    # Restrained cool rim separates the warm fish from the speech bubble.
+    dots('c', [(x,12) for x in range(2,14)]+[(3,13),(12,13)]+[(x,14) for x in range(5,11)])
+    dots('p', [(x,13) for x in range(4,12)])
+    return [''.join(row) for row in grid]
+
+
 def fountain():
     """Hand-pixelled warm stone bowls and a blue arcing jet, readable at the native bubble size."""
     return [
@@ -260,6 +282,10 @@ ICONS = {
     'fish': {
         'palette': {'o': '#6e3418', 'f': '#f39054', 'h': '#ffdcbc', 's': '#cc6a33', 'w': '#fff4ea', 'k': '#2f1a10'},
         'grid': fish(),
+    },
+    'grilled-fish': {
+        'palette': {'o':'#70452f','f':'#dda250','h':'#ffe3a0','s':'#b67a3d','m':'#8d4e29','k':'#3e302d','p':'#fff7e5','c':'#a7b5b0','t':'#c5beb0'},
+        'grid': grilled_fish(),
     },
     # 🎣 a fishing rod and float, for fishing at the pond.
     'fishing': {

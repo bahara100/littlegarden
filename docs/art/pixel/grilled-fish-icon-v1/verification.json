@@ -1,0 +1,15 @@
+{
+  "size": [
+    16,
+    16
+  ],
+  "opaqueColors": 9,
+  "alpha": [
+    0,
+    255
+  ],
+  "nativeMatchesCodeGrid": true,
+  "existingIconsUnchanged": true,
+  "bubbleKey": "생선구이",
+  "newAutomaticBehavior": false
+}
