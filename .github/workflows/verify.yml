@@ -2,29 +2,66 @@ name: Verify
 on: [push, pull_request, workflow_dispatch]
 # Checks the game only. The preserved multiplayer code (apps/server, tests/*.test.ts) is checked by hand when
 # needed: npm run check:legacy, npm run build -w apps/server, npm run test:legacy.
+permissions:
+  contents: read
+  actions: read  # to find the last commit that passed (below)
 jobs:
   verify:
     runs-on: ubuntu-24.04  # pinned: move up to a newer Ubuntu after checking Playwright installs there
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # Only what can have changed is checked again, against the newest earlier commit that passed Verify:
+      #   - the same commit (preview first, then main): nothing; the run still succeeds, so Pages deploys main from it.
+      #   - no file the game is built from or tested by: type check and rule tests only (seconds), no build and no
+      #     screen tests (the slow part). Art sources, review pages, tools and notes are not part of the game.
+      #   - anything else, or no passed commit to compare with: everything.
+      - name: What needs checking?
+        id: scope
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base=""
+          for sha in $(gh run list -R "$GITHUB_REPOSITORY" --workflow Verify --event push --status success --limit 50 --json headSha -q '.[].headSha'); do
+            if git merge-base --is-ancestor "$sha" "$GITHUB_SHA" 2>/dev/null; then base=$sha; break; fi
+          done
+          if [ -z "$base" ]; then echo "No earlier passed commit to compare with: checking everything."; exit 0; fi
+          if [ "$base" = "$GITHUB_SHA" ]; then
+            echo "skip=all" >> "$GITHUB_OUTPUT"; echo "::notice::$GITHUB_SHA already passed Verify; nothing to check again."; exit 0
+          fi
+          game='^(apps/client/(src/|index\.html|vite\.config\.ts|tsconfig\.json|package\.json|public/(sprites|music)/)|package(-lock)?\.json$|tsconfig|playwright\.config\.ts|tests/e2e/|\.github/workflows/verify\.yml)'
+          changed=$(git diff --name-only "$base" "$GITHUB_SHA")
+          if ! echo "$changed" | grep -qE "$game"; then
+            echo "skip=screen" >> "$GITHUB_OUTPUT"; echo "::notice::No game files changed since ${base:0:7}: no build or screen tests."
+          fi
       - uses: actions/setup-node@v7
+        if: steps.scope.outputs.skip != 'all'
         with:
           node-version: 24
           cache: npm
       - run: npm ci
+        if: steps.scope.outputs.skip != 'all'
       - run: npm run check
+        if: steps.scope.outputs.skip != 'all'
       - run: npm test
+        if: steps.scope.outputs.skip != 'all'
       # oxipng recompresses the built PNGs losslessly (vite.config.ts). Pinned release, checked against its published hash.
       - name: Install oxipng
+        if: steps.scope.outputs.skip == ''
         run: |
           curl -fsSL -o /tmp/oxipng.tgz https://github.com/shssoichiro/oxipng/releases/download/v10.2.1/oxipng-10.2.1-x86_64-unknown-linux-musl.tar.gz
           echo "1813750ef592c5350ca79c88f98b2c0876d05c826dc7156245256d4255c1ad17  /tmp/oxipng.tgz" | sha256sum -c -
           tar -xzf /tmp/oxipng.tgz -C /tmp
           sudo install /tmp/oxipng-10.2.1-x86_64-unknown-linux-musl/oxipng /usr/local/bin/oxipng
       - run: npm run build
+        if: steps.scope.outputs.skip == ''
       # Screen tests in a headless browser against the built game (playwright.config.ts).
       - run: npx playwright install --with-deps chromium
+        if: steps.scope.outputs.skip == ''
       - run: npm run test:e2e
+        if: steps.scope.outputs.skip == ''
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
