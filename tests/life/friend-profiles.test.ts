@@ -90,7 +90,7 @@ test('Scarlet likes fishing and Snow White likes eating: what each thinks of at 
     assert.equal(reactionLabel({ ...sim.avatars.get(id)!, ...at }, 1), icon, id);
   assert.equal(reactionLabel({ ...sim.avatars.get('snow')!, ...at, watchKind: 'fountain' }, 1), '⛲');
   const lines = (id: string) => UNLOCKS.filter(u => u.kind === 'line' && u.friend === id).map(u => [u.when, (u as { text: string }).text]);
-  assert.deepEqual(lines('character'), [['idle', '어디, 괜찮을 술 없나...'], ['idle', '바람 따라, 구름 따라, 마음 가는 대로'], ['greet', '한잔 할텐가?']]);
+  assert.deepEqual(lines('character'), [['idle', '어디, 괜찮은 술 없나...'], ['idle', '바람 따라, 구름 따라, 마음 가는 대로'], ['greet', '한잔 할텐가?']]);
   assert.deepEqual(lines('snow'), [['watch', '맛있어보이는군']]);
   assert.deepEqual(unlockErrors(UNLOCKS, ACTION_IDS), []);
 });
