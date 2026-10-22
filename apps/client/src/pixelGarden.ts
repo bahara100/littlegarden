@@ -22,6 +22,7 @@ import { scarletDirection } from './scarletDirections';
 import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, type FriendId } from './friendBodyArt';
 import { SCARLET2 as SCARLET_SD, SCARLET2_DIRECTIONS as SCARLET_SD_DIRECTIONS, SCARLET2_SPEED as SCARLET_SD_SPEED, Scarlet2WalkCycle as ScarletWalkCycle } from './scarlet2';
 import { SCARLET2_SIT, scarlet2Sitting } from './scarlet2';
+import { SNOW_WHITE, SNOW_WHITE_SIT } from './snowWhite';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
 import { DEFAULT_SEASON, seasonGround, type SeasonId } from './seasons';
 
@@ -34,7 +35,7 @@ type Hit = { id: string; x: number; y: number; w: number; h: number; image?: HTM
 
 /** Canvas-only presentation. Navigation, editor validation and saves stay renderer independent. */
 export class PixelGarden {
-  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED });
+  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED, snow: SCARLET_SD_SPEED });
   readonly editor = new LayoutEditor();
   scarletModel: 'loading' | 'ready' | 'fallback' = 'loading';
   selectedAvatar: AvatarId = 'character';
@@ -47,6 +48,7 @@ export class PixelGarden {
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private friendArt = new Map<FriendId, Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>>();
   private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement; sit: HTMLImageElement }>();
+  private snowArt = new Map<'se' | 'ne', { idle: HTMLImageElement; sit: HTMLImageElement }>();
   private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private friendsSitRear = new Map<FriendId, HTMLImageElement>();
   private props: Sprite[] = [];
@@ -107,7 +109,7 @@ export class PixelGarden {
       this.drinkingArt = drinkingWaterFrames(this.parkProps.get('drinkingFountain')!.image);
       this.streamBanks = waterBankArt(this.parkProps.get('stream')!.image);
       this.bridgeFront = bridgeFrontArt(this.parkProps.get('bridge')!.image);
-      const [friends, friendsSw, image, approved, dressed, rearSit] = await Promise.all([
+      const [friends, friendsSw, image, approved, dressed, rearSit, snow] = await Promise.all([
         loadPixelAtlas('sprites/garden/garden-friends-sit-v1.png'), loadPixelAtlas('sprites/garden/garden-friends-sit-sw-v1.png'), this.loadImage('sprites/garden/playground-props-v1.png'),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SCARLET_SD.sources[source];
@@ -123,9 +125,15 @@ export class PixelGarden {
           return [id, new Map(sources)] as const;
         })),
         Promise.all(FRIEND_IDS.map(async id => [id, await this.loadImage(friendRearSitArt(id))] as const)),
+        Promise.all((['se', 'ne'] as const).map(async source => {
+          const art = SNOW_WHITE.sources[source];
+          const [idle, sit] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.sit)]);
+          return [source, { idle, sit }] as const;
+        })),
       ]);
       if (this.disposed) return;
       approved.forEach(([source, art]) => this.approvedArt.set(source, art));
+      snow.forEach(([source, art]) => this.snowArt.set(source, art));
       dressed.forEach(([id, sources]) => this.friendArt.set(id, sources));
       this.friendsSit = { se: friends, sw: friendsSw };
       rearSit.forEach(([id, art]) => this.friendsSitRear.set(id, art));
@@ -243,34 +251,37 @@ export class PixelGarden {
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
     const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' || seat?.kind === 'picnicRug' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
-    const scarletSit = a.id === 'character' && scarlet2Sitting(seat?.kind, seated, a.phase);
-    const drawnSit = scarletSit || (a.id !== 'character' && !!this.friendsSit && seated > 0 && !standingOnSeat);
+    // Scarlet2 and Snow White share the 128px canvas and the chair sitting rules; Snow White has no walking drawings yet.
+    const tall = a.id === 'character' || a.id === 'snow';
+    const scarletSit = tall && scarlet2Sitting(seat?.kind, seated, a.phase);
+    const drawnSit = scarletSit || (!tall && !!this.friendsSit && seated > 0 && !standingOnSeat);
     const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
-    const chairTransition = a.id === 'character' && !!seat && seat.kind !== 'picnicRug';
-    const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : (a.id !== 'character' || chairTransition) && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
+    const chairTransition = tall && !!seat && seat.kind !== 'picnicRug';
+    const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : (!tall || chairTransition) && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.life.seesawTilt(seat.equipment), still)) * u * seated : 0;
     const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + sway + seesaw;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
-    const size = Math.round(u * (a.id === 'character' ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (a.id === 'character' ? scarletSit ? SCARLET2_SIT.originY : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
-    if (a.id === 'character' && this.approvedArt.size) {
+    const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
+    const size = Math.round(u * (tall ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (tall ? scarletSit ? sitOrigin : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
+    if (tall && (a.id === 'snow' ? this.snowArt.size : this.approvedArt.size)) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
-      const art = this.approvedArt.get(source)!;
+      const art: { idle: HTMLImageElement; sit: HTMLImageElement; walk?: HTMLImageElement } = a.id === 'snow' ? this.snowArt.get(source)! : this.approvedArt.get(source)!;
       c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
       if (scarletSit) c.drawImage(art.sit, 0, 0, size, size);
-      else if (moving && !still) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
+      else if (moving && !still && art.walk) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
-    } else if (drawnSit && a.id !== 'character') {
+    } else if (drawnSit && !tall) {
       const frame = a.id === 'peach' ? 0 : 4;
       if (facing === 'ne' || facing === 'nw') {
         c.save(); c.translate(x + (facing === 'nw' ? size : 0), y); c.scale(facing === 'nw' ? -1 : 1, 1);
-        c.drawImage(this.friendsSitRear.get(a.id)!, 0, 0, size, size); c.restore();
+        c.drawImage(this.friendsSitRear.get(a.id as FriendId)!, 0, 0, size, size); c.restore();
       } else c.drawImage(this.friendsSit![facing], 0, frame / 4 * 96, 96, 96, x, y, size, size);
-    } else if (a.id !== 'character' && this.friendArt.has(a.id)) {
-      const { source, flipX } = FRIEND_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
-      const art = this.friendArt.get(a.id)!.get(source)!;
+    } else if (!tall && this.friendArt.has(a.id as FriendId)) {
+      const { source, flipX } = FRIEND_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)], id = a.id as FriendId;
+      const art = this.friendArt.get(id)!.get(source)!;
       c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
-      if (moving && !still) c.drawImage(art.walk, this.friendCycles[a.id].frame * 96, 0, 96, 96, 0, 0, size, size);
+      if (moving && !still) c.drawImage(art.walk, this.friendCycles[id].frame * 96, 0, 96, 96, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
     } else {

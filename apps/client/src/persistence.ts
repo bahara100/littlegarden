@@ -24,7 +24,7 @@ export interface GardenSave {
   /** Where the day had got to (0 = midnight, .5 = noon). */
   clock: number;
 }
-export function emptySave(): GardenSave { return { regions: {}, affinity: { character: 0, peach: 0, lilac: 0 }, petted: {}, clock: DAY.start }; }
+export function emptySave(): GardenSave { return { regions: {}, affinity: { character: 0, peach: 0, lilac: 0, snow: 0 }, petted: {}, clock: DAY.start }; }
 /** A save holding one layout, in the garden region. */
 export function gardenSave(layout: Layout, extra: Partial<GardenSave> = {}): GardenSave { return { ...emptySave(), regions: { garden: layout }, ...extra }; }
 type SaveData = { app: string; version: number; [key: string]: unknown };
@@ -48,7 +48,7 @@ export function upgradeSave(data: SaveData): SaveData {
   return data;
 }
 function affinityFrom(value: unknown): Affinity {
-  const v = (value ?? {}) as Record<string, unknown>, out: Affinity = { character: 0, peach: 0, lilac: 0 };
+  const v = (value ?? {}) as Record<string, unknown>, out: Affinity = { character: 0, peach: 0, lilac: 0, snow: 0 };
   for (const id of Object.keys(out) as AvatarId[]) {
     const n = v[id];
     if (n !== undefined && (typeof n !== 'number' || !Number.isInteger(n) || n < 0 || n > AFFINITY_MAX)) throw new Error('친구 정보가 올바르지 않아요.');
@@ -58,7 +58,7 @@ function affinityFrom(value: unknown): Affinity {
 }
 function pettedFrom(value: unknown): Petted {
   const v = (value ?? {}) as Record<string, unknown>, out: Petted = {};
-  for (const id of ['character', 'peach', 'lilac'] as AvatarId[]) {
+  for (const id of ['character', 'peach', 'lilac', 'snow'] as AvatarId[]) {
     const d = v[id];
     if (d === undefined) continue;
     if (typeof d !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(d)) throw new Error('친구 정보가 올바르지 않아요.');
@@ -87,7 +87,7 @@ function decodeLayout(value: unknown, growLegacyPonds = false): Layout {
   const ids = new Set<string>();
   function item(value: unknown): PlacedItem {
     const v = value as PlacedItem;
-    if (!v || typeof v.id !== 'string' || !v.id.length || v.id.length > 100 || ['character', 'peach', 'lilac'].includes(v.id) || ids.has(v.id) || !Object.hasOwn(CATALOG, v.kind) ||
+    if (!v || typeof v.id !== 'string' || !v.id.length || v.id.length > 100 || ['character', 'peach', 'lilac', 'snow'].includes(v.id) || ids.has(v.id) || !Object.hasOwn(CATALOG, v.kind) ||
       !Number.isFinite(v.x) || !Number.isFinite(v.z) || Math.abs(v.x) > HALF || Math.abs(v.z) > HALF || !Number.isInteger(v.turn) || v.turn < 0 || v.turn > 3 ||
       [v.w, v.d].some(n => n !== undefined && (typeof n !== 'number' || !Number.isFinite(n) || n <= 0 || n > 16))) throw new Error('기구 정보나 고유 번호가 올바르지 않아요.');
     ids.add(v.id);
@@ -135,7 +135,7 @@ export function loadSettings(storage: SaveStorage): Settings {
     const v = JSON.parse(storage.getItem(SETTINGS_KEY) ?? '{}') as Partial<Settings>, out = { ...DEFAULT_SETTINGS };
     if (typeof v.grid === 'boolean') out.grid = v.grid;
     if (typeof v.zoom === 'number' && Number.isFinite(v.zoom)) out.zoom = Math.max(ZOOM.min, Math.min(ZOOM.max, v.zoom));
-    if (v.selected === 'character' || v.selected === 'peach' || v.selected === 'lilac') out.selected = v.selected;
+    if (v.selected === 'character' || v.selected === 'peach' || v.selected === 'lilac' || v.selected === 'snow') out.selected = v.selected;
     if (typeof v.dayCycle === 'boolean') out.dayCycle = v.dayCycle;
     if (typeof v.fps === 'boolean') out.fps = v.fps;
     if (isRegionId(v.region)) out.region = v.region;

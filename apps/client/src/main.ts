@@ -69,7 +69,8 @@ function refresh() {
     setText(`request-${equipment}`, equipment === 'picnicRug' ? `돗자리 앉기 · ${free}자리` : `${equipment === 'bench' ? '벤치' : equipment === 'seesaw' ? '시소' : equipment === 'picnicTable' ? '테이블' : '그네'} 이용 · ${free}자리`);
   }
   if (friend) {
-    el('model-review').hidden = false;
+    // Snow White has no review page in the game yet (her drawings are reviewed in docs/art/pixel/snow-white-*-v1).
+    el('model-review').hidden = friend.id === 'snow';
     setText('model-review', friend.id === 'character' ? '홍련2 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
     el('selection-icon').dataset.friend = friend.id;

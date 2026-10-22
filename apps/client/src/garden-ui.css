@@ -190,7 +190,8 @@ aside { gap: 12px; }
 #friend-character i { background-image: url('/sprites/scarlet2/approved-v6/idle-se.png') !important; background-size: 43px 43px; }
 #friend-peach i { background-image: url('/sprites/garden/base-walk-v2/momo/idle-se.png') !important; }
 #friend-lilac i { background-image: url('/sprites/garden/base-walk-v2/lulu/idle-se.png') !important; }
-.friend-roster strong { font-size: 12px; font-weight: 600; }
+#friend-snow i { background-image: url('/sprites/snow-white/v1/idle-se.png') !important; background-size: 43px 43px; }
+.friend-roster strong { font-size: 12px; font-weight: 600; white-space: nowrap; letter-spacing: -.02em; }
 .friend-roster span { font-size: 9px; color: #718165; }
 .selection-panel { min-height: 0; }
 .selected-heading { margin: 13px 0 10px; gap: 10px; }
@@ -199,6 +200,7 @@ aside { gap: 12px; }
 .object-icon { width: 42px; height: 42px; border-radius: 13px; background: #eef1e4; color: #758c63; font-size: 26px; flex-shrink: 0; }
 .object-icon[data-friend] { color: transparent; background-repeat: no-repeat; background-size: 65px 65px; background-position: center top; image-rendering: pixelated; }
 .object-icon[data-friend=character] { background-image: url('/sprites/scarlet2/approved-v6/idle-se.png'); background-size: 49px 49px; }
+.object-icon[data-friend=snow] { background-image: url('/sprites/snow-white/v1/idle-se.png'); background-size: 49px 49px; }
 .object-icon[data-friend=peach] { background-image: url('/sprites/garden/base-walk-v2/momo/idle-se.png'); }
 .object-icon[data-friend=lilac] { background-image: url('/sprites/garden/base-walk-v2/lulu/idle-se.png'); }
 .selection-panel > p { min-height: 0; font-size: 11px; line-height: 1.8; }
@@ -290,7 +292,7 @@ dialog p { color: #67795b; }
   .friend-roster button { flex-direction: row; flex-wrap: wrap; padding: 8px; gap: 6px; }
   .friend-roster span { flex-basis: 100%; }
   .friend-roster i { width: 30px; height: 28px; background-size: 47px 47px; }
-  #friend-character i { background-size: 36px 36px; }
+  #friend-character i, #friend-snow i { background-size: 36px 36px; }
   .panel { padding: 16px; }
   .selection-panel { min-height: 0; }
   .display-panel { padding: 0 16px; align-self: start; }

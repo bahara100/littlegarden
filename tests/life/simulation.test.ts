@@ -114,6 +114,7 @@ test('a friend often picks the free bench seat beside a sitting friend', () => {
 });
 test('a friend who steps off a bench does not sit straight back down beside the friend still on it', () => {
   const sim = new LifeSimulation(seeded()), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
+  sim.avatars.get('snow')!.until = 1e9;  // Snow White stays put, so the second bench seat stays Lulu's
   assert.equal(sim.use('character', 'swing'), null);  // the swing is taken, so the bench is her only other seat
   assert.equal(sim.use('peach', 'bench'), null);
   for (let i = 0; i < 12; i++) {  // many rounds of the sit-together roll

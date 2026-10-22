@@ -75,7 +75,7 @@ export function actionsToTry(list: readonly Unlock[], friend: AvatarId, points: 
 }
 /** Problems in an unlock list (for the tests): unknown friends, moments or actions, points out of range, long lines. */
 export function unlockErrors(list: readonly Unlock[], actions: readonly string[]): string[] {
-  const friends = ['character', 'peach', 'lilac'], errors: string[] = [];
+  const friends = ['character', 'peach', 'lilac', 'snow'], errors: string[] = [];
   list.forEach((u, i) => {
     const where = `#${i + 1} (${u.kind})`;
     if (!Number.isInteger(u.at) || u.at < 0 || u.at > AFFINITY_MAX) errors.push(`${where}: at must be 0..${AFFINITY_MAX}`);

@@ -53,7 +53,7 @@ test('after greeting, the same two friends pass each other without stopping for 
   assert.equal(REACTION.cooldown, 180);
   const sim = Object.assign(new LifeSimulation(() => 0), { greetFrom: 0 }), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
   const meet = () => {
-    for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: 9.5, until: 1e9, phase: 'idle', path: [] });
+    for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: f.id === 'snow' ? -9.5 : 9.5, until: 1e9, phase: 'idle', path: [] });
     Object.assign(momo, { x: 5.5, z: 4.5 }); sim.update(.05);   // apart: the meeting is over
     Object.assign(lulu, { x: 6.5, z: 4.5 }); sim.update(.05);   // together again
   };
@@ -68,7 +68,7 @@ test('nobody greets in the first 10 seconds, when everyone starts side by side',
   const { REACTION } = await import('../../apps/client/src/simulation.js');
   assert.equal(REACTION.quietStart, 10);
   const sim = new LifeSimulation(() => 0), momo = sim.avatars.get('peach')!, lulu = sim.avatars.get('lilac')!;
-  for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: 9.5, until: 1e9, phase: 'idle', path: [] });
+  for (const f of sim.avatars.values()) Object.assign(f, { x: f.id === 'character' ? -9.5 : 9.5, z: f.id === 'snow' ? -9.5 : 9.5, until: 1e9, phase: 'idle', path: [] });
   Object.assign(momo, { x: 5.5, z: 4.5 }); Object.assign(lulu, { x: 6.5, z: 4.5 });
   for (let t = 0; t < 12; t += .05) sim.update(.05);
   assert.equal(momo.phase, 'idle', 'the twins stood together from the start and did not greet');

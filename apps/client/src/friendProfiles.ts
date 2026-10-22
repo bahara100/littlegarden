@@ -39,6 +39,11 @@ export const PROFILES: Record<AvatarId, FriendProfile> = {
     facts: [['성격', '활발함'], ['좋아하는 것', '공원 산책'], ['가족', '쌍둥이 언니 모모']],
     twin: 'peach', stroll: .45, followTwin: .7, rest: .7,
   },
+  snow: {
+    subtitle: '공원에 새로 놀러 온 친구',
+    intro: '공원에 새로 놀러 온 친구예요. 벤치에 앉아 쉬거나, 가까이 다가가 작은 인사를 건네보세요.',
+    facts: [],
+  },
 };
 /** Whether two friends are twins. */
 export const twins = (a: AvatarId, b: AvatarId) => PROFILES[a].twin === b;

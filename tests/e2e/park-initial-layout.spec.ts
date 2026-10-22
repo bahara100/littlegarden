@@ -37,6 +37,6 @@ test('a saved park stays intact until the player confirms the new regional initi
   await page.reload(); await expect(page.locator('#loading')).toBeHidden();
   await page.click('#edit-mode'); await expect(page.locator('#draft-count')).toContainText(`${PARK_INITIAL_LAYOUT.items.length}개 배치`);
   const back = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), SAVE_KEY);
-  expect(back.friends.affinity).toEqual(saved.affinity);
+  expect(back.friends.affinity).toEqual({ ...saved.affinity, snow: 0 });  // a friend added after this save starts at 0
   expect(back.regions.garden.items).toEqual(PARK_INITIAL_LAYOUT.items);
 });

@@ -67,12 +67,12 @@ test('older saves upgrade step by step: v1 and v2 layouts become the garden regi
   const v1 = JSON.stringify({ app: 'little-garden', version: 1, savedAt: '2026-10-17T00:00:00Z', layout: cloneLayout(DEFAULT_LAYOUT) });
   const fromV1 = decodeGarden(v1);
   assert.deepEqual(fromV1.regions, { garden: decodeSave(encode(DEFAULT_LAYOUT)) });
-  assert.deepEqual(fromV1.affinity, { character: 0, peach: 0, lilac: 0 });
+  assert.deepEqual(fromV1.affinity, { character: 0, peach: 0, lilac: 0, snow: 0 });
   assert.deepEqual(fromV1.petted, {}); assert.equal(fromV1.clock, DAY.start);
   const v2 = JSON.stringify({ app: 'little-garden', version: 2, layout: cloneLayout(DEFAULT_LAYOUT), friends: { affinity: { character: 3, peach: 0, lilac: 12 } } });
   const fromV2 = decodeGarden(v2);
   assert.deepEqual(Object.keys(fromV2.regions), ['garden']);
-  assert.deepEqual(fromV2.affinity, { character: 3, peach: 0, lilac: 12 });
+  assert.deepEqual(fromV2.affinity, { character: 3, peach: 0, lilac: 12, snow: 0 }, 'friends added later start at 0');
   assert.equal(JSON.parse(encode(DEFAULT_LAYOUT)).version, SAVE_VERSION);
   assert.equal(SAVE_VERSION, 4);
 });
@@ -83,7 +83,7 @@ test('each region keeps its own layout; friends, pat days and the clock round-tr
   const back = loadGarden(storage)!;
   assert.equal(back.regions.onsen!.items.some(i => i.kind === 'swing'), false, 'the hot spring has its own placements');
   assert.equal(back.regions.garden!.items.some(i => i.kind === 'swing'), true, 'the garden keeps its swing');
-  assert.deepEqual(back.affinity, { character: 3, peach: 0, lilac: 12 });
+  assert.deepEqual(back.affinity, { character: 3, peach: 0, lilac: 12, snow: 0 });
   assert.deepEqual(back.petted, { lilac: '2026-10-18' });
   assert.equal(back.clock, .82);
   assert.deepEqual(decodeGarden(encodeSave(emptySave())).regions, {});

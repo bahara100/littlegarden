@@ -5,7 +5,7 @@ import { UNLOCKS } from './unlocks';
 import type { ActionId } from './friendActions';
 import { PROFILES, twins } from './friendProfiles';
 import { SEESAW } from './seesaw';
-export type AvatarId = 'character' | 'peach' | 'lilac';
+export type AvatarId = 'character' | 'peach' | 'lilac' | 'snow';
 export type EquipmentId = string;
 
 export type Phase = 'idle' | 'walking' | 'boarding' | 'seated' | 'swinging' | 'leaving' | 'waving' | 'greeting' | 'happy' | 'watching';
@@ -13,6 +13,7 @@ export const FRIENDS = [
   { id: 'character' as const, name: '홍련', color: '#8b70ab', start: { x: -.5, z: 2.5 } },
   { id: 'peach' as const, name: '모모', color: '#d7a18b', start: { x: -2.5, z: 2.5 } },
   { id: 'lilac' as const, name: '루루', color: '#b5a4cd', start: { x: 2.5, z: 2.5 } },
+  { id: 'snow' as const, name: '스노우화이트', color: '#c9cbd6', start: { x: .5, z: 4.5 } },
 ];
 const DEFAULT_WORLD = worldFrom(DEFAULT_LAYOUT.items);
 export const SEATS = DEFAULT_WORLD.seats;
@@ -112,7 +113,7 @@ export class LifeSimulation {
   private seesaws = new Map<string, { phase: number; tilt: number; amplitude: number }>();
   seesawTilt(id: string) { return this.seesaws.get(id)?.tilt ?? 0; }
   /** How close each friend feels to you (affinity.ts): one point for the first pat of each day, kept with the save. */
-  readonly affinity: Record<AvatarId, number> = { character: 0, peach: 0, lilac: 0 };
+  readonly affinity: Record<AvatarId, number> = { character: 0, peach: 0, lilac: 0, snow: 0 };
   /** The day (YYYY-MM-DD) each friend's affinity last went up. */
   readonly petted: Partial<Record<AvatarId, string>> = {};
   /** Whether the day passes (morning → afternoon → evening → night); off keeps a bright afternoon. */

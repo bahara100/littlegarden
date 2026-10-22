@@ -31,13 +31,13 @@ test('picnic tables have four reachable seats, separate approaches and inward fa
 
 test('friends reserve different seats on both sides, sit, leave onto free tiles and release seats on layout changes', () => {
   const sim = new LifeSimulation(() => .9); sim.applyLayout([table()]);
-  for (const id of ['character', 'peach', 'lilac'] as const) assert.equal(sim.use(id, 'table'), null);
-  assert.equal(sim.reservations.size, 3); assert.equal(new Set([...sim.avatars.values()].map(a => a.seatId)).size, 3);
+  for (const id of ['character', 'peach', 'lilac', 'snow'] as const) assert.equal(sim.use(id, 'table'), null);
+  assert.equal(sim.reservations.size, 4); assert.equal(new Set([...sim.avatars.values()].map(a => a.seatId)).size, 4);
   until(sim, () => [...sim.avatars.values()].every(a => a.phase === 'seated'));
   assert.equal(new Set([...sim.avatars.values()].map(a => sim.seatOf(a)!.bench)).size, 2);
   for (const a of sim.avatars.values()) { assert.equal(activityLabel(a), '테이블에서 쉬는 중'); assert.equal(a.yaw, sim.seatOf(a)!.yaw); }
   sim.leave('peach'); until(sim, () => sim.avatars.get('peach')!.seatId === null);
-  assert.ok(walkable(sim.avatars.get('peach')!, sim.world)); assert.equal(sim.reservations.size, 2);
+  assert.ok(walkable(sim.avatars.get('peach')!, sim.world)); assert.equal(sim.reservations.size, 3);
   sim.applyLayout([]); assert.equal(sim.reservations.size, 0);
   assert.ok([...sim.avatars.values()].every(a => a.seatId === null));
 });

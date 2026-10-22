@@ -20,10 +20,11 @@ import { pondFishArt, pondFishFrame } from './pondFish';
 import { project, unproject } from './isometric';
 import { sceneOrder, walkerDepth } from './drawOrder';
 import { scarletDirection } from './scarletDirections';
-import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture } from './friendBodyArt';
+import { FRIEND_BODY, FRIEND_IDS, FRIEND_DIRECTIONS, FRIEND_SPEED, FriendWalkCycle, friendArt, friendTexture, type FriendId } from './friendBodyArt';
 import { friendRearSitArt, friendRearSitTexture } from './friendSittingArt';
 import { SCARLET2 as SCARLET_SD, SCARLET2_DIRECTIONS as SCARLET_SD_DIRECTIONS, SCARLET2_SPEED as SCARLET_SD_SPEED, Scarlet2WalkCycle as ScarletWalkCycle } from './scarlet2';
 import { SCARLET2_SIT, scarlet2Sitting } from './scarlet2';
+import { SNOW_WHITE, SNOW_WHITE_SIT } from './snowWhite';
 import { loadPixelAtlas } from './pixelAtlas';
 import type { Selection } from './pixelGarden';
 import { DEFAULT_REGION, region, type RegionId } from './regions';
@@ -98,7 +99,7 @@ function diamond(c: CanvasRenderingContext2D, p: Point, w: number, d: number, co
 
 /** Phaser presentation with the same public surface as PixelGarden; simulation, editor and saves are shared. */
 export class PhaserGarden {
-  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED });
+  readonly life = new LifeSimulation(Math.random, { character: SCARLET_SD_SPEED, peach: FRIEND_SPEED, lilac: FRIEND_SPEED, snow: SCARLET_SD_SPEED });
   readonly editor = new LayoutEditor();
   scarletModel: 'loading' | 'ready' | 'fallback' = 'loading';
   selectedAvatar: AvatarId = 'character';
@@ -200,6 +201,10 @@ class GardenScene extends Phaser.Scene {
       this.load.image(`sit-${source}`, `${base}${art.sit}`);
       this.load.spritesheet(`walk-${source}`, `${base}${art.walk}`, { frameWidth: SCARLET_SD.frameSize, frameHeight: SCARLET_SD.frameSize });
     }
+    for (const [source, art] of Object.entries(SNOW_WHITE.sources)) {
+      this.load.image(`snow-idle-${source}`, `${base}${art.idle}`);
+      this.load.image(`snow-sit-${source}`, `${base}${art.sit}`);
+    }
     for (const id of FRIEND_IDS) this.load.image(friendRearSitTexture(id), `${base}${friendRearSitArt(id)}`);
     for (const id of FRIEND_IDS) for (const source of ['se', 'ne'] as const) {
       const art = friendArt(id, source);
@@ -229,9 +234,9 @@ class GardenScene extends Phaser.Scene {
     this.add.image(-FLOOR.ox, -FLOOR.oy, 'overlay').setOrigin(0).setDepth(9999);
     this.ghost = this.add.image(0, 0, 'prop0').setOrigin(.5, 1).setAlpha(.65).setVisible(false);
     for (const a of this.g.life.avatars.values()) {
-      const scarlet = a.id === 'character', size = U * (scarlet ? SCARLET_SD.worldSize : 2.8);
-      const sprite = this.add.sprite(0, 0, a.id === 'character' ? 'idle-se' : friendTexture(a.id, 'idle', 'se'))
-        .setOrigin(.5, scarlet ? SCARLET_SD.originY : FRIEND_BODY.originY).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
+      const tall = a.id === 'character' || a.id === 'snow', size = U * (tall ? SCARLET_SD.worldSize : 2.8);
+      const sprite = this.add.sprite(0, 0, a.id === 'character' ? 'idle-se' : a.id === 'snow' ? 'snow-idle-se' : friendTexture(a.id as FriendId, 'idle', 'se'))
+        .setOrigin(.5, tall ? SCARLET_SD.originY : FRIEND_BODY.originY).setDisplaySize(size, size).setInteractive({ pixelPerfect: true });
       sprite.setData('id', a.id);
       this.avatars.set(a.id, { sprite });
     }
@@ -507,11 +512,13 @@ class GardenScene extends Phaser.Scene {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     // Drawn seated poses bend the legs themselves, so they only need the seat height above the ground point.
     const facing = seat && seated ? this.seatFacing(seat) : null;
-    const friendSit = a.id !== 'character' && !!facing && this.textures.exists('friends-sit');
+    // Scarlet2 and Snow White share the 128px canvas and the chair sitting rules; Snow White has no walking drawings yet.
+    const tall = a.id === 'character' || a.id === 'snow';
+    const friendSit = !tall && !!facing && this.textures.exists('friends-sit');
     // While still standing at the start of sitting down (or end of getting up) the feet stay on the ground.
-    const scarletSit = a.id === 'character' && scarlet2Sitting(seat?.kind, seated, a.phase);
+    const scarletSit = tall && scarlet2Sitting(seat?.kind, seated, a.phase);
     const drawnSit = friendSit || scarletSit;
-    const chairTransition = a.id === 'character' && !!seat && seat.kind !== 'picnicRug';
+    const chairTransition = tall && !!seat && seat.kind !== 'picnicRug';
     const standingOnSeat = (drawnSit || chairTransition) && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const lift = standingOnSeat ? 0 : !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : seated * SEAT_LIFT.drawn[seat!.kind];
     // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
@@ -522,19 +529,21 @@ class GardenScene extends Phaser.Scene {
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.g.life.seesawTilt(seat.equipment), still)) * U * seated : 0;
     const x = p.x + swing.x, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
     view.sprite.setPosition(x, base).setDepth(z);
-    if (a.id === 'character') {
-      const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)];
-      if (scarletSit) view.sprite.setTexture(`sit-${source}`);
-      else if (moving) view.sprite.setTexture(`walk-${source}`, this.walkCycle.frame);
-      else view.sprite.setTexture(`idle-${source}`);
-      view.sprite.setFlipX(flipX).setOrigin(.5, scarletSit ? SCARLET2_SIT.originY : SCARLET_SD.originY).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
+    if (tall) {
+      const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)], art = a.id === 'snow' ? 'snow-' : '';
+      if (scarletSit) view.sprite.setTexture(`${art}sit-${source}`);
+      else if (moving && a.id === 'character') view.sprite.setTexture(`walk-${source}`, this.walkCycle.frame);
+      else view.sprite.setTexture(`${art}idle-${source}`);
+      const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
+      view.sprite.setFlipX(flipX).setOrigin(.5, scarletSit ? sitOrigin : SCARLET_SD.originY).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
-      if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(friendRearSitTexture(a.id)).setFlipX(facing === 'nw');
+      if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(friendRearSitTexture(a.id as FriendId)).setFlipX(facing === 'nw');
       else view.sprite.setTexture(facing === 'sw' ? 'friends-sit-sw' : 'friends-sit', a.id === 'peach' ? 0 : 4).setFlipX(false);
       view.sprite.setOrigin(.5, .97).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     } else {
       const { source, flipX } = FRIEND_DIRECTIONS[facing ?? scarletDirection(a.yaw)];
-      view.sprite.setTexture(friendTexture(a.id, moving ? 'walk' : 'idle', source), moving ? this.friendCycles[a.id].frame : undefined)
+      const id = a.id as FriendId;
+      view.sprite.setTexture(friendTexture(id, moving ? 'walk' : 'idle', source), moving ? this.friendCycles[id].frame : undefined)
         .setFlipX(flipX).setOrigin(.5, FRIEND_BODY.originY).setDisplaySize(U * FRIEND_BODY.worldSize, U * FRIEND_BODY.worldSize);
     }
     const cam = this.cameras.main;
