@@ -19,13 +19,16 @@ export interface FriendProfile {
   followTwin?: number;
   /** How long they stay on a bench or swing, as a share of the usual time (active friends get up sooner). */
   rest?: number;
+  /** What comes to mind while watching the pond, shown over the head now and then (default: a fish, 🐟). */
+  pondEmote?: string;
 }
 
 export const PROFILES: Record<AvatarId, FriendProfile> = {
   character: {
     subtitle: '오늘도 정원에서 함께 쉬어요',
     intro: '바닥을 누르면 그곳으로 걸어가요. 벤치에서 쉬거나, 가까이 다가가 작은 인사를 건네보세요.',
-    facts: [],
+    facts: [['좋아하는 것', '낚시']],
+    pondEmote: '🎣',
   },
   peach: {
     subtitle: '루루의 쌍둥이 언니',
@@ -41,8 +44,9 @@ export const PROFILES: Record<AvatarId, FriendProfile> = {
   },
   snow: {
     subtitle: '공원에 새로 놀러 온 친구',
-    intro: '공원에 새로 놀러 온 친구예요. 벤치에 앉아 쉬거나, 가까이 다가가 작은 인사를 건네보세요.',
-    facts: [],
+    intro: '공원에 새로 놀러 온 친구예요. 먹는 걸 좋아해서, 호수의 물고기를 보면 생선구이가 떠올라요.',
+    facts: [['좋아하는 것', '먹는 것']],
+    pondEmote: '생선구이',
   },
 };
 /** Whether two friends are twins. */

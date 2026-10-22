@@ -477,8 +477,8 @@ export function reactionLabel(a: Avatar, time: number) {
   if (a.phase === 'waving') return '👋';
   if (time < a.cheerUntil) return '♡';
   if (a.phase === 'happy') return time - a.since < PET.duration / 2 ? '♡' : '♪';
-  // Watching a pond or fountain: a fish (or the fountain) shows up now and then (2.5 s of every 5).
-  if (a.phase === 'watching') return (time - a.since) % 5 < 2.5 ? (a.watchKind === 'fountain' ? '⛲' : '🐟') : '';
+  // Watching a pond or fountain: what the friend sees or thinks of shows up now and then (2.5 s of every 5).
+  if (a.phase === 'watching') return (time - a.since) % 5 < 2.5 ? (a.watchKind === 'fountain' ? '⛲' : PROFILES[a.id].pondEmote ?? '🐟') : '';
   if (a.phase !== 'greeting') return '';
   // Meeting: notice (!), wave hello (👋), then take turns chatting (··· / ♪).
   const t = time - a.since;

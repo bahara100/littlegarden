@@ -41,14 +41,14 @@ interface UnlockBase {
   /** For 'greet': only when greeting this friend (e.g. a twin calling the other). */
   with?: AvatarId;
 }
-/** Something said in a speech bubble over the head (keep it short: up to 20 characters). */
+/** Something said in a speech bubble over the head (keep it short: up to 24 characters). */
 export interface LineUnlock extends UnlockBase { kind: 'line'; when: Moment; text: string }
 /** An emotion over the head: a symbol or a short word such as ♡ ♪ ✿ ! ? 💤, shown for `seconds` (default 2). */
 export interface EmoteUnlock extends UnlockBase { kind: 'emote'; when: Moment; emote: string; seconds?: number }
 /** A behaviour the friend may choose on their own while free (friendActions.ts lists what exists). */
 export interface ActionUnlock extends UnlockBase { kind: 'action'; action: ActionId }
 export type Unlock = LineUnlock | EmoteUnlock | ActionUnlock;
-export const LINE_MAX = 20;
+export const LINE_MAX = 24;
 
 const forFriend = (u: Unlock, friend: AvatarId, points: number) => points >= u.at && (!u.friend || u.friend === friend);
 /** Everything this friend has unlocked at these points, in list order. */

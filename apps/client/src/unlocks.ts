@@ -17,4 +17,9 @@ export const UNLOCKS: readonly Unlock[] = [
   { kind: 'line', at: 0, friend: 'lilac', when: 'pet', text: '언니보다 내가 먼저야!' },
   { kind: 'line', at: 0, friend: 'lilac', when: 'greet', with: 'peach', text: '언니, 같이 가!' },
   { kind: 'line', at: 0, friend: 'lilac', when: 'watch', text: '물고기다! 언니 이것 봐!' },
+  // Scarlet (likes fishing) and Snow White (likes eating): lines the player chose on 2026-10-22, shown from the start.
+  { kind: 'line', at: 0, friend: 'character', when: 'idle', text: '어디, 괜찮을 술 없나...' },
+  { kind: 'line', at: 0, friend: 'character', when: 'idle', text: '바람 따라, 구름 따라, 마음 가는 대로' },
+  { kind: 'line', at: 0, friend: 'character', when: 'greet', text: '한잔 할텐가?' },
+  { kind: 'line', at: 0, friend: 'snow', when: 'watch', text: '맛있어보이는군' },
 ];

@@ -78,3 +78,29 @@ test('nobody greets in the first 10 seconds, when everyone starts side by side',
   sim.applyLayout(sim.layout);                                        // a layout change puts everyone back together
   assert.ok(sim.greetFrom >= sim.time + 10 - 1e-9);
 });
+test('Scarlet likes fishing and Snow White likes eating: what each thinks of at the pond, and their lines', async () => {
+  const { reactionLabel } = await import('../../apps/client/src/simulation.js');
+  const { UNLOCKS } = await import('../../apps/client/src/unlocks.js');
+  const { unlockErrors } = await import('../../apps/client/src/affinity.js');
+  const { ACTION_IDS } = await import('../../apps/client/src/friendActions.js');
+  assert.ok(PROFILES.character.facts.some(([, v]) => v === '낚시')); assert.ok(PROFILES.snow.facts.some(([, v]) => v === '먹는 것'));
+  const sim = new LifeSimulation(() => 0);
+  const at = { phase: 'watching' as const, watchKind: 'pond' as const, since: 0, speechUntil: 0, emoteUntil: 0, cheerUntil: 0 };
+  for (const [id, icon] of [['character', '🎣'], ['snow', '생선구이'], ['peach', '🐟'], ['lilac', '🐟']] as const)
+    assert.equal(reactionLabel({ ...sim.avatars.get(id)!, ...at }, 1), icon, id);
+  assert.equal(reactionLabel({ ...sim.avatars.get('snow')!, ...at, watchKind: 'fountain' }, 1), '⛲');
+  const lines = (id: string) => UNLOCKS.filter(u => u.kind === 'line' && u.friend === id).map(u => [u.when, (u as { text: string }).text]);
+  assert.deepEqual(lines('character'), [['idle', '어디, 괜찮을 술 없나...'], ['idle', '바람 따라, 구름 따라, 마음 가는 대로'], ['greet', '한잔 할텐가?']]);
+  assert.deepEqual(lines('snow'), [['watch', '맛있어보이는군']]);
+  assert.deepEqual(unlockErrors(UNLOCKS, ACTION_IDS), []);
+});
+test('Snow White says her line when she starts watching the pond', () => {
+  const sim = new LifeSimulation(() => 0), snow = sim.avatars.get('snow')!;
+  for (const f of sim.avatars.values()) f.until = 1e9;
+  sim.applyLayout([{ id: 'lake', kind: 'pond', x: 0, z: -6, turn: 0 }]);
+  for (const f of sim.avatars.values()) f.until = 1e9;
+  sim.greetFrom = 1e9;
+  assert.equal(sim.watchPond('snow', 'lake'), null);
+  for (let t = 0; t < 40 && snow.phase !== 'watching'; t += .05) sim.update(.05);
+  assert.equal(snow.phase, 'watching'); assert.equal(snow.speech, '맛있어보이는군');
+});

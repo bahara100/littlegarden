@@ -71,7 +71,7 @@ function refresh() {
   if (friend) {
     // Snow White has no review page in the game yet (her drawings are reviewed in docs/art/pixel/snow-white-*-v1).
     el('model-review').hidden = friend.id === 'snow';
-    setText('model-review', friend.id === 'character' ? '홍련2 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
+    setText('model-review', friend.id === 'character' ? '홍련 외형·동작 살펴보기 ↗' : '모모·루루 걷기 비교하기 ↗');
     setText('selection-kind', 'CHARACTER'); setText('selection-icon', '☺'); setText('selection-title', friend.name);
     el('selection-icon').dataset.friend = friend.id;
     const profile = PROFILES[friend.id];
