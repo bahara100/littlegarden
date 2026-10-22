@@ -45,10 +45,11 @@ export class PixelGarden {
   private bubbles: CharacterBubbles;
   private resizeObserver: ResizeObserver;
   private walkCycle = new ScarletWalkCycle();
+  private snowWalkCycle = new ScarletWalkCycle();
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private friendArt = new Map<FriendId, Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement }>>();
   private approvedArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement; sit: HTMLImageElement }>();
-  private snowArt = new Map<'se' | 'ne', { idle: HTMLImageElement; sit: HTMLImageElement }>();
+  private snowArt = new Map<'se' | 'ne', { idle: HTMLImageElement; walk: HTMLImageElement; sit: HTMLImageElement }>();
   private friendsSit?: { se: HTMLCanvasElement; sw: HTMLCanvasElement };
   private friendsSitRear = new Map<FriendId, HTMLImageElement>();
   private props: Sprite[] = [];
@@ -127,8 +128,8 @@ export class PixelGarden {
         Promise.all(FRIEND_IDS.map(async id => [id, await this.loadImage(friendRearSitArt(id))] as const)),
         Promise.all((['se', 'ne'] as const).map(async source => {
           const art = SNOW_WHITE.sources[source];
-          const [idle, sit] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.sit)]);
-          return [source, { idle, sit }] as const;
+          const [idle, walk, sit] = await Promise.all([this.loadImage(art.idle), this.loadImage(art.walk), this.loadImage(art.sit)]);
+          return [source, { idle, walk, sit }] as const;
         })),
       ]);
       if (this.disposed) return;
@@ -251,7 +252,7 @@ export class PixelGarden {
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
     const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' || seat?.kind === 'picnicRug' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
-    // Scarlet2 and Snow White share the 128px canvas and the chair sitting rules; Snow White has no walking drawings yet.
+    // Scarlet2 and Snow White share the 128px canvas, the walking speed and the chair sitting rules.
     const tall = a.id === 'character' || a.id === 'snow';
     const scarletSit = tall && scarlet2Sitting(seat?.kind, seated, a.phase);
     const drawnSit = scarletSit || (!tall && !!this.friendsSit && seated > 0 && !standingOnSeat);
@@ -265,10 +266,10 @@ export class PixelGarden {
     const size = Math.round(u * (tall ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (tall ? scarletSit ? sitOrigin : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (tall && (a.id === 'snow' ? this.snowArt.size : this.approvedArt.size)) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
-      const art: { idle: HTMLImageElement; sit: HTMLImageElement; walk?: HTMLImageElement } = a.id === 'snow' ? this.snowArt.get(source)! : this.approvedArt.get(source)!;
+      const art = a.id === 'snow' ? this.snowArt.get(source)! : this.approvedArt.get(source)!, cycle = a.id === 'snow' ? this.snowWalkCycle : this.walkCycle;
       c.save(); c.translate(x + (flipX ? size : 0), y); c.scale(flipX ? -1 : 1, 1);
       if (scarletSit) c.drawImage(art.sit, 0, 0, size, size);
-      else if (moving && !still && art.walk) c.drawImage(art.walk, this.walkCycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
+      else if (moving && !still) c.drawImage(art.walk, cycle.frame * SCARLET_SD.frameSize, 0, SCARLET_SD.frameSize, SCARLET_SD.frameSize, 0, 0, size, size);
       else c.drawImage(art.idle, 0, 0, size, size);
       c.restore();
     } else if (drawnSit && !tall) {
@@ -308,10 +309,12 @@ export class PixelGarden {
     const now = performance.now(), dt = Math.min(.1, (now - this.last) / 1000); this.last = now;
     if (!document.hidden) {
       const before = this.life.avatars.get('character')!, previous = { x: before.x, z: before.z };
+      const snow = this.life.avatars.get('snow')!, snowBefore = { x: snow.x, z: snow.z };
       const previousFriends = FRIEND_IDS.map(id => { const a = this.life.avatars.get(id)!; return { id, x: a.x, z: a.z }; });
       if (!this.editor.active) this.life.update(dt);
       const scarlet = this.life.avatars.get('character')!;
       this.walkCycle.advance(Math.hypot(scarlet.x - previous.x, scarlet.z - previous.z), !this.editor.active && scarlet.phase === 'walking');
+      this.snowWalkCycle.advance(Math.hypot(snow.x - snowBefore.x, snow.z - snowBefore.z), !this.editor.active && snow.phase === 'walking');
       for (const before of previousFriends) {
         const a = this.life.avatars.get(before.id)!;
         this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !this.editor.active && a.phase === 'walking');

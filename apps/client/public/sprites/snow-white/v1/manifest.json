@@ -2,8 +2,10 @@
   "character": "스노우화이트",
   "standingVersion": 1,
   "sittingVersion": 1,
-  "walking": null,
+  "walkingVersion": 1,
   "frameSize": 128,
+  "frames": 4,
+  "fps": 6,
   "mirrors": {
     "sw": "se",
     "nw": "ne"
@@ -13,6 +15,10 @@
       "source": "docs/art/pixel/snow-white-idle-v1/idle-se.png",
       "sha256": "4f897d725d77c50787dd09aeb9a11416acd134930e82db71af9d51a327a82a21"
     },
+    "walk-se.png": {
+      "source": "docs/art/pixel/snow-white-walk-v1/walk-se.png",
+      "sha256": "cb6f82517c5243245355d7d5a9e6c7b1d81b6aac1fb51af6950fa2974a57468a"
+    },
     "sit-se.png": {
       "source": "docs/art/pixel/snow-white-sit-v1/sit-se.png",
       "sha256": "d1dfc3df10ec71dc7d40cb6c94a2a265659d1bc460f9fe3d5d3c6bd72d74430b"
@@ -20,6 +26,10 @@
     "idle-ne.png": {
       "source": "docs/art/pixel/snow-white-idle-v1/idle-ne.png",
       "sha256": "315ad385ee80bebae6b2fbcb234a64e4ed273113e130f4e15f2144cd492bfbf4"
+    },
+    "walk-ne.png": {
+      "source": "docs/art/pixel/snow-white-walk-v1/walk-ne.png",
+      "sha256": "8448a1ef2b96533483dd9102bde85332a227a418e2c7477960607b145749f788"
     },
     "sit-ne.png": {
       "source": "docs/art/pixel/snow-white-sit-v1/sit-ne.png",

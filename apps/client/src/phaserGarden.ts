@@ -161,6 +161,7 @@ type AvatarView = { sprite: Phaser.GameObjects.Sprite };
 class GardenScene extends Phaser.Scene {
   private ready = false;
   private walkCycle = new ScarletWalkCycle();
+  private snowWalkCycle = new ScarletWalkCycle();
   private friendCycles = { peach: new FriendWalkCycle(), lilac: new FriendWalkCycle() };
   private propWidths: number[] = [];
   private parkWidths = new Map<ParkPropKind, number>();
@@ -204,6 +205,7 @@ class GardenScene extends Phaser.Scene {
     for (const [source, art] of Object.entries(SNOW_WHITE.sources)) {
       this.load.image(`snow-idle-${source}`, `${base}${art.idle}`);
       this.load.image(`snow-sit-${source}`, `${base}${art.sit}`);
+      this.load.spritesheet(`snow-walk-${source}`, `${base}${art.walk}`, { frameWidth: SNOW_WHITE.frameSize, frameHeight: SNOW_WHITE.frameSize });
     }
     for (const id of FRIEND_IDS) this.load.image(friendRearSitTexture(id), `${base}${friendRearSitArt(id)}`);
     for (const id of FRIEND_IDS) for (const source of ['se', 'ne'] as const) {
@@ -512,7 +514,7 @@ class GardenScene extends Phaser.Scene {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     // Drawn seated poses bend the legs themselves, so they only need the seat height above the ground point.
     const facing = seat && seated ? this.seatFacing(seat) : null;
-    // Scarlet2 and Snow White share the 128px canvas and the chair sitting rules; Snow White has no walking drawings yet.
+    // Scarlet2 and Snow White share the 128px canvas, the walking speed and the chair sitting rules.
     const tall = a.id === 'character' || a.id === 'snow';
     const friendSit = !tall && !!facing && this.textures.exists('friends-sit');
     // While still standing at the start of sitting down (or end of getting up) the feet stay on the ground.
@@ -532,7 +534,7 @@ class GardenScene extends Phaser.Scene {
     if (tall) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)], art = a.id === 'snow' ? 'snow-' : '';
       if (scarletSit) view.sprite.setTexture(`${art}sit-${source}`);
-      else if (moving && a.id === 'character') view.sprite.setTexture(`walk-${source}`, this.walkCycle.frame);
+      else if (moving) view.sprite.setTexture(`${art}walk-${source}`, (a.id === 'snow' ? this.snowWalkCycle : this.walkCycle).frame);
       else view.sprite.setTexture(`${art}idle-${source}`);
       const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
       view.sprite.setFlipX(flipX).setOrigin(.5, scarletSit ? sitOrigin : SCARLET_SD.originY).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
@@ -566,10 +568,12 @@ class GardenScene extends Phaser.Scene {
     if (!this.ready || document.hidden) return;
     const dt = Math.min(.1, ms / 1000), still = this.reduced.matches, editing = this.g.editor.active;
     const character = this.g.life.avatars.get('character')!, before = { x: character.x, z: character.z };
+    const snow = this.g.life.avatars.get('snow')!, snowBefore = { x: snow.x, z: snow.z };
     const previousFriends = FRIEND_IDS.map(id => { const a = this.g.life.avatars.get(id)!; return { id, x: a.x, z: a.z }; });
     if (!editing) this.g.life.update(dt);
     this.moveSwings(dt, still);
     this.walkCycle.advance(Math.hypot(character.x - before.x, character.z - before.z), !editing && character.phase === 'walking');
+    this.snowWalkCycle.advance(Math.hypot(snow.x - snowBefore.x, snow.z - snowBefore.z), !editing && snow.phase === 'walking');
     for (const before of previousFriends) {
       const a = this.g.life.avatars.get(before.id)!;
       this.friendCycles[before.id].advance(Math.hypot(a.x - before.x, a.z - before.z), !editing && a.phase === 'walking');

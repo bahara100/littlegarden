@@ -6,18 +6,18 @@ import { SCARLET2, SCARLET2_SIT } from '../../apps/client/src/scarlet2';
 import { FRIENDS, LifeSimulation } from '../../apps/client/src/simulation';
 import { PROFILES } from '../../apps/client/src/friendProfiles';
 
-test('Snow White uses the exact standing V1 and chair sitting V1 drawings at Scarlet2 size', () => {
+test('Snow White uses the exact standing V1, walking V1 and chair sitting V1 drawings at Scarlet2 size', () => {
   for (const d of ['se', 'ne'] as const) {
-    for (const [path, source] of [[SNOW_WHITE.sources[d].idle, `docs/art/pixel/snow-white-idle-v1/idle-${d}.png`], [SNOW_WHITE.sources[d].sit, `docs/art/pixel/snow-white-sit-v1/sit-${d}.png`]]) {
+    for (const [path, source] of [[SNOW_WHITE.sources[d].idle, `docs/art/pixel/snow-white-idle-v1/idle-${d}.png`], [SNOW_WHITE.sources[d].walk, `docs/art/pixel/snow-white-walk-v1/walk-${d}.png`], [SNOW_WHITE.sources[d].sit, `docs/art/pixel/snow-white-sit-v1/sit-${d}.png`]]) {
       const bytes = readFileSync(`apps/client/public/${path}`);
       assert.deepEqual(bytes, readFileSync(source));
-      assert.equal(bytes.readUInt32BE(16), 128); assert.equal(bytes.readUInt32BE(20), 128);
+      assert.equal(bytes.readUInt32BE(16), path.includes('walk') ? 128 * SNOW_WHITE.frameCount : 128); assert.equal(bytes.readUInt32BE(20), 128);
     }
   }
   assert.equal(SNOW_WHITE.worldSize, SCARLET2.worldSize);
   assert.equal(SNOW_WHITE.originY * SNOW_WHITE.frameSize, 115);
   assert.equal(SNOW_WHITE_SIT.originY, SCARLET2_SIT.originY);
-  assert.equal('walk' in SNOW_WHITE.sources.se, false, 'no walking drawings yet');
+  assert.equal(SNOW_WHITE.fps, SCARLET2.fps, 'same walking speed and frame step as Scarlet2');
 });
 test('Snow White is a fourth friend with her own card and affinity', () => {
   assert.deepEqual(FRIENDS.map(f => f.id), ['character', 'peach', 'lilac', 'snow']);
