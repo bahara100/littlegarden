@@ -5,9 +5,10 @@ import { CATALOG, EQUIPMENT_SCALE, GARDEN, HALF, ZOOM, PROP_ART_BASE, SEAT_LIFT,
 import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkProps';
 import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
 import { loadGroundMaterials } from './groundMaterials';
-import { paintSwingFrame } from './swingFrames';
+import { makeSwingArt, SWING, swingPose as swingArtPose, swingSeatShift, type SwingCell, type SwingArt } from './swingArt';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { picnicTabletop, picnicGridArt } from './picnicTable';
+import { benchFrontArt, benchSeatShift } from './benchArt';
 import { paintPicnicRug } from './picnicRug';
 import { fountainFrames, fountainFrame } from './fountainWater';
 import { drinkingWaterFrames, drinkingWaterFrame } from './drinkingWater';
@@ -40,19 +41,10 @@ export const FIT = { w: 2 * GARDEN + 3, h: GARDEN * 1.5 } as const;
 const U = 18;
 const PROP_WIDTH = { bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 };
 /**
- * Swing layers from tools/art/split-swing-v1.py: rows are props cells 2 (seat faces down-right) and 3 (down-left),
- * columns [far frame, ropes + seat, top bar, near frame], 444 source pixels each. `pivots` are the rope tops on the bar
- * and `seat` the middle of the seat, in cell source pixels; `forward` is the seat's screen-x direction.
+ * Original four-part swing art plus the near rope extracted into a foreground pass.
+ * Source coordinates, fitted art and all 33 moving poses are shared in swingArt.ts.
  */
-const SWING_CELL = 444;
-const SWING_RIG = {
-  2: { row: 0, pivots: [[182, 140], [285, 101]], seat: [245, 292], forward: 1 },
-  3: { row: 1, pivots: [[160, 97], [262, 135]], seat: [200, 292], forward: -1 },
-} as const;
-/** Largest rope angle, one back-and-forth in seconds, and pre-drawn poses on each side of hanging still. */
-const SWING = { max: 18 * Math.PI / 180, period: 2.4, poses: 16, pad: 24 } as const;
-type SwingCell = keyof typeof SWING_RIG;
-type SwingView = { hang: Phaser.GameObjects.Image; bar: Phaser.GameObjects.Image; near: Phaser.GameObjects.Image };
+type SwingView = { hang: Phaser.GameObjects.Image; rope: Phaser.GameObjects.Image; bar: Phaser.GameObjects.Image; near: Phaser.GameObjects.Image };
 const FLOOR = { w: 2 * GARDEN * U + 4, h: GARDEN * U + 16, ox: GARDEN * U + 2, oy: GARDEN / 2 * U + 2 };
 const iso = (p: Point) => project(p, U);
 const propIndex = (item: PlacedItem) => { const odd = item.turn % 2; return item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd; };
@@ -167,9 +159,10 @@ class GardenScene extends Phaser.Scene {
   private parkWidths = new Map<ParkPropKind, number>();
   private props = new Map<string, Phaser.GameObjects.Image>();
   /** Per swing cell: width of the trimmed art in its 128 texture and the seat's depth below the rope tops there. */
-  private swingArt = new Map<SwingCell, { width: number; seatDrop: number }>();
+  private swingArt = new Map<SwingCell, SwingArt>();
   private swingViews = new Map<string, SwingView>();
   private picnicTops = new Map<string, Phaser.GameObjects.Image>();
+  private benchFronts = new Map<string, Phaser.GameObjects.Image>();
   private pondFishViews = new Map<string, Phaser.GameObjects.Image>();
   private raisedWaterViews = new Map<string, Phaser.GameObjects.Image>();
   private fishFrame = -1;
@@ -262,7 +255,9 @@ class GardenScene extends Phaser.Scene {
     const w = image.naturalWidth / 4, h = image.naturalHeight / 2;
     for (let n = 0; n < 8; n++) {
       const cell = cutCell(image, n % 4 * w, Math.floor(n / 4) * h, w, h), fit = fitCell(cell);
-      this.textures.addCanvas(`prop${n}`, drawFit(cell, fit)); this.propWidths.push(fit.dw);
+      const fitted = drawFit(cell, fit);
+      this.textures.addCanvas(`prop${n}`, fitted); this.propWidths.push(fit.dw);
+      if (n < 2) this.textures.addCanvas(`bench-front-${n}`, benchFrontArt(fitted, n as 0 | 1));
     }
     for (const kind of Object.keys(PARK_PROPS) as ParkPropKind[]) {
       const source = this.textures.get(`park-${kind}`).getSourceImage() as HTMLImageElement;
@@ -294,30 +289,15 @@ class GardenScene extends Phaser.Scene {
    * that keeps the rope tops on the bar.
    */
   private makeSwings() {
-    const image = this.textures.get('swing-parts').getSourceImage() as HTMLImageElement, { pad, poses, max } = SWING;
-    for (const [key, rig] of Object.entries(SWING_RIG)) {
-      const cell = Number(key) as SwingCell, y = rig.row * SWING_CELL;
-      const layers = [0, 1, 2, 3].map(col => cutCell(image, col * SWING_CELL, y, SWING_CELL, SWING_CELL));
-      const whole = document.createElement('canvas'); whole.width = whole.height = SWING_CELL;
-      for (const layer of layers) whole.getContext('2d')!.drawImage(layer, 0, 0);
-      const fit = fitCell(whole), [back, hang, bar, near] = layers.map(layer => drawFit(layer, fit));
-      this.textures.addCanvas(`swing${cell}-back`, back); this.textures.addCanvas(`swing${cell}-bar`, bar); this.textures.addCanvas(`swing${cell}-near`, near);
-      // Cell source pixels → padded pose-frame pixels.
-      const at = ([x, y]: readonly number[]) => ({ x: (x - fit.left) * fit.dw / fit.sw + (128 - fit.dw) / 2 + pad, y: (y - fit.top) * fit.dh / fit.sh + 128 - fit.dh + pad });
-      const p1 = at(rig.pivots[0]), p2 = at(rig.pivots[1]), seat = at(rig.seat);
-      const m = (p2.y - p1.y) / (p2.x - p1.x), y0 = p1.y - m * p1.x;
-      this.swingArt.set(cell, { width: fit.dw, seatDrop: seat.y - y0 - m * seat.x });
-      const size = 128 + pad * 2, sheet = document.createElement('canvas'); sheet.width = size * (poses * 2 + 1); sheet.height = size;
-      const c = sheet.getContext('2d')!; c.imageSmoothingEnabled = false;
-      for (let k = -poses; k <= poses; k++) {
-        c.save();
-        c.translate((k + poses) * size, 0);
-        c.beginPath(); c.rect(0, 0, size, size); c.clip();
-        paintSwingFrame(c, layers[1], fit, hang, pad, max * k / poses, rig.forward, m, y0);
-        c.restore();
+    this.swingArt = makeSwingArt(this.textures.get('swing-parts').getSourceImage() as HTMLImageElement);
+    for (const [cell, art] of this.swingArt) {
+      for (const kind of ['back','bar','near'] as const) this.textures.addCanvas(`swing${cell}-${kind}`, art[kind]);
+      for (const [name,frames] of [['hang',art.hang],['rope',art.ropes]] as const) {
+        const size=128+SWING.pad*2,sheet=document.createElement('canvas');sheet.width=size*frames.length;sheet.height=size;
+        const c=sheet.getContext('2d')!;frames.forEach((frame,i)=>c.drawImage(frame,i*size,0));
+        const tex=this.textures.addCanvas(`swing${cell}-${name}`,sheet)!;
+        frames.forEach((_,i)=>tex.add(i,0,i*size,0,size,size));
       }
-      const tex = this.textures.addCanvas(`swing${cell}-hang`, sheet)!;
-      for (let i = 0; i <= poses * 2; i++) tex.add(i, 0, i * size, 0, size, size);
     }
   }
   private makeShapes() {
@@ -417,13 +397,16 @@ class GardenScene extends Phaser.Scene {
     }
     const index = propIndex(item), size = PROP_WIDTH[item.kind] * U * 128 / this.propWidths[index], p = iso(item);
     image.setTexture(`prop${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE[item.kind]).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(this.rank(item.id));
+    if (item.kind === 'bench' && image !== this.ghost) {
+      let front = this.benchFronts.get(item.id);
+      if (!front) { front = this.add.image(0, 0, `bench-front-${index}`).setOrigin(.5, 1).setInteractive({ pixelPerfect: true }); front.setData('id', item.id); this.benchFronts.set(item.id, front); }
+      front.setTexture(`bench-front-${index}`).setPosition(p.x, p.y + U * PROP_ART_BASE.bench).setDisplaySize(size, size).setFlipX(item.turn >= 2).setDepth(this.rank(item.id) + .4);
+    }
   }
   /** Current pose of a swing: its ropes + seat frame, and where its seat moved (world px; `ground` is the part along the floor). */
   private swingPose(item: PlacedItem) {
     const cell = propIndex(item) as SwingCell, art = this.swingArt.get(cell)!, motion = this.swingMotion.get(item.id);
-    const k = motion ? Math.round(motion.amp * Math.sin(motion.phase) * SWING.poses) : 0, t = SWING.max * k / SWING.poses;
-    const d = art.seatDrop * PROP_WIDTH.swing * U / art.width, forward = SWING_RIG[cell].forward * (item.turn >= 2 ? -1 : 1);
-    return { frame: k + SWING.poses, x: forward * Math.sin(t) * d, y: (Math.sin(t) / 2 - (1 - Math.cos(t))) * d, ground: Math.sin(t) / 2 * d };
+    return swingArtPose(art,item.turn,motion,U);
   }
   /**
    * Far frame behind the rider, ropes + seat just behind the rider, near frame in front of both. The bar is above
@@ -435,12 +418,13 @@ class GardenScene extends Phaser.Scene {
     let view = this.swingViews.get(item.id);
     if (!view) {
       const part = (originY: number) => { const o = this.add.image(0, 0, 'prop0').setOrigin(.5, originY).setInteractive({ pixelPerfect: true }); o.setData('id', item.id); return o; };
-      view = { hang: part((128 + SWING.pad) / (128 + SWING.pad * 2)), bar: part(1), near: part(1) };
+      view = { hang: part((128 + SWING.pad) / (128 + SWING.pad * 2)), rope: part((128 + SWING.pad) / (128 + SWING.pad * 2)), bar: part(1), near: part(1) };
       this.swingViews.set(item.id, view);
     }
     image.setTexture(`swing${cell}-back`).setPosition(x, y).setDisplaySize(size, size).setFlipX(flip).setDepth(z);
     const frame = this.swingPose(item).frame;
     view.hang.setTexture(`swing${cell}-hang`, frame).setPosition(x, y).setDisplaySize(framed, framed).setFlipX(flip).setDepth(z + .3);
+    view.rope.setTexture(`swing${cell}-rope`, frame).setPosition(x, y).setDisplaySize(framed, framed).setFlipX(flip).setDepth(z + .38);
     view.bar.setTexture(`swing${cell}-bar`).setPosition(x, y).setDisplaySize(size, size).setFlipX(flip).setDepth(z + (frame < SWING.poses ? .4 : .32));
     view.near.setTexture(`swing${cell}-near`).setPosition(x, y).setDisplaySize(size, size).setFlipX(flip).setDepth(z + .4);
   }
@@ -473,6 +457,7 @@ class GardenScene extends Phaser.Scene {
     for (const [id, image] of this.props) if (!live.has(id)) { image.destroy(); this.props.delete(id); }
     for (const [id, view] of this.swingViews) if (!live.has(id)) { for (const o of Object.values(view)) o.destroy(); this.swingViews.delete(id); }
     for (const [id, top] of this.picnicTops) if (!live.has(id)) { top.destroy(); this.picnicTops.delete(id); }
+    for (const [id, front] of this.benchFronts) if (!items.some(i => i.id === id && i.kind === 'bench')) { front.destroy(); this.benchFronts.delete(id); }
     const pending = this.g.editor.pending;
     this.ghost.setVisible(!!pending && !onFloor(pending.kind));
     if (pending && !onFloor(pending.kind)) this.placeProp(this.ghost, pending);
@@ -523,20 +508,22 @@ class GardenScene extends Phaser.Scene {
     const chairTransition = tall && !!seat && seat.kind !== 'picnicRug';
     const standingOnSeat = (drawnSit || chairTransition) && (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     const lift = standingOnSeat ? 0 : !drawnSit ? seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'] : seated * SEAT_LIFT.drawn[seat!.kind];
-    // A rider is always drawn in front of the bench art and the swing seat, whichever end of it the seat is on,
+    // A rider is in front of the bench's wood and behind its separate near iron arm,
     // and behind the swing's near frame (and its bar while swinging back). On a swing the rider moves with the seat.
     const equipment = seat && this.g.life.layout.find(i => i.id === seat.equipment);
     const z = seat && seated && seat.kind !== 'picnicRug' ? this.rank(seat.equipment) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, this.items, this.order);
     const swing = seated && equipment?.kind === 'swing' ? this.swingPose(equipment) : { x: 0, y: 0, ground: 0 };
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.g.life.seesawTilt(seat.equipment), still)) * U * seated : 0;
-    const x = p.x + swing.x, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
+    const bench = seat?.kind === 'bench' ? benchSeatShift(equipment?.turn ?? 0, seated) * U : 0;
+    const swingSeat = seat?.kind === 'swing' ? swingSeatShift(equipment?.turn ?? 0, seated) * U : 0;
+    const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
+    const x = p.x + swing.x + bench + swingSeat, base = p.y - (lift + bridgeLift(a, this.g.life.layout)) * U + swing.y + seesaw, moving = a.phase === 'walking' && !still;
     view.sprite.setPosition(x, base).setDepth(z);
     if (tall) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[facing ?? scarletDirection(a.yaw)], art = a.id === 'snow' ? 'snow-' : '';
       if (scarletSit) view.sprite.setTexture(`${art}sit-${source}`);
       else if (moving) view.sprite.setTexture(`${art}walk-${source}`, (a.id === 'snow' ? this.snowWalkCycle : this.walkCycle).frame);
       else view.sprite.setTexture(`${art}idle-${source}`);
-      const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
       view.sprite.setFlipX(flipX).setOrigin(.5, scarletSit ? sitOrigin : SCARLET_SD.originY).setDisplaySize(U * SCARLET_SD.worldSize, U * SCARLET_SD.worldSize);
     } else if (friendSit && !standingOnSeat) {
       if (facing === 'ne' || facing === 'nw') view.sprite.setTexture(friendRearSitTexture(a.id as FriendId)).setFlipX(facing === 'nw');

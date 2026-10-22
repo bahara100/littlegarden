@@ -8,6 +8,8 @@ import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture'
 import { loadGroundMaterials } from './groundMaterials';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
 import { picnicTabletop, picnicGridArt } from './picnicTable';
+import { benchFrontArt, benchSeatShift } from './benchArt';
+import { makeSwingArt, SWING, swingPose as swingArtPose, swingSeatShift, type SwingCell, type SwingArt, type SwingMotion } from './swingArt';
 import { fountainFrames, fountainFrame } from './fountainWater';
 import { drinkingWaterFrames, drinkingWaterFrame } from './drinkingWater';
 import { LifeSimulation, type AvatarId, type EquipmentId, type Avatar, type Seat } from './simulation';
@@ -56,6 +58,9 @@ export class PixelGarden {
   private parkProps = new Map<ParkPropKind, Sprite>();
   private seesawArt: HTMLCanvasElement[] = [];
   private picnicTop?: HTMLCanvasElement;
+  private benchFronts: HTMLCanvasElement[] = [];
+  private swingArt = new Map<SwingCell, SwingArt>();
+  private swingMotion = new Map<string, SwingMotion>();
   private fountainArt: HTMLCanvasElement[] = [];
   private drinkingArt: HTMLCanvasElement[] = [];
   private streamBanks?: HTMLCanvasElement;
@@ -157,7 +162,9 @@ export class PixelGarden {
         const dw = Math.round(sw * scale), dh = Math.round(sh * scale);
         tc.drawImage(cell, left, top, sw, sh, (128 - dw) / 2, 128 - dh, dw, dh);
         this.props.push({ image: trimmed, width: dw, height: dh });
+        if (n < 2) this.benchFronts[n] = benchFrontArt(trimmed, n as 0 | 1);
       }
+      this.swingArt = makeSwingArt(await this.loadImage('sprites/garden/playground-swing-v1.png'));
       this.scarletModel = 'ready'; this.callbacks.notice('도트 놀이터에 오신 걸 환영해요. 바닥을 눌러 걸어보세요.');
     } catch (error) { this.scarletModel = 'fallback'; this.callbacks.error(); console.error('Pixel art load failed', error); }
   }
@@ -211,7 +218,8 @@ export class PixelGarden {
     const odd = item.turn % 2;
     const index = item.kind === 'bench' ? 1 - odd : item.kind === 'swing' ? 3 - odd : item.kind === 'tree' ? 4 : item.kind === 'flower' ? 5 : 6 + odd;
     const kind = item.kind, park = isParkProp(kind);
-    const art = park ? this.parkProps.get(kind) : this.props[index]; if (!art) return;
+    const swing = item.kind === 'swing' && !ghost ? this.swingArt.get(index as SwingCell) : undefined;
+    const art = park ? this.parkProps.get(kind) : swing ? { image: swing.back, width: swing.width, height: 124 } : this.props[index]; if (!art) return;
     const width = (park ? PARK_PROPS[kind].width : ({ bench: 5.4 * EQUIPMENT_SCALE.bench, swing: 6.1 * EQUIPMENT_SCALE.swing, tree: 3.9, flower: 3, fence: 3, path: 1, pond: 5 })[kind]) * unit;
     const size = Math.round(width * 128 / art.width), x = Math.round(p.x - size / 2), y = Math.round(p.y - size + unit * PROP_ART_BASE[item.kind]);
     if (ghost) c.globalAlpha = .65;
@@ -228,6 +236,28 @@ export class PixelGarden {
     if (ghost || (this.editor.active && this.editor.selected === item.id)) {
       const f = footprint(item); c.globalAlpha = .45; this.tile(item, f.w, f.d, ghost && this.editor.error ? '#d07880' : '#fff4bc', '#66547b'); c.globalAlpha = 1;
     }
+  }
+  private swingPose(item: PlacedItem) {
+    const art = this.swingArt.get((3 - item.turn % 2) as SwingCell)!;
+    return swingArtPose(art, item.turn, this.reduced.matches || this.editor.active ? undefined : this.swingMotion.get(item.id), this.unit);
+  }
+  private drawSwingLayer(item: PlacedItem, layer: 'hang' | 'ropes' | 'bar' | 'near') {
+    const art = this.swingArt.get((3 - item.turn % 2) as SwingCell); if (!art) return;
+    const pose = this.swingPose(item), padded = layer === 'hang' || layer === 'ropes';
+    const source = layer === 'hang' ? art.hang[pose.frame] : layer === 'ropes' ? art.ropes[pose.frame] : art[layer];
+    const c = this.ctx, p = this.screen(item), size = Math.round(6.1 * EQUIPMENT_SCALE.swing * this.unit * 128 / art.width), pad = padded ? size * SWING.pad / 128 : 0;
+    const x = Math.round(p.x - size / 2) - pad, y = Math.round(p.y - size + this.unit * PROP_ART_BASE.swing) - pad, drawn = size + pad * 2, flip = item.turn >= 2;
+    c.save(); if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
+    c.drawImage(source, x, y, drawn, drawn); c.restore();
+    this.hits.push({ id: item.id, x, y, w: drawn, h: drawn, image: source, frame: flip ? -1 : undefined });
+  }
+  private drawBenchFront(item: PlacedItem) {
+    const index = 1 - item.turn % 2, art = this.props[index], source = this.benchFronts[index]; if (!art || !source) return;
+    const c = this.ctx, p = this.screen(item), size = Math.round(5.4 * EQUIPMENT_SCALE.bench * this.unit * 128 / art.width);
+    const x = Math.round(p.x - size / 2), y = Math.round(p.y - size + this.unit * PROP_ART_BASE.bench), flip = item.turn >= 2;
+    c.save(); if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
+    c.drawImage(source, x, y, size, size); c.restore();
+    this.hits.push({ id: item.id, x, y, w: size, h: size, image: source, frame: flip ? -1 : undefined });
   }
   private drawPicnicTop(item: PlacedItem) {
     const art = this.parkProps.get('picnicTable'); if (!art || !this.picnicTop) return;
@@ -250,19 +280,22 @@ export class PixelGarden {
     const seated = seat && ['boarding', 'seated', 'swinging', 'leaving'].includes(a.phase) ? a.progress : 0;
     const moving = a.phase === 'walking', still = this.reduced.matches;
     const turn = seat ? this.life.layout.find(i => i.id === seat.equipment)?.turn ?? 0 : 0;
+    if (seat?.kind === 'bench') p.x += benchSeatShift(turn, seated) * u;
+    const equipment = seat?.kind === 'swing' && this.life.layout.find(i => i.id === seat.equipment);
+    const swing = equipment && seated && this.swingArt.size ? this.swingPose(equipment) : { x: 0, y: 0 };
+    if (seat?.kind === 'swing') p.x += swing.x + swingSeatShift(turn, seated) * u;
     const facing = seat?.kind === 'seesaw' || seat?.kind === 'picnicTable' || seat?.kind === 'picnicRug' ? scarletDirection(seat.yaw) : turn === 0 || turn === 3 ? 'sw' : 'se';
     const standingOnSeat = (a.phase === 'boarding' || a.phase === 'leaving') && seated < .45;
     // Scarlet2 and Snow White share the 128px canvas, the walking speed and the chair sitting rules.
     const tall = a.id === 'character' || a.id === 'snow';
     const scarletSit = tall && scarlet2Sitting(seat?.kind, seated, a.phase);
     const drawnSit = scarletSit || (!tall && !!this.friendsSit && seated > 0 && !standingOnSeat);
-    const sway = a.phase === 'swinging' && !still ? Math.sin(this.life.time * 2) * u * .16 : 0;
     const chairTransition = tall && !!seat && seat.kind !== 'picnicRug';
     const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : (!tall || chairTransition) && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.life.seesawTilt(seat.equipment), still)) * u * seated : 0;
-    const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + sway + seesaw;
-    if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
+    const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + swing.y + seesaw;
+    if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (tall ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (tall ? scarletSit ? sitOrigin : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (tall && (a.id === 'snow' ? this.snowArt.size : this.approvedArt.size)) {
       const { source, flipX } = SCARLET_SD_DIRECTIONS[seated ? facing : scarletDirection(a.yaw)];
@@ -312,6 +345,16 @@ export class PixelGarden {
       const snow = this.life.avatars.get('snow')!, snowBefore = { x: snow.x, z: snow.z };
       const previousFriends = FRIEND_IDS.map(id => { const a = this.life.avatars.get(id)!; return { id, x: a.x, z: a.z }; });
       if (!this.editor.active) this.life.update(dt);
+      const swingIds = new Set<string>();
+      for (const item of this.life.layout) if (item.kind === 'swing') {
+        swingIds.add(item.id);
+        const m = this.swingMotion.get(item.id) ?? { phase: 0, amp: 0 };
+        const riding = [...this.life.avatars.values()].some(a => a.phase === 'swinging' && this.life.seatOf(a)?.equipment === item.id);
+        m.amp = this.reduced.matches ? 0 : riding && !this.editor.active ? Math.min(1, m.amp + dt / 1.5) : Math.max(0, m.amp - dt / .6);
+        m.phase = m.amp ? m.phase + dt * Math.PI * 2 / SWING.period : 0;
+        this.swingMotion.set(item.id, m);
+      }
+      for (const id of this.swingMotion.keys()) if (!swingIds.has(id)) this.swingMotion.delete(id);
       const scarlet = this.life.avatars.get('character')!;
       this.walkCycle.advance(Math.hypot(scarlet.x - previous.x, scarlet.z - previous.z), !this.editor.active && scarlet.phase === 'walking');
       this.snowWalkCycle.advance(Math.hypot(snow.x - snowBefore.x, snow.z - snowBefore.z), !this.editor.active && snow.phase === 'walking');
@@ -327,6 +370,12 @@ export class PixelGarden {
       const friends = this.editor.active ? [] : [...this.life.avatars.values()];
       const order = sceneOrder(items, friends.filter(a => !this.life.riding(a) || this.life.seatOf(a)?.kind === 'picnicRug').map(a => ({ id: `avatar:${a.id}`, x: a.x, z: a.z })));
       const layers = items.filter(i => !onFloor(i.kind)).map(i => ({ depth: order.get(i.id)!, draw: () => this.drawItem(i) }));
+      for (const item of items) if (item.kind === 'bench') layers.push({ depth: order.get(item.id)! + .4, draw: () => this.drawBenchFront(item) });
+      for (const item of items) if (item.kind === 'swing' && this.swingArt.size) {
+        const rank = order.get(item.id)!, pose = this.swingPose(item);
+        for (const [part, depth] of [['hang',.3],['bar',pose.frame < SWING.poses ? .4 : .32],['ropes',.38],['near',.4]] as const)
+          layers.push({ depth: rank + depth, draw: () => this.drawSwingLayer(item, part) });
+      }
       for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .2, draw: () => this.drawPicnicTop(item) });
       for (const item of items) if (['pond', 'stream', 'bridge'].includes(item.kind)) layers.push({ depth: order.get(item.id)! + (item.kind === 'bridge' ? .2 : 0), draw: () => this.drawRaisedWater(item) });
       for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat && seat.kind !== 'picnicRug' ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, items, order), draw: () => this.drawAvatar(a) }); }
