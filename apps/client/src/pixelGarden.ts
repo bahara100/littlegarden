@@ -7,7 +7,7 @@ import { PARK_PROPS, isParkProp, parkPropUrl, type ParkPropKind } from './parkPr
 import { naturalGroundDetails, naturalPaths, groundGrid } from './groundTexture';
 import { loadGroundMaterials } from './groundMaterials';
 import { SEESAW, seesawFrames, seesawFrame, seesawOffset } from './seesaw';
-import { picnicTabletop, picnicGridArt } from './picnicTable';
+import { picnicTabletop, picnicGridArt, picnicRiderOffset, picnicBenchFront } from './picnicTable';
 import { benchFrontArt, benchSeatShift } from './benchArt';
 import { makeSwingArt, SWING, swingPose as swingArtPose, swingSeatShift, type SwingCell, type SwingArt, type SwingMotion } from './swingArt';
 import { fountainFrames, fountainFrame } from './fountainWater';
@@ -58,6 +58,7 @@ export class PixelGarden {
   private parkProps = new Map<ParkPropKind, Sprite>();
   private seesawArt: HTMLCanvasElement[] = [];
   private picnicTop?: HTMLCanvasElement;
+  private picnicFront?: HTMLCanvasElement;
   private benchFronts: HTMLCanvasElement[] = [];
   private swingArt = new Map<SwingCell, SwingArt>();
   private swingMotion = new Map<string, SwingMotion>();
@@ -106,6 +107,7 @@ export class PixelGarden {
         let left = 128, right = 0;
         for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) if (data[(y * 128 + x) * 4 + 3] >= 180) { left = Math.min(left, x); right = Math.max(right, x); }
         if (kind === 'picnicTable') this.picnicTop = picnicGridArt(picnicTabletop(canvas));
+        if (kind === 'picnicTable') this.picnicFront = picnicBenchFront(picnicGridArt(canvas));
         return [kind, { image: kind === 'picnicTable' ? picnicGridArt(canvas) : canvas, width: right - left + 1, height: 124 }] as const;
       }));
       if (this.disposed) return;
@@ -259,13 +261,13 @@ export class PixelGarden {
     c.drawImage(source, x, y, size, size); c.restore();
     this.hits.push({ id: item.id, x, y, w: size, h: size, image: source, frame: flip ? -1 : undefined });
   }
-  private drawPicnicTop(item: PlacedItem) {
-    const art = this.parkProps.get('picnicTable'); if (!art || !this.picnicTop) return;
+  private drawPicnicTop(item: PlacedItem, front=false) {
+    const art = this.parkProps.get('picnicTable'),source=front?this.picnicFront:this.picnicTop; if (!art || !source) return;
     const c = this.ctx, p = this.screen(item), size = Math.round(PARK_PROPS.picnicTable.width * this.unit * 128 / art.width);
     const x = Math.round(p.x - size / 2), y = Math.round(p.y - size + this.unit * PROP_ART_BASE.picnicTable), flip = !!(item.turn % 2);
     c.save(); if (flip) { c.translate(p.x * 2, 0); c.scale(-1, 1); }
-    c.drawImage(this.picnicTop, x, y, size, size); c.restore();
-    this.hits.push({ id: item.id, x, y, w: size, h: size, image: this.picnicTop, frame: flip ? -1 : undefined });
+    c.drawImage(source, x, y, size, size); c.restore();
+    this.hits.push({ id: item.id, x, y, w: size, h: size, image: source, frame: flip ? -1 : undefined });
   }
   private drawRaisedWater(item: PlacedItem) {
     if (item.kind === 'pond') { paintPondBanks(this.ctx, item, p => this.screen(p), this.unit); return; }
@@ -294,7 +296,11 @@ export class PixelGarden {
     const lift = drawnSit ? seated * SEAT_LIFT.drawn[seat!.kind] : (!tall || chairTransition) && standingOnSeat ? 0 : seated * SEAT_LIFT.standing[seat?.kind ?? 'bench'];
     const seesaw = seat?.kind === 'seesaw' && seated ? seesawOffset(seat.side!, seesawFrame(this.life.seesawTilt(seat.equipment), still)) * u * seated : 0;
     const sitOrigin = a.id === 'snow' ? SNOW_WHITE_SIT.originY : SCARLET2_SIT.originY;
-    const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + swing.y + seesaw;
+    const tableItem = seat?.kind === 'picnicTable' && this.life.layout.find(i => i.id === seat.equipment);
+    const table = tableItem && seat && drawnSit ? picnicRiderOffset(tableItem,seat,
+      {character:a.id,facing,frameSize:tall?128:96,worldSize:tall?SCARLET_SD.worldSize:FRIEND_BODY.worldSize,originY:tall?sitOrigin:.97},seated,this.parkProps.get('picnicTable')?.width,SEAT_LIFT.drawn.picnicTable) : {x:0,y:0};
+    p.x += table.x * u;
+    const base = p.y - u * (lift + bridgeLift(a, this.life.layout)) + swing.y + seesaw + table.y * u;
     if (this.selectedAvatar === a.id) { c.strokeStyle = '#fff4bd'; c.lineWidth = 1; c.beginPath(); c.ellipse(p.x, p.y, u * .7, u * .32, 0, 0, Math.PI * 2); c.stroke(); }
     const size = Math.round(u * (tall ? SCARLET_SD.worldSize : FRIEND_BODY.worldSize)), x = Math.round(p.x - size / 2), y = Math.round(base - size * (tall ? scarletSit ? sitOrigin : SCARLET_SD.originY : drawnSit ? .97 : FRIEND_BODY.originY));
     if (tall && (a.id === 'snow' ? this.snowArt.size : this.approvedArt.size)) {
@@ -377,6 +383,7 @@ export class PixelGarden {
           layers.push({ depth: rank + depth, draw: () => this.drawSwingLayer(item, part) });
       }
       for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .2, draw: () => this.drawPicnicTop(item) });
+      for (const item of items) if (item.kind === 'picnicTable') layers.push({ depth: order.get(item.id)! + .4, draw: () => this.drawPicnicTop(item,true) });
       for (const item of items) if (['pond', 'stream', 'bridge'].includes(item.kind)) layers.push({ depth: order.get(item.id)! + (item.kind === 'bridge' ? .2 : 0), draw: () => this.drawRaisedWater(item) });
       for (const a of friends) { const seat = this.life.riding(a) && this.life.seatOf(a); layers.push({ depth: seat && seat.kind !== 'picnicRug' ? (order.get(seat.equipment) ?? 0) + (seat.kind === 'picnicTable' && seat.bench === 'far' ? .12 : .35) : walkerDepth({ ...a, id: `avatar:${a.id}` }, items, order), draw: () => this.drawAvatar(a) }); }
       layers.sort((a, b) => a.depth - b.depth).forEach(layer => layer.draw());

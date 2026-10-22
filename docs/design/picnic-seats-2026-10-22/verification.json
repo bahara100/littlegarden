@@ -1,0 +1,426 @@
+[
+  {
+    "renderer": "phaser",
+    "turn": 0,
+    "bench": "near",
+    "side": -1,
+    "error": 1.7763568394002505e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": false,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 0,
+    "bench": "near",
+    "side": 1,
+    "error": 5.329070518200751e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": false,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 0,
+    "bench": "far",
+    "side": -1,
+    "error": 7.32410687763558e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 0,
+    "bench": "far",
+    "side": 1,
+    "error": 0,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 1,
+    "bench": "near",
+    "side": -1,
+    "error": 1.7763568394002505e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 1,
+    "bench": "near",
+    "side": 1,
+    "error": 5.329070518200751e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 1,
+    "bench": "far",
+    "side": -1,
+    "error": 7.32410687763558e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": false,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 1,
+    "bench": "far",
+    "side": 1,
+    "error": 0,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": false,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 2,
+    "bench": "near",
+    "side": -1,
+    "error": 1.7763568394002505e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": false,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 2,
+    "bench": "near",
+    "side": 1,
+    "error": 5.329070518200751e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": false,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 2,
+    "bench": "far",
+    "side": -1,
+    "error": 7.32410687763558e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 2,
+    "bench": "far",
+    "side": 1,
+    "error": 0,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 3,
+    "bench": "near",
+    "side": -1,
+    "error": 1.7763568394002505e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 3,
+    "bench": "near",
+    "side": 1,
+    "error": 5.329070518200751e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-ne",
+    "flip": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 3,
+    "bench": "far",
+    "side": -1,
+    "error": 7.32410687763558e-15,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": false,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "phaser",
+    "turn": 3,
+    "bench": "far",
+    "side": 1,
+    "error": 0,
+    "front": true,
+    "tabletop": true,
+    "source": "snow-sit-se",
+    "flip": false,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "phaser",
+    "id": "character",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "phaser",
+    "id": "character",
+    "bench": "far",
+    "seated": true
+  },
+  {
+    "renderer": "phaser",
+    "id": "peach",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "phaser",
+    "id": "peach",
+    "bench": "far",
+    "seated": true
+  },
+  {
+    "renderer": "phaser",
+    "id": "lilac",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "phaser",
+    "id": "lilac",
+    "bench": "far",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "turn": 0,
+    "bench": "near",
+    "side": -1,
+    "error": 1.006086897811151,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 0,
+    "bench": "near",
+    "side": 1,
+    "error": 1.4590052918514007,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 0,
+    "bench": "far",
+    "side": -1,
+    "error": 0.6975063047500113,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 0,
+    "bench": "far",
+    "side": 1,
+    "error": 0.9110380820596309,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 1,
+    "bench": "near",
+    "side": -1,
+    "error": 0.405653295250101,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 1,
+    "bench": "near",
+    "side": 1,
+    "error": 0.9801671753585663,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 1,
+    "bench": "far",
+    "side": -1,
+    "error": 0.41715110591488985,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 1,
+    "bench": "far",
+    "side": 1,
+    "error": 0.4527586409588343,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 2,
+    "bench": "near",
+    "side": -1,
+    "error": 1.006086897811151,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 2,
+    "bench": "near",
+    "side": 1,
+    "error": 1.4590052918514007,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 2,
+    "bench": "far",
+    "side": -1,
+    "error": 0.6975063047500113,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 2,
+    "bench": "far",
+    "side": 1,
+    "error": 0.9110380820596309,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 3,
+    "bench": "near",
+    "side": -1,
+    "error": 0.405653295250101,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 3,
+    "bench": "near",
+    "side": 1,
+    "error": 0.9801671753585663,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-near-1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 3,
+    "bench": "far",
+    "side": -1,
+    "error": 0.41715110591488985,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far--1"
+  },
+  {
+    "renderer": "canvas",
+    "turn": 3,
+    "bench": "far",
+    "side": 1,
+    "error": 0.4527586409588343,
+    "front": true,
+    "tabletop": true,
+    "seat": "qa-table-far-1"
+  },
+  {
+    "renderer": "canvas",
+    "id": "character",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "id": "character",
+    "bench": "far",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "id": "peach",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "id": "peach",
+    "bench": "far",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "id": "lilac",
+    "bench": "near",
+    "seated": true
+  },
+  {
+    "renderer": "canvas",
+    "id": "lilac",
+    "bench": "far",
+    "seated": true
+  }
+]
